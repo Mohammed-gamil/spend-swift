@@ -124,20 +124,21 @@ export default function Dashboard() {
       pendingApprovals={mockStats.pendingApprovals}
       notifications={3}
     >
-      <div className="space-y-6">
+      <div className="space-y-6 animate-fade-in">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between animate-slide-up">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">
+            <h1 className="text-3xl font-bold text-foreground bg-gradient-hero bg-clip-text text-transparent animate-glow">
               Welcome back, {mockUser.name.split(' ')[0]}!
             </h1>
-            <p className="text-muted-foreground mt-1">
+            <p className="text-muted-foreground mt-1 animate-slide-up" style={{ animationDelay: '0.1s' }}>
               Here's what's happening with your purchase requests today.
             </p>
           </div>
           
           <Button 
-            className="bg-gradient-primary hover:bg-gradient-primary/90 text-white shadow-primary"
+            className="bg-gradient-primary hover:bg-gradient-primary/90 text-white shadow-primary hover:shadow-glow transition-all duration-300 hover:scale-105 animate-scale-in"
+            style={{ animationDelay: '0.2s' }}
             onClick={() => handleNavigate('create-pr')}
           >
             <Plus className="mr-2 h-4 w-4" />
@@ -146,20 +147,22 @@ export default function Dashboard() {
         </div>
 
         {/* Stats Grid */}
-        <StatsGrid stats={mockStats} userRole={mockUser.role} />
+        <div className="animate-scale-in" style={{ animationDelay: '0.3s' }}>
+          <StatsGrid stats={mockStats} userRole={mockUser.role} />
+        </div>
 
         {/* Main Content Grid */}
-        <div className="grid gap-6 lg:grid-cols-3">
+        <div className="grid gap-6 lg:grid-cols-3 animate-slide-up" style={{ animationDelay: '0.4s' }}>
           {/* Recent Activity & PRs */}
           <div className="lg:col-span-2 space-y-6">
             {/* Recent PRs */}
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
+            <Card className="hover:shadow-lg transition-all duration-300 hover:scale-[1.01] bg-gradient-card">
+              <CardHeader className="flex flex-row items-center justify-between group">
                 <CardTitle className="flex items-center gap-2">
-                  <FileText className="h-5 w-5 text-primary" />
+                  <FileText className="h-5 w-5 text-primary transition-transform group-hover:scale-110" />
                   Recent Requests
                 </CardTitle>
-                <Button variant="ghost" size="sm" onClick={() => handleNavigate('my-requests')}>
+                <Button variant="ghost" size="sm" onClick={() => handleNavigate('my-requests')} className="hover:bg-gradient-primary-soft transition-all duration-300">
                   View all
                   <ArrowRight className="ml-1 h-4 w-4" />
                 </Button>
@@ -177,18 +180,20 @@ export default function Dashboard() {
             </Card>
 
             {/* Activity Timeline */}
-            <Card>
-              <CardHeader>
+            <Card className="hover:shadow-lg transition-all duration-300 hover:scale-[1.01] bg-gradient-card">
+              <CardHeader className="group">
                 <CardTitle className="flex items-center gap-2">
-                  <Activity className="h-5 w-5 text-primary" />
+                  <Activity className="h-5 w-5 text-primary transition-transform group-hover:scale-110" />
                   Recent Activity
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {mockStats.recentActivity.map((activity) => (
-                    <div key={activity.id} className="flex items-start gap-3 pb-3 last:pb-0 border-b last:border-0">
-                      <Avatar className="h-8 w-8">
+                  {mockStats.recentActivity.map((activity, index) => (
+                    <div key={activity.id} 
+                         className="flex items-start gap-3 pb-3 last:pb-0 border-b last:border-0 animate-slide-up hover:bg-gradient-primary-soft/20 p-2 rounded-lg transition-all duration-300" 
+                         style={{ animationDelay: `${0.1 * index}s` }}>
+                      <Avatar className="h-8 w-8 transition-transform hover:scale-110">
                         <AvatarImage src={activity.user?.avatar} />
                         <AvatarFallback className="bg-primary/10 text-primary text-xs">
                           {activity.user?.name.split(' ').map(n => n[0]).join('').toUpperCase()}
@@ -197,8 +202,8 @@ export default function Dashboard() {
                       
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
-                          <span className="font-medium text-sm">{activity.user?.name}</span>
-                          <Badge variant="outline" className="text-xs">
+                          <span className="font-medium text-sm transition-colors hover:text-primary">{activity.user?.name}</span>
+                          <Badge variant="outline" className="text-xs hover:bg-primary/10 transition-colors">
                             {activity.action}
                           </Badge>
                         </div>
@@ -218,16 +223,16 @@ export default function Dashboard() {
           </div>
 
           {/* Quick Actions & Insights */}
-          <div className="space-y-6">
+          <div className="space-y-6 animate-scale-in" style={{ animationDelay: '0.5s' }}>
             {/* Quick Actions */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Quick Actions</CardTitle>
+            <Card className="hover:shadow-lg transition-all duration-300 hover:scale-[1.01] bg-gradient-card">
+              <CardHeader className="group">
+                <CardTitle className="text-lg transition-colors group-hover:text-primary">Quick Actions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <Button 
                   variant="outline" 
-                  className="w-full justify-start"
+                  className="w-full justify-start hover:bg-gradient-primary-soft transition-all duration-300 hover:scale-[1.02]"
                   onClick={() => handleNavigate('create-pr')}
                 >
                   <Plus className="mr-2 h-4 w-4" />
@@ -237,7 +242,7 @@ export default function Dashboard() {
                 {mockUser.role !== 'USER' && (
                   <Button 
                     variant="outline" 
-                    className="w-full justify-start"
+                    className="w-full justify-start hover:bg-gradient-primary-soft transition-all duration-300 hover:scale-[1.02]"
                     onClick={() => handleNavigate('approvals')}
                   >
                     <FileText className="mr-2 h-4 w-4" />
@@ -247,7 +252,7 @@ export default function Dashboard() {
                 
                 <Button 
                   variant="outline" 
-                  className="w-full justify-start"
+                  className="w-full justify-start hover:bg-gradient-primary-soft transition-all duration-300 hover:scale-[1.02]"
                   onClick={() => handleNavigate('my-requests')}
                 >
                   <Users className="mr-2 h-4 w-4" />
@@ -257,17 +262,17 @@ export default function Dashboard() {
             </Card>
 
             {/* Insights */}
-            <Card>
-              <CardHeader>
+            <Card className="hover:shadow-lg transition-all duration-300 hover:scale-[1.01] bg-gradient-card">
+              <CardHeader className="group">
                 <CardTitle className="flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5 text-success" />
+                  <TrendingUp className="h-5 w-5 text-success transition-transform group-hover:scale-110" />
                   Insights
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="p-3 bg-success/10 rounded-lg border border-success/20">
+                <div className="p-3 bg-success/10 rounded-lg border border-success/20 hover:bg-success/15 transition-all duration-300 hover:scale-[1.02] cursor-default">
                   <div className="flex items-center gap-2 mb-1">
-                    <div className="h-2 w-2 bg-success rounded-full"></div>
+                    <div className="h-2 w-2 bg-success rounded-full animate-pulse-soft"></div>
                     <span className="text-sm font-medium text-success">Approval Rate</span>
                   </div>
                   <p className="text-xs text-muted-foreground">
@@ -275,9 +280,9 @@ export default function Dashboard() {
                   </p>
                 </div>
                 
-                <div className="p-3 bg-warning/10 rounded-lg border border-warning/20">
+                <div className="p-3 bg-warning/10 rounded-lg border border-warning/20 hover:bg-warning/15 transition-all duration-300 hover:scale-[1.02] cursor-default">
                   <div className="flex items-center gap-2 mb-1">
-                    <div className="h-2 w-2 bg-warning rounded-full"></div>
+                    <div className="h-2 w-2 bg-warning rounded-full animate-pulse-soft"></div>
                     <span className="text-sm font-medium text-warning">Budget Alert</span>
                   </div>
                   <p className="text-xs text-muted-foreground">
@@ -285,9 +290,9 @@ export default function Dashboard() {
                   </p>
                 </div>
                 
-                <div className="p-3 bg-primary/10 rounded-lg border border-primary/20">
+                <div className="p-3 bg-primary/10 rounded-lg border border-primary/20 hover:bg-primary/15 transition-all duration-300 hover:scale-[1.02] cursor-default">
                   <div className="flex items-center gap-2 mb-1">
-                    <div className="h-2 w-2 bg-primary rounded-full"></div>
+                    <div className="h-2 w-2 bg-primary rounded-full animate-pulse-soft"></div>
                     <span className="text-sm font-medium text-primary">Performance</span>
                   </div>
                   <p className="text-xs text-muted-foreground">
