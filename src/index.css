@@ -1,0 +1,221 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Purchase Request Management System Design System */
+
+@layer base {
+  :root {
+    /* Core Brand Colors - Modern Professional Palette */
+    --background: 240 100% 99%;
+    --foreground: 240 10% 10%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 10%;
+
+    /* Primary - Deep Professional Blue */
+    --primary: 217 91% 35%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 217 91% 45%;
+    --primary-dark: 217 91% 25%;
+
+    /* Secondary - Warm Accent */
+    --secondary: 240 5% 96%;
+    --secondary-foreground: 240 6% 10%;
+
+    /* Success - PR Approved */
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 100%;
+    --success-light: 142 76% 46%;
+
+    /* Warning - Pending Actions */
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    --warning-light: 38 92% 60%;
+
+    /* Muted Elements */
+    --muted: 240 5% 96%;
+    --muted-foreground: 240 4% 46%;
+
+    /* Accent - Interactive Elements */
+    --accent: 240 5% 96%;
+    --accent-foreground: 240 6% 10%;
+
+    /* Destructive - Rejections/Errors */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* UI Elements */
+    --border: 240 6% 90%;
+    --input: 240 6% 90%;
+    --ring: 217 91% 35%;
+
+    /* Status Specific Colors */
+    --status-draft: 240 5% 64%;
+    --status-submitted: 217 91% 45%;
+    --status-approved: 142 76% 36%;
+    --status-rejected: 0 84% 60%;
+    --status-transferred: 142 76% 26%;
+
+    /* Gradients */
+    /* Gradients - Enhanced with smooth transitions */
+    --gradient-primary: linear-gradient(135deg, hsl(217 91% 35%), hsl(217 91% 45%));
+    --gradient-success: linear-gradient(135deg, hsl(142 76% 36%), hsl(142 76% 46%));
+    --gradient-hero: linear-gradient(135deg, hsl(217 91% 35%) 0%, hsl(217 91% 45%) 50%, hsl(142 76% 36%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(240 20% 99%) 100%);
+    --gradient-primary-soft: linear-gradient(135deg, hsl(217 91% 35% / 0.1), hsl(217 91% 45% / 0.1));
+    --gradient-success-soft: linear-gradient(135deg, hsl(142 76% 36% / 0.1), hsl(142 76% 46% / 0.1));
+    
+    /* Luxury gradients with subtle opacity */
+    --gradient-luxury-bg: linear-gradient(135deg, hsl(217 91% 35% / 0.03), hsl(142 76% 36% / 0.02), hsl(217 91% 45% / 0.03));
+    --gradient-luxury-card: linear-gradient(135deg, hsl(0 0% 100% / 0.8), hsl(240 100% 99% / 0.9), hsl(217 91% 98% / 0.7));
+    --gradient-luxury-header: linear-gradient(90deg, hsl(217 91% 35% / 0.05), hsl(217 91% 45% / 0.03));
+    --gradient-luxury-accent: radial-gradient(ellipse at top, hsl(217 91% 35% / 0.1), transparent 50%);
+    --gradient-luxury-glass: linear-gradient(135deg, hsl(0 0% 100% / 0.1), hsl(0 0% 100% / 0.05));
+
+    /* Enhanced Shadows with color tints */
+    --shadow-sm: 0 1px 2px 0 hsl(217 91% 35% / 0.04);
+    --shadow-md: 0 4px 6px -1px hsl(217 91% 35% / 0.1), 0 2px 4px -2px hsl(217 91% 35% / 0.1);
+    --shadow-lg: 0 10px 15px -3px hsl(217 91% 35% / 0.1), 0 4px 6px -4px hsl(217 91% 35% / 0.1);
+    --shadow-primary: 0 10px 25px -3px hsl(217 91% 35% / 0.3);
+    --shadow-success: 0 10px 25px -3px hsl(142 76% 36% / 0.25);
+    --shadow-glow: 0 0 40px hsl(217 91% 35% / 0.15);
+
+    /* Backdrop blur effects */
+    --backdrop-blur: blur(20px);
+    --backdrop-blur-sm: blur(8px);
+
+    /* Enhanced Animations */
+    --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-normal: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Dark mode gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(217 91% 65%), hsl(217 91% 75%));
+    --gradient-success: linear-gradient(135deg, hsl(142 76% 46%), hsl(142 76% 56%));
+    --gradient-hero: linear-gradient(135deg, hsl(217 91% 65%) 0%, hsl(217 91% 75%) 50%, hsl(142 76% 46%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(222.2 84% 4.9%) 0%, hsl(217.2 32.6% 17.5%) 100%);
+    --gradient-primary-soft: linear-gradient(135deg, hsl(210 40% 98% / 0.1), hsl(212.7 26.8% 83.9% / 0.1));
+    --gradient-success-soft: linear-gradient(135deg, hsl(142 76% 46% / 0.1), hsl(142 76% 56% / 0.1));
+    
+    /* Dark mode luxury gradients */
+    --gradient-luxury-bg: linear-gradient(135deg, hsl(217 91% 65% / 0.02), hsl(142 76% 46% / 0.01), hsl(217 91% 75% / 0.02));
+    --gradient-luxury-card: linear-gradient(135deg, hsl(222.2 84% 4.9% / 0.9), hsl(217.2 32.6% 17.5% / 0.8), hsl(217 91% 15% / 0.7));
+    --gradient-luxury-header: linear-gradient(90deg, hsl(217 91% 65% / 0.03), hsl(217 91% 75% / 0.02));
+    --gradient-luxury-accent: radial-gradient(ellipse at top, hsl(217 91% 65% / 0.08), transparent 50%);
+    --gradient-luxury-glass: linear-gradient(135deg, hsl(0 0% 100% / 0.05), hsl(0 0% 100% / 0.02));
+
+    /* Dark mode shadows */
+    --shadow-sm: 0 1px 2px 0 hsl(217 91% 65% / 0.08);
+    --shadow-md: 0 4px 6px -1px hsl(217 91% 65% / 0.15), 0 2px 4px -2px hsl(217 91% 65% / 0.15);
+    --shadow-lg: 0 10px 15px -3px hsl(217 91% 65% / 0.15), 0 4px 6px -4px hsl(217 91% 65% / 0.15);
+    --shadow-primary: 0 10px 25px -3px hsl(217 91% 65% / 0.4);
+    --shadow-success: 0 10px 25px -3px hsl(142 76% 46% / 0.35);
+    --shadow-glow: 0 0 40px hsl(217 91% 65% / 0.25);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer components {
+  /* Custom component styles */
+  .glass-effect {
+    @apply backdrop-blur-sm bg-white/80 dark:bg-gray-900/80 border border-white/20 dark:border-gray-800/20;
+  }
+  
+  .floating-card {
+    @apply transform transition-all duration-300 hover:scale-105 hover:shadow-lg dark:hover:shadow-primary/20;
+  }
+  
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-light;
+  }
+  
+  .shimmer-effect {
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+  }
+
+  /* Luxury gradient utilities */
+  .luxury-bg {
+    background: var(--gradient-luxury-bg);
+  }
+  
+  .luxury-card {
+    background: var(--gradient-luxury-card);
+    backdrop-filter: blur(10px);
+    border: 1px solid hsl(var(--border) / 0.1);
+  }
+  
+  .luxury-header {
+    background: var(--gradient-luxury-header);
+  }
+  
+  .luxury-accent {
+    background: var(--gradient-luxury-accent);
+  }
+  
+  .luxury-glass {
+    background: var(--gradient-luxury-glass);
+    backdrop-filter: blur(20px);
+  }
+
+  /* Dark mode specific enhancements */
+  .dark .gradient-text {
+    @apply from-blue-400 to-blue-300;
+  }
+}

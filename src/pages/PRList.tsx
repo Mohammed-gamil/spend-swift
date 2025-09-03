@@ -1,0 +1,299 @@
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { useAuthStore } from "@/stores/authStore";
+import { usePRStore } from "@/stores/prStore";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Plus, Search, Filter, Eye, Edit, Calendar, DollarSign, Clock } from "lucide-react";
+import { formatDistanceToNow, format } from "date-fns";
+import { PurchaseRequest } from "@/types";
+import RoleGuard from "@/components/auth/RoleGuard";
+
+// Mock data
+const mockPRs: PurchaseRequest[] = [
+  {
+    id: "PR-2024-001",
+    requesterId: "2",
+    requester: { id: "2", name: "Sarah Ahmed", email: "sarah@company.com", role: "USER", status: "active" },
+    title: "New MacBook Pro for Development Team",
+    description: "Urgent requirement for M3 MacBook Pro to replace aging development machine",
+    category: "IT Equipment",
+    desiredCost: 2499,
+    currency: "USD",
+    neededByDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    state: "SUBMITTED",
+    items: [{ id: "1", name: "MacBook Pro M3", quantity: 1, unitPrice: 2499, total: 2499 }],
+    quotes: [],
+    approvals: [],
+    createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
+    updatedAt: new Date(Date.now() - 2 * 60 * 60 * 1000)
+  },
+  {
+    id: "PR-2024-002",
+    requesterId: "3",
+    requester: { id: "3", name: "Mohamed Ali", email: "mohamed@company.com", role: "USER", status: "active" },
+    title: "Office Supplies - Q1 2024",
+    description: "Quarterly office supplies including stationery, printing materials",
+    category: "Office Supplies",
+    desiredCost: 750,
+    currency: "USD",
+    neededByDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
+    state: "DM_APPROVED",
+    items: [{ id: "2", name: "Office Supplies Bundle", quantity: 1, unitPrice: 750, total: 750 }],
+    quotes: [],
+    approvals: [],
+    createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+    updatedAt: new Date(Date.now() - 4 * 60 * 60 * 1000)
+  }
+];
+
+export default function PRList() {
+  const { user } = useAuthStore();
+  const { prs, isLoading, getPRs } = usePRStore();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [stateFilter, setStateFilter] = useState<string>("all");
+
+  useEffect(() => {
+    getPRs();
+  }, [getPRs]);
+
+  const getStateColor = (state: string) => {
+    switch (state) {
+      case 'DRAFT': return 'bg-gray-100 text-gray-800';
+      case 'SUBMITTED': return 'bg-blue-100 text-blue-800';
+      case 'DM_APPROVED': return 'bg-green-100 text-green-800';
+      case 'ACCT_APPROVED': return 'bg-purple-100 text-purple-800';
+      case 'FINAL_APPROVED': return 'bg-emerald-100 text-emerald-800';
+      case 'FUNDS_TRANSFERRED': return 'bg-cyan-100 text-cyan-800';
+      default: return 'bg-red-100 text-red-800';
+    }
+  };
+
+  const formatCurrency = (amount: number, currency: string) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: currency,
+    }).format(amount);
+  };
+
+  // Combine mock data with store data for demo purposes
+  const allPRs = [...mockPRs, ...prs];
+  
+  const filteredPRs = allPRs.filter(pr => {
+    const matchesSearch = searchQuery === "" || 
+      pr.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      pr.id.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesState = stateFilter === "all" || pr.state === stateFilter;
+    
+    return matchesSearch && matchesState;
+  });
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Purchase Requests</h1>
+          <p className="text-gray-600 mt-1">Manage and track your purchase requests</p>
+        </div>
+        
+        <RoleGuard allowedRoles={['USER']}>
+          <Button asChild>
+            <Link to="/prs/create">
+              <Plus className="mr-2 h-4 w-4" />
+              Create Request
+            </Link>
+          </Button>
+        </RoleGuard>
+      </div>
+
+      {/* Filters */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Filter className="h-5 w-5" />
+            Filters
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex-1">
+              <div className="relative">
+                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Input
+                  placeholder="Search by title or PR ID..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+            </div>
+            
+            <Select value={stateFilter} onValueChange={setStateFilter}>
+              <SelectTrigger className="w-full md:w-48">
+                <SelectValue placeholder="Filter by state" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All States</SelectItem>
+                <SelectItem value="DRAFT">Draft</SelectItem>
+                <SelectItem value="SUBMITTED">Submitted</SelectItem>
+                <SelectItem value="DM_APPROVED">Manager Approved</SelectItem>
+                <SelectItem value="ACCT_APPROVED">Accountant Approved</SelectItem>
+                <SelectItem value="FINAL_APPROVED">Final Approved</SelectItem>
+                <SelectItem value="FUNDS_TRANSFERRED">Funds Transferred</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* PR List */}
+      <Card>
+        <CardHeader>
+          <CardTitle>
+            Purchase Requests ({filteredPRs.length})
+          </CardTitle>
+          <CardDescription>
+            {stateFilter === "all" 
+              ? "All your purchase requests" 
+              : `Purchase requests with status: ${stateFilter.replace('_', ' ')}`
+            }
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {filteredPRs.length > 0 ? (
+            <div className="space-y-4">
+              {filteredPRs.map((pr) => (
+                <div key={pr.id} className="border rounded-lg p-4 hover:bg-accent hover:text-accent-foreground transition-colors">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h3 className="font-semibold text-lg">{pr.title}</h3>
+                        <Badge className={getStateColor(pr.state)}>
+                          {pr.state.replace('_', ' ')}
+                        </Badge>
+                      </div>
+                      
+                      <p className="text-gray-600 mb-3 line-clamp-2">{pr.description}</p>
+                      
+                      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 text-sm">
+                        <div className="flex items-center gap-2">
+                          <Avatar className="h-6 w-6">
+                            <AvatarImage src={pr.requester?.avatar} />
+                            <AvatarFallback className="text-xs">
+                              {pr.requester?.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                          <span className="text-gray-600">
+                            {pr.requester?.name}
+                          </span>
+                        </div>
+                        
+                        <div className="flex items-center gap-1">
+                          <DollarSign className="h-4 w-4 text-gray-400" />
+                          <span className="font-medium">
+                            {formatCurrency(pr.desiredCost, pr.currency)}
+                          </span>
+                        </div>
+                        
+                        <div className="flex items-center gap-1">
+                          <Calendar className="h-4 w-4 text-gray-400" />
+                          <span>
+                            Due {format(pr.neededByDate, "MMM d")}
+                          </span>
+                        </div>
+                        
+                        <div className="flex items-center gap-1">
+                          <Clock className="h-4 w-4 text-gray-400" />
+                          <span>
+                            {formatDistanceToNow(pr.createdAt, { addSuffix: true })}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <div className="mt-3 flex items-center gap-2">
+                        <span className="text-sm text-gray-500">
+                          {pr.items.length} item{pr.items.length !== 1 ? 's' : ''}
+                        </span>
+                        <span className="text-gray-300">•</span>
+                        <span className="text-sm text-gray-500">
+                          {pr.category}
+                        </span>
+                        <span className="text-gray-300">•</span>
+                        <span className="text-sm text-gray-500">
+                          ID: {pr.id}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <div className="flex flex-col gap-2 ml-4">
+                      <Button variant="outline" size="sm" asChild>
+                        <Link to={`/prs/${pr.id}`}>
+                          <Eye className="h-4 w-4 mr-2" />
+                          View
+                        </Link>
+                      </Button>
+                      
+                      <RoleGuard allowedRoles={['USER']}>
+                        {pr.state === 'DRAFT' && (
+                          <Button variant="outline" size="sm" asChild>
+                            <Link to={`/prs/${pr.id}/edit`}>
+                              <Edit className="h-4 w-4 mr-2" />
+                              Edit
+                            </Link>
+                          </Button>
+                        )}
+                      </RoleGuard>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <div className="mx-auto h-12 w-12 text-gray-400 mb-4">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                No purchase requests found
+              </h3>
+              <p className="text-gray-600 mb-4">
+                {searchQuery || stateFilter !== 'all' 
+                  ? 'No requests match your current filters.' 
+                  : 'Get started by creating your first purchase request.'
+                }
+              </p>
+              {(searchQuery || stateFilter !== 'all') ? (
+                <Button 
+                  variant="outline"
+                  onClick={() => {
+                    setSearchQuery('');
+                    setStateFilter('all');
+                  }}
+                >
+                  Clear Filters
+                </Button>
+              ) : (
+                <RoleGuard allowedRoles={['USER']}>
+                  <Button asChild>
+                    <Link to="/prs/create">
+                      <Plus className="mr-2 h-4 w-4" />
+                      Create Your First Request
+                    </Link>
+                  </Button>
+                </RoleGuard>
+              )}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
