@@ -1,12 +1,15 @@
 import { useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/stores/authStore';
+import { useTranslation } from '@/hooks/use-translation';
+import { useLanguageStore } from '@/hooks/use-language';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Badge } from '@/components/ui/badge';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { LanguageToggle } from '@/components/ui/language-toggle';
 import { NotificationDropdown } from '@/components/ui/notification-dropdown';
 import { 
   Menu, 
@@ -24,19 +27,21 @@ import {
 import { UserRole } from '@/types';
 
 const navigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: Home, roles: ['USER', 'DIRECT_MANAGER', 'ACCOUNTANT', 'FINAL_MANAGER', 'ADMIN'] },
-  { name: 'My PRs', href: '/prs', icon: FileText, roles: ['USER', 'DIRECT_MANAGER', 'ACCOUNTANT', 'FINAL_MANAGER', 'ADMIN'] },
-  { name: 'Create PR', href: '/prs/create', icon: Plus, roles: ['USER'] },
-  { name: 'Approvals', href: '/approvals', icon: CheckSquare, roles: ['DIRECT_MANAGER', 'ACCOUNTANT', 'FINAL_MANAGER'] },
-  { name: 'Accounting', href: '/accounting', icon: DollarSign, roles: ['ACCOUNTANT'] },
-  { name: 'Reports', href: '/reports', icon: BarChart3, roles: ['DIRECT_MANAGER', 'FINAL_MANAGER', 'ADMIN'] },
-  { name: 'Users', href: '/admin/users', icon: Users, roles: ['ADMIN'] },
-  { name: 'Settings', href: '/admin/settings', icon: Settings, roles: ['ADMIN'] },
+  { name: 'nav.dashboard', href: '/dashboard', icon: Home, roles: ['USER', 'DIRECT_MANAGER', 'ACCOUNTANT', 'FINAL_MANAGER', 'ADMIN'] },
+  { name: 'nav.myPRs', href: '/prs', icon: FileText, roles: ['USER', 'DIRECT_MANAGER', 'ACCOUNTANT', 'FINAL_MANAGER', 'ADMIN'] },
+  { name: 'nav.createPR', href: '/prs/create', icon: Plus, roles: ['USER'] },
+  { name: 'nav.approvals', href: '/approvals', icon: CheckSquare, roles: ['DIRECT_MANAGER', 'ACCOUNTANT', 'FINAL_MANAGER'] },
+  { name: 'nav.accounting', href: '/accounting', icon: DollarSign, roles: ['ACCOUNTANT'] },
+  { name: 'nav.reports', href: '/reports', icon: BarChart3, roles: ['DIRECT_MANAGER', 'FINAL_MANAGER', 'ADMIN'] },
+  { name: 'nav.users', href: '/admin/users', icon: Users, roles: ['ADMIN'] },
+  { name: 'nav.settings', href: '/admin/settings', icon: Settings, roles: ['ADMIN'] },
 ];
 
 export default function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { user, logout } = useAuthStore();
+  const { t } = useTranslation();
+  const { direction } = useLanguageStore();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -58,12 +63,12 @@ export default function AppLayout() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-luxury-bg">
+    <div className="app-layout">
       {/* Desktop sidebar */}
-      <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
+      <div className="sidebar hidden lg:flex lg:flex-col">
         <div className="flex flex-col flex-grow luxury-card border-r border-border/50 backdrop-blur-xl">
-          <div className="flex items-center px-6 py-4 border-b border-border/50 luxury-header">\n
-            <h1 className="text-xl font-bold text-foreground">PR System</h1>
+          <div className="flex items-center px-6 py-4 border-b border-border/50 luxury-header">
+            <h1 className="text-xl font-bold text-foreground">{t('app.title')}</h1>
           </div>
           <nav className="flex-1 px-4 py-4 space-y-2">
             {filteredNavigation.map((item) => (
@@ -77,44 +82,44 @@ export default function AppLayout() {
                 }`}
               >
                 <item.icon className="mr-3 h-5 w-5" />
-                {item.name}
+                {t(item.name as any)}
               </Link>
             ))}
           </nav>
         </div>
       </div>
 
-      {/* Mobile sidebar */}
-      <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
-        <SheetContent side="left" className="w-64 p-0 luxury-card backdrop-blur-xl">
-          <div className="flex flex-col h-full">
-            <div className="flex items-center px-6 py-4 border-b border-border/50 luxury-header">
-              <h1 className="text-xl font-bold text-foreground">PR System</h1>
+      {/* Main content area including mobile header */}
+      <div className="main-content flex flex-col">
+        {/* Mobile sidebar */}
+        <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
+          <SheetContent side={direction === 'rtl' ? 'right' : 'left'} className="w-64 p-0 luxury-card backdrop-blur-xl">
+            <div className="flex flex-col h-full">
+              <div className="flex items-center px-6 py-4 border-b border-border/50 luxury-header">
+                <h1 className="text-xl font-bold text-foreground">{t('app.title')}</h1>
+              </div>
+              <nav className="flex-1 px-4 py-4 space-y-2">
+                {filteredNavigation.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    onClick={() => setSidebarOpen(false)}
+                    className={`flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                      isCurrentPath(item.href)
+                        ? 'bg-primary/10 text-primary'
+                        : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                    }`}
+                  >
+                    <item.icon className="mr-3 h-5 w-5" />
+                    {t(item.name as any)}
+                  </Link>
+                ))}
+              </nav>
             </div>
-            <nav className="flex-1 px-4 py-4 space-y-2">
-              {filteredNavigation.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  onClick={() => setSidebarOpen(false)}
-                  className={`flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                    isCurrentPath(item.href)
-                      ? 'bg-primary/10 text-primary'
-                      : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
-                  }`}
-                >
-                  <item.icon className="mr-3 h-5 w-5" />
-                  {item.name}
-                </Link>
-              ))}
-            </nav>
-          </div>
-        </SheetContent>
-
-        {/* Main content */}
-        <div className="lg:pl-64">
+          </SheetContent>
+        
           {/* Top navigation */}
-          <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-border/50 luxury-header backdrop-blur-xl px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
+          <div className="top-header sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-border/50 luxury-header backdrop-blur-xl px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
             <SheetTrigger asChild>
               <Button variant="ghost" size="sm" className="lg:hidden">
                 <Menu className="h-5 w-5" />
@@ -124,6 +129,9 @@ export default function AppLayout() {
             <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
               <div className="flex flex-1"></div>
               <div className="flex items-center gap-x-4 lg:gap-x-6">
+                {/* Language Toggle */}
+                <LanguageToggle />
+                
                 {/* Theme Toggle */}
                 <ThemeToggle />
                 
@@ -154,15 +162,15 @@ export default function AppLayout() {
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
-                      <Link to="/profile">Profile Settings</Link>
+                      <Link to="/profile">{t('nav.profile')}</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link to="/notifications">Notifications</Link>
+                      <Link to="/notifications">{t('nav.notifications')}</Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleLogout}>
                       <LogOut className="mr-2 h-4 w-4" />
-                      Log out
+                      {t('nav.logout')}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -176,8 +184,8 @@ export default function AppLayout() {
               <Outlet />
             </div>
           </main>
-        </div>
-      </Sheet>
+        </Sheet>
+      </div>
     </div>
   );
 }

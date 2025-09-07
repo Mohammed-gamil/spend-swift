@@ -94,12 +94,12 @@ export default function PRList() {
   });
 
   return (
-    <div className="space-y-6">
+    <div className="pr-page-container">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="page-header flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Purchase Requests</h1>
-          <p className="text-gray-600 mt-1">Manage and track your purchase requests</p>
+          <h1 className="pr-page-title">Purchase Requests</h1>
+          <p className="pr-page-subtitle">Manage and track your purchase requests</p>
         </div>
         
         <RoleGuard allowedRoles={['USER']}>
@@ -113,7 +113,7 @@ export default function PRList() {
       </div>
 
       {/* Filters */}
-      <Card>
+      <Card className="pr-filters-card">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Filter className="h-5 w-5" />
@@ -123,13 +123,13 @@ export default function PRList() {
         <CardContent>
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+              <div className="search-input-wrapper">
+                <Search className="search-input-icon" />
                 <Input
                   placeholder="Search by title or PR ID..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
+                  className="search-input"
                 />
               </div>
             </div>
@@ -167,84 +167,56 @@ export default function PRList() {
         </CardHeader>
         <CardContent>
           {filteredPRs.length > 0 ? (
-            <div className="space-y-4">
+            <div className="pr-card-grid">
               {filteredPRs.map((pr) => (
-                <div key={pr.id} className="border rounded-lg p-4 hover:bg-accent hover:text-accent-foreground transition-colors">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <h3 className="font-semibold text-lg">{pr.title}</h3>
-                        <Badge className={getStateColor(pr.state)}>
-                          {pr.state.replace('_', ' ')}
-                        </Badge>
+                <div key={pr.id} className="pr-card">
+                  {/* Card Header */}
+                  <div className="pr-card-header">
+                    <h3 className="pr-card-title">{pr.title}</h3>
+                    <Badge className={`status-badge status-${pr.state.toLowerCase()}`}>
+                      {pr.state.replace('_', ' ')}
+                    </Badge>
+                  </div>
+
+                  {/* Card Body */}
+                  <div className="pr-card-body">
+                    <p className="pr-card-description">{pr.description}</p>
+                  </div>
+
+                  {/* Card Footer */}
+                  <div className="pr-card-footer">
+                    <div className="pr-card-metadata">
+                      <div className="metadata-item">
+                        <Calendar className="metadata-icon" />
+                        <span>Due {format(pr.neededByDate, "MMM d")}</span>
                       </div>
-                      
-                      <p className="text-gray-600 mb-3 line-clamp-2">{pr.description}</p>
-                      
-                      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 text-sm">
-                        <div className="flex items-center gap-2">
-                          <Avatar className="h-6 w-6">
-                            <AvatarImage src={pr.requester?.avatar} />
-                            <AvatarFallback className="text-xs">
-                              {pr.requester?.name.split(' ').map(n => n[0]).join('').toUpperCase()}
-                            </AvatarFallback>
-                          </Avatar>
-                          <span className="text-gray-600">
-                            {pr.requester?.name}
-                          </span>
-                        </div>
-                        
-                        <div className="flex items-center gap-1">
-                          <DollarSign className="h-4 w-4 text-gray-400" />
-                          <span className="font-medium">
-                            {formatCurrency(pr.desiredCost, pr.currency)}
-                          </span>
-                        </div>
-                        
-                        <div className="flex items-center gap-1">
-                          <Calendar className="h-4 w-4 text-gray-400" />
-                          <span>
-                            Due {format(pr.neededByDate, "MMM d")}
-                          </span>
-                        </div>
-                        
-                        <div className="flex items-center gap-1">
-                          <Clock className="h-4 w-4 text-gray-400" />
-                          <span>
-                            {formatDistanceToNow(pr.createdAt, { addSuffix: true })}
-                          </span>
-                        </div>
+                      <div className="metadata-item">
+                        <DollarSign className="metadata-icon" />
+                        <span>{formatCurrency(pr.desiredCost, pr.currency)}</span>
                       </div>
-                      
-                      <div className="mt-3 flex items-center gap-2">
-                        <span className="text-sm text-gray-500">
-                          {pr.items.length} item{pr.items.length !== 1 ? 's' : ''}
-                        </span>
-                        <span className="text-gray-300">•</span>
-                        <span className="text-sm text-gray-500">
-                          {pr.category}
-                        </span>
-                        <span className="text-gray-300">•</span>
-                        <span className="text-sm text-gray-500">
-                          ID: {pr.id}
-                        </span>
+                      <div className="metadata-item">
+                        <span className="font-mono text-xs">ID: {pr.id}</span>
                       </div>
                     </div>
-                    
-                    <div className="flex flex-col gap-2 ml-4">
-                      <Button variant="outline" size="sm" asChild>
+                    <div className="pr-card-actions">
+                      <div className="avatar-group">
+                        <Avatar className="avatar-circle">
+                          <AvatarImage src={pr.requester?.avatar} />
+                          <AvatarFallback className="avatar-fallback">
+                            {pr.requester?.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                      </div>
+                      <Button variant="ghost" size="icon" asChild>
                         <Link to={`/prs/${pr.id}`}>
-                          <Eye className="h-4 w-4 mr-2" />
-                          View
+                          <Eye className="h-5 w-5" />
                         </Link>
                       </Button>
-                      
                       <RoleGuard allowedRoles={['USER']}>
                         {pr.state === 'DRAFT' && (
-                          <Button variant="outline" size="sm" asChild>
+                          <Button variant="ghost" size="icon" asChild>
                             <Link to={`/prs/${pr.id}/edit`}>
-                              <Edit className="h-4 w-4 mr-2" />
-                              Edit
+                              <Edit className="h-5 w-5" />
                             </Link>
                           </Button>
                         )}

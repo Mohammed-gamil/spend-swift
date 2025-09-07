@@ -1,3 +1,6 @@
+/* Google Fonts for Arabic Support */
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -219,3 +222,544 @@
     @apply from-blue-400 to-blue-300;
   }
 }
+
+/* RTL Support and Arabic Typography */
+@layer base {
+  /* Arabic font family */
+  [dir="rtl"] {
+    font-family: 'Cairo', 'Tajawal', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  /* Ensure proper text direction */
+  [dir="rtl"] {
+    direction: rtl;
+    text-align: right;
+  }
+  
+  [dir="ltr"] {
+    direction: ltr;
+    text-align: left;
+  }
+  
+  /* Fix input text alignment */
+  [dir="rtl"] input,
+  [dir="rtl"] textarea,
+  [dir="rtl"] select {
+    text-align: right;
+  }
+  
+  [dir="ltr"] input,
+  [dir="ltr"] textarea,
+  [dir="ltr"] select {
+    text-align: left;
+  }
+}
+
+@layer components {
+  /* RTL Navigation adjustments */
+  [dir="rtl"] .nav-items {
+    flex-direction: row-reverse;
+  }
+  
+  /* RTL Flexbox layouts */
+  [dir="rtl"] .flex-row {
+    flex-direction: row-reverse;
+  }
+  
+  /* RTL margins and padding adjustments */
+  [dir="rtl"] .ml-auto {
+    margin-left: 0;
+    margin-right: auto;
+  }
+  
+  [dir="rtl"] .mr-auto {
+    margin-right: 0;
+    margin-left: auto;
+  }
+  
+  /* RTL positioning */
+  [dir="rtl"] .left-0 {
+    left: auto;
+    right: 0;
+  }
+  
+  [dir="rtl"] .right-0 {
+    right: auto;
+    left: 0;
+  }
+  
+  /* RTL transforms for icons that need flipping */
+  [dir="rtl"] .rtl-flip {
+    transform: scaleX(-1);
+  }
+  
+  /* RTL specific spacing */
+  [dir="rtl"] .space-x-reverse > :not([hidden]) ~ :not([hidden]) {
+    --tw-space-x-reverse: 1;
+  }
+  
+  /* RTL grid adjustments */
+  [dir="rtl"] .grid-flow-col {
+    grid-auto-flow: column reverse;
+  }
+  
+  /* RTL border radius adjustments */
+  [dir="rtl"] .rounded-l-none {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  
+  [dir="rtl"] .rounded-r-md {
+    border-top-left-radius: 0.375rem;
+    border-bottom-left-radius: 0.375rem;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  
+  /* RTL dropdown and popover positioning */
+  [dir="rtl"] .dropdown-content {
+    left: auto;
+    right: 0;
+  }
+  
+  /* RTL text truncation */
+  [dir="rtl"] .truncate {
+    direction: rtl;
+    text-align: right;
+  }
+  
+  /* RTL form elements */
+  [dir="rtl"] .form-input {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+  
+  /* RTL button icon spacing */
+  [dir="rtl"] .btn-icon-left {
+    margin-right: 0;
+    margin-left: 0.5rem;
+  }
+  
+  [dir="rtl"] .btn-icon-right {
+    margin-left: 0;
+    margin-right: 0.5rem;
+  }
+  
+  /* RTL table adjustments */
+  [dir="rtl"] table {
+    direction: rtl;
+  }
+  
+  [dir="rtl"] th,
+  [dir="rtl"] td {
+    text-align: right;
+  }
+  
+  [dir="rtl"] th:first-child,
+  [dir="rtl"] td:first-child {
+    text-align: right;
+  }
+  
+  [dir="rtl"] th:last-child,
+  [dir="rtl"] td:last-child {
+    text-align: left;
+  }
+  
+  /* RTL chart and visualization adjustments */
+  [dir="rtl"] .recharts-wrapper {
+    direction: ltr; /* Keep charts LTR for proper data visualization */
+  }
+  
+  [dir="rtl"] .chart-legend {
+    direction: rtl;
+  }
+  
+  /* RTL toast notifications */
+  [dir="rtl"] .toast-container {
+    left: 1rem;
+    right: auto;
+  }
+  
+  /* RTL modal and dialog adjustments */
+  [dir="rtl"] .modal-content {
+    text-align: right;
+  }
+  
+  /* RTL animation adjustments */
+  [dir="rtl"] .slide-in-right {
+    transform: translateX(-100%);
+  }
+  
+  [dir="rtl"] .slide-in-left {
+    transform: translateX(100%);
+  }
+  
+  /* RTL breadcrumb adjustments */
+  [dir="rtl"] .breadcrumb-separator {
+    transform: scaleX(-1);
+  }
+  
+  /* RTL progress bar */
+  [dir="rtl"] .progress-bar {
+    direction: ltr; /* Keep progress direction consistent */
+  }
+  
+  /* RTL specific utility classes */
+  .rtl\:text-right[dir="rtl"] {
+    text-align: right;
+  }
+  
+  .rtl\:text-left[dir="rtl"] {
+    text-align: left;
+  }
+  
+  .rtl\:flex-row-reverse[dir="rtl"] {
+    flex-direction: row-reverse;
+  }
+  
+  .rtl\:ml-auto[dir="rtl"] {
+    margin-left: auto;
+    margin-right: 0;
+  }
+  
+  .rtl\:mr-auto[dir="rtl"] {
+    margin-right: auto;
+    margin-left: 0;
+  }
+}
+
+/* Targeted RTL tweaks for spacing in navigation and icons */
+@layer components {
+  /* RTL Override for the Top Header and Page Header */
+  [dir="rtl"] .top-header,
+  [dir="rtl"] .page-header {
+    flex-direction: row-reverse;
+  }
+  /* Also flip the inner flex wrapper of the top header so the spacer and actions swap */
+  [dir="rtl"] .top-header > .flex.flex-1,
+  [dir="rtl"] .top-header > .flex-1 {
+    flex-direction: row-reverse;
+  }
+
+  /* RTL Override for attribute-identified headers in main content */
+  [dir="rtl"] .main-content [data-component-name="nav"][class*="justify-Right"] {
+    flex-direction: row-reverse;
+  }
+  
+  [dir="rtl"] .main-content [data-component-name="div"][class*="justify-Right"] {
+    flex-direction: row-reverse;
+  }
+
+  /* Generic RTL flip for flex headers with justify-between inside main content */
+  [dir="rtl"] .main-content .flex[class*="justify-between"] {
+    flex-direction: row-reverse;
+  }
+
+  /* Ensure auto margins play nice in RTL: swap ml-auto/mr-auto */
+  [dir="rtl"] .ml-auto { margin-left: 0; margin-right: auto; }
+  [dir="rtl"] .mr-auto { margin-right: 0; margin-left: auto; }
+
+
+/* High-specificity RTL header overrides placed in utilities layer to win over Tailwind utilities */
+@layer utilities {
+  /* Flip known header containers */
+  [dir="rtl"] .top-header,
+  [dir="rtl"] .page-header {
+    flex-direction: row-reverse !important;
+  }
+
+  /* Flip inner wrapper in top header (spacer and actions) */
+  [dir="rtl"] .top-header > .flex.flex-1,
+  [dir="rtl"] .top-header > .flex-1 {
+    flex-direction: row-reverse !important;
+  }
+
+  /* Flip attribute-identified flex headers inside main content */
+  [dir="rtl"] .main-content [data-component-name="nav"][class*="justify-between"],
+  [dir="rtl"] .main-content [data-component-name="div"][class*="justify-between"] {
+    flex-direction: row-reverse !important;
+  }
+
+  /* Global flip for attribute-identified containers even outside main content */
+  [dir="rtl"] [data-component-name="nav"][class*="justify-between"],
+  [dir="rtl"] [data-component-name="div"][class*="justify-between"] {
+    flex-direction: row-reverse !important;
+  }
+
+  /* Flip the reusable header component container */
+  [dir="rtl"] header .container.flex[class*="justify-between"] {
+    flex-direction: row-reverse !important;
+  }
+  /* Adjust horizontal spacing utilities inside header in RTL */
+  [dir="rtl"] header .container .space-x-4 > :not([hidden]) ~ :not([hidden]) {
+    --tw-space-x-reverse: 1;
+  }
+
+  /* Generic flip for flex headers with justify-between inside main content */
+  [dir="rtl"] .main-content .flex-row[class*="justify-between"],
+  [dir="rtl"] .main-content .flex[class*="justify-between"] {
+    flex-direction: row-reverse !important;
+  }
+}
+  /* Sidebar navigation icon margin in RTL */
+  [dir="rtl"] nav a > .mr-3 {
+    margin-right: 0;
+    margin-left: 0.75rem; /* 3 * 0.25rem = 0.75rem */
+  }
+
+  /* Generic small icon margin flip (e.g., logout) */
+  [dir="rtl"] .mr-2 {
+    margin-right: 0;
+    margin-left: 0.5rem; /* 2 * 0.25rem = 0.5rem */
+  }
+}
+
+@layer components {
+  /* App Layout - CSS Grid Implementation (responsive) */
+  .app-layout {
+    display: grid;
+    grid-template-columns: 1fr; /* Mobile: single column */
+    min-height: 100vh;
+  }
+
+  .sidebar {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+  }
+
+  .main-content {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+    overflow-y: auto; /* Allow content to scroll */
+  }
+
+  /* Desktop and up */
+  @media (min-width: 1024px) {
+    .app-layout {
+      grid-template-columns: 250px 1fr; /* Sidebar width and main content */
+    }
+
+    .sidebar {
+      grid-column: 1 / 2;
+    }
+
+    .main-content {
+      grid-column: 2 / 3;
+    }
+
+    /* RTL Override for Grid Layout */
+    [dir="rtl"] .app-layout {
+      grid-template-columns: 1fr 250px; /* Main content and sidebar */
+    }
+
+    [dir="rtl"] .sidebar {
+      grid-column: 2 / 3;
+    }
+
+    [dir="rtl"] .main-content {
+      grid-column: 1 / 2;
+    }
+  }
+}
+
+/* ==========================================================================
+   Purchase Request (PR) Page - Modern UI Overhaul
+   ========================================================================== */
+
+/* 1. Global Layout & Spacing
+   -------------------------------------------------------------------------- */
+.pr-page-container {
+  padding: 2rem; /* Increased padding for more breathing room */
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* Consistent vertical gap */
+}
+
+/* 2. Typography & Visual Hierarchy
+   -------------------------------------------------------------------------- */
+.pr-page-title {
+  font-size: 1.75rem; /* 28px */
+  font-weight: 700;
+  color: hsl(var(--foreground));
+}
+
+.pr-page-subtitle {
+  font-size: 1rem;
+  color: hsl(var(--muted-foreground));
+  margin-top: 0.25rem;
+}
+
+/* 3. Filter & Search Controls
+   -------------------------------------------------------------------------- */
+.pr-filters-card {
+  background-color: hsl(var(--card));
+  border-radius: var(--radius);
+  border: 1px solid hsl(var(--border));
+}
+
+.search-input-wrapper {
+  position: relative;
+}
+
+.search-input-icon {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  inset-inline-start: 0.75rem;
+  color: hsl(var(--muted-foreground));
+}
+
+.search-input {
+  padding-inline-start: 2.5rem; /* Space for the icon */
+  background-color: hsl(var(--input));
+  border-color: hsl(var(--border));
+}
+
+.search-input:focus {
+  border-color: hsl(var(--ring));
+  box-shadow: 0 0 0 1px hsl(var(--ring));
+}
+
+/* 4. Request Card Grid
+   -------------------------------------------------------------------------- */
+.pr-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+}
+
+/* 5. The Request Card Component (`.pr-card`)
+   -------------------------------------------------------------------------- */
+.pr-card {
+  background-color: hsl(var(--card));
+  border-radius: 0.75rem; /* 12px */
+  border: 1px solid hsl(var(--border));
+  box-shadow: var(--shadow-sm);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.pr-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Card Header: Title and Status */
+.pr-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.pr-card-title {
+  font-size: 1.125rem; /* 18px */
+  font-weight: 600;
+  color: hsl(var(--foreground));
+  line-height: 1.4;
+}
+
+/* Card Body: Description */
+.pr-card-body {
+  flex-grow: 1;
+}
+
+.pr-card-description {
+  font-size: 0.875rem; /* 14px */
+  color: hsl(var(--muted-foreground));
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Card Footer: Metadata and Actions */
+.pr-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid hsl(var(--border));
+  padding-top: 1rem;
+  margin-top: auto;
+}
+
+.pr-card-metadata {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.8125rem; /* 13px */
+  color: hsl(var(--muted-foreground));
+}
+
+.metadata-item {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.metadata-icon {
+  width: 0.875rem; /* 14px */
+  height: 0.875rem;
+  color: hsl(var(--muted-foreground));
+}
+
+.pr-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* 6. Status Badges
+   -------------------------------------------------------------------------- */
+.status-badge {
+  padding: 0.25rem 0.625rem;
+  border-radius: 9999px;
+  font-size: 0.75rem; /* 12px */
+  font-weight: 500;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.status-submitted {
+  background-color: hsl(var(--primary) / 0.1);
+  color: hsl(var(--primary));
+}
+.status-dm_approved {
+  background-color: hsl(var(--success) / 0.1);
+  color: hsl(var(--success));
+}
+.status-rejected {
+  background-color: hsl(var(--destructive) / 0.1);
+  color: hsl(var(--destructive));
+}
+/* Add other status colors as needed */
+
+/* 7. Avatars
+   -------------------------------------------------------------------------- */
+.avatar-group {
+  display: flex;
+  padding-inline-end: 0.5rem;
+}
+
+.avatar-circle {
+  width: 2rem; /* 32px */
+  height: 2rem;
+  border: 2px solid hsl(var(--card));
+}
+
+.avatar-circle:not(:first-child) {
+  margin-inline-start: -0.75rem;
+}
+
+.avatar-fallback {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+/* (Removed duplicate non-responsive grid block to honor the responsive one above) */

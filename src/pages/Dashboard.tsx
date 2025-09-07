@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuthStore } from "@/stores/authStore";
+import { useTranslation } from "@/hooks/use-translation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -101,6 +102,7 @@ const mockRecentPRs: PurchaseRequest[] = [
 
 export default function Dashboard() {
   const { user } = useAuthStore();
+  const { t } = useTranslation();
 
   const getInitials = (name: string) => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
@@ -128,13 +130,13 @@ export default function Dashboard() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="page-header flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">
-            Welcome back, {user?.name.split(' ')[0]}!
+            {t('dashboard.welcome')}, {user?.name.split(' ')[0]}!
           </h1>
           <p className="text-gray-600 mt-1">
-            Here's what's happening with your purchase requests today.
+            {t('dashboard.subtitle')}
           </p>
         </div>
         
@@ -142,7 +144,7 @@ export default function Dashboard() {
           <Button asChild>
             <Link to="/prs/create">
               <Plus className="mr-2 h-4 w-4" />
-              Create Request
+              {t('nav.createPR')}
             </Link>
           </Button>
         </RoleGuard>
