@@ -107,7 +107,7 @@
   }
   
   .gradient-text {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-light;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary;
   }
   
   .shimmer-effect {
