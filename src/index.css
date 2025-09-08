@@ -6,75 +6,64 @@
 
 @layer base {
   :root {
-    /* Core Brand Colors - Custom Dark Theme */
-    --background: 0 0% 11%;
-    --foreground: 0 0% 99%;
+    /* Fixed 4-Color Theme */
+    --background: 0 0% 11%;           /* #1b1b1b - Main background */
+    --foreground: 0 0% 99%;           /* #fefefe - Main text */
 
-    --card: 0 0% 13%;
-    --card-foreground: 0 0% 99%;
+    --card: 0 0% 11%;                 /* #1b1b1b - Card background */
+    --card-foreground: 0 0% 99%;      /* #fefefe - Card text */
 
-    --popover: 0 0% 13%;
-    --popover-foreground: 0 0% 99%;
+    --popover: 0 0% 11%;              /* #1b1b1b - Popover background */
+    --popover-foreground: 0 0% 99%;   /* #fefefe - Popover text */
 
-    /* Primary - Golden Orange */
-    --primary: 41 89% 59%;
-    --primary-foreground: 0 0% 11%;
-    --primary-light: 41 89% 69%;
-    --primary-dark: 41 89% 49%;
+    /* Primary - Golden Orange for strokes, icons, edges */
+    --primary: 41 89% 59%;            /* #f2aa38 - Strokes, icons, edges */
+    --primary-foreground: 0 0% 11%;   /* #1b1b1b - Text on primary */
+    --primary-hover: 41 89% 54%;      /* Slightly darker primary for hover */
 
-    /* Secondary - Darker Elements */
-    --secondary: 0 0% 15%;
-    --secondary-foreground: 0 0% 99%;
+    /* Secondary - Same as background */
+    --secondary: 0 0% 11%;            /* #1b1b1b - Secondary background */
+    --secondary-foreground: 0 0% 99%; /* #fefefe - Secondary text */
 
-    /* Success - PR Approved */
-    --success: 142 76% 36%;
-    --success-foreground: 0 0% 100%;
-    --success-light: 142 76% 46%;
-
-    /* Warning - Golden Orange */
-    --warning: 41 89% 59%;
-    --warning-foreground: 0 0% 11%;
-    --warning-light: 41 89% 69%;
-
-    /* Muted Elements */
-    --muted: 0 0% 15%;
-    --muted-foreground: 240 2% 74%;
+    /* Muted Elements - Sub text */
+    --muted: 0 0% 11%;                /* #1b1b1b - Muted background */
+    --muted-foreground: 240 2% 74%;   /* #bcbcbd - Sub text */
 
     /* Accent - Interactive Elements */
-    --accent: 0 0% 15%;
-    --accent-foreground: 0 0% 99%;
+    --accent: 0 0% 11%;               /* #1b1b1b - Accent background */
+    --accent-foreground: 0 0% 99%;    /* #fefefe - Accent text */
 
-    /* Destructive - Rejections/Errors */
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
+    /* Success/Warning/Destructive - Using primary color */
+    --success: 41 89% 59%;            /* #f2aa38 */
+    --success-foreground: 0 0% 11%;   /* #1b1b1b */
+    --warning: 41 89% 59%;            /* #f2aa38 */
+    --warning-foreground: 0 0% 11%;   /* #1b1b1b */
+    --destructive: 41 89% 59%;        /* #f2aa38 */
+    --destructive-foreground: 0 0% 11%; /* #1b1b1b */
 
     /* UI Elements */
-    --border: 41 89% 59%;
-    --input: 0 0% 15%;
-    --ring: 41 89% 59%;
+    --border: 41 89% 59%;             /* #f2aa38 - Borders and edges */
+    --input: 0 0% 11%;                /* #1b1b1b - Input background */
+    --ring: 41 89% 59%;               /* #f2aa38 - Focus rings */
 
-    /* Status Specific Colors */
-    --status-draft: 240 2% 74%;
-    --status-submitted: 41 89% 59%;
-    --status-approved: 142 76% 36%;
-    --status-rejected: 0 84% 60%;
-    --status-transferred: 142 76% 26%;
+    /* Status Specific Colors - Using 4-color theme */
+    --status-draft: 240 2% 74%;      /* #bcbcbd - Sub text */
+    --status-submitted: 41 89% 59%;   /* #f2aa38 - Primary */
+    --status-approved: 41 89% 59%;    /* #f2aa38 - Primary */
+    --status-rejected: 41 89% 59%;    /* #f2aa38 - Primary */
+    --status-transferred: 41 89% 59%; /* #f2aa38 - Primary */
 
-    /* Gradients - Enhanced with smooth transitions */
-    --gradient-primary: linear-gradient(135deg, hsl(41 89% 59%), hsl(41 89% 69%));
-    --gradient-success: linear-gradient(135deg, hsl(142 76% 36%), hsl(142 76% 46%));
-    --gradient-hero: linear-gradient(135deg, hsl(41 89% 59%) 0%, hsl(41 89% 69%) 50%, hsl(142 76% 36%) 100%);
-    --gradient-card: linear-gradient(135deg, hsl(0 0% 13%) 0%, hsl(0 0% 15%) 100%);
-    --gradient-primary-soft: linear-gradient(135deg, hsl(41 89% 59% / 0.1), hsl(41 89% 69% / 0.1));
-    --gradient-success-soft: linear-gradient(135deg, hsl(142 76% 36% / 0.1), hsl(142 76% 46% / 0.1));
+    /* Gradients - Using 4-color theme */
+    --gradient-primary: linear-gradient(135deg, hsl(41 89% 59%), hsl(41 89% 54%));
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 11%) 0%, hsl(0 0% 13%) 100%);
+    --gradient-primary-soft: linear-gradient(135deg, hsl(41 89% 59% / 0.1), hsl(41 89% 59% / 0.05));
 
-    /* Enhanced Shadows with color tints */
-    --shadow-sm: 0 1px 2px 0 hsl(41 89% 59% / 0.04);
-    --shadow-md: 0 4px 6px -1px hsl(41 89% 59% / 0.1), 0 2px 4px -2px hsl(41 89% 59% / 0.1);
-    --shadow-lg: 0 10px 15px -3px hsl(41 89% 59% / 0.1), 0 4px 6px -4px hsl(41 89% 59% / 0.1);
-    --shadow-primary: 0 10px 25px -3px hsl(41 89% 59% / 0.3);
-    --shadow-success: 0 10px 25px -3px hsl(142 76% 36% / 0.25);
-    --shadow-glow: 0 0 40px hsl(41 89% 59% / 0.15);
+    /* Enhanced Shadows with primary color tints */
+    --shadow-sm: 0 1px 2px 0 hsl(41 89% 59% / 0.08);
+    --shadow-md: 0 4px 6px -1px hsl(41 89% 59% / 0.12), 0 2px 4px -2px hsl(41 89% 59% / 0.08);
+    --shadow-lg: 0 10px 15px -3px hsl(41 89% 59% / 0.15), 0 4px 6px -4px hsl(41 89% 59% / 0.1);
+    --shadow-primary: 0 10px 25px -3px hsl(41 89% 59% / 0.25);
+    --shadow-glow: 0 0 40px hsl(41 89% 59% / 0.2);
 
     /* Backdrop blur effects */
     --backdrop-blur: blur(20px);

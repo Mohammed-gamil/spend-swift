@@ -27,8 +27,7 @@ export default {
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
 					foreground: 'hsl(var(--primary-foreground))',
-					light: 'hsl(var(--primary-light))',
-					dark: 'hsl(var(--primary-dark))'
+					hover: 'hsl(var(--primary-hover))'
 				},
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary))',
@@ -36,13 +35,11 @@ export default {
 				},
 				success: {
 					DEFAULT: 'hsl(var(--success))',
-					foreground: 'hsl(var(--success-foreground))',
-					light: 'hsl(var(--success-light))'
+					foreground: 'hsl(var(--success-foreground))'
 				},
 				warning: {
 					DEFAULT: 'hsl(var(--warning))',
-					foreground: 'hsl(var(--warning-foreground))',
-					light: 'hsl(var(--warning-light))'
+					foreground: 'hsl(var(--warning-foreground))'
 				},
 				destructive: {
 					DEFAULT: 'hsl(var(--destructive))',
@@ -84,19 +81,15 @@ export default {
 			},
 			backgroundImage: {
 				'gradient-primary': 'var(--gradient-primary)',
-				'gradient-success': 'var(--gradient-success)',
-				'gradient-hero': 'var(--gradient-hero)',
 				'gradient-card': 'var(--gradient-card)',
 				'gradient-primary-soft': 'var(--gradient-primary-soft)',
-				'gradient-success-soft': 'var(--gradient-success-soft)',
-				'shimmer': 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)'
+				'shimmer': 'linear-gradient(90deg, transparent, hsl(41 89% 59% / 0.2), transparent)'
 			},
 			boxShadow: {
 				'sm': 'var(--shadow-sm)',
 				'md': 'var(--shadow-md)',
 				'lg': 'var(--shadow-lg)',
 				'primary': 'var(--shadow-primary)',
-				'success': 'var(--shadow-success)',
 				'glow': 'var(--shadow-glow)'
 			},
 			backdropBlur: {
