@@ -3,6 +3,8 @@ import { persist } from 'zustand/middleware';
 import { User } from '@/types';
 import { authService } from '@/lib/auth';
 import toast from 'react-hot-toast';
+import { useLanguageStore } from '@/hooks/use-language';
+import { translations } from '@/lib/translations';
 
 interface AuthState {
   user: User | null;
@@ -43,7 +45,12 @@ export const useAuthStore = create<AuthState & AuthActions>()(
             error: null,
           });
           
-          toast.success(`Welcome back, ${response.user.name}!`);
+          {
+            const lang = useLanguageStore.getState().language;
+            const template = translations[lang]['auth.toast.welcomeBack'];
+            const message = template.replace('{name}', response.user.name);
+            toast.success(message);
+          }
         } catch (error: unknown) {
           const errorMessage = error instanceof Error ? error.message : 'Login failed';
           set({
@@ -69,7 +76,10 @@ export const useAuthStore = create<AuthState & AuthActions>()(
             error: null,
           });
           
-          toast.success('Logged out successfully');
+          {
+            const lang = useLanguageStore.getState().language;
+            toast.success(translations[lang]['auth.toast.logoutSuccess']);
+          }
         } catch (error: unknown) {
           const errorMessage = error instanceof Error ? error.message : 'Logout failed';
           set({

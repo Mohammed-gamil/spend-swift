@@ -16,6 +16,24 @@ export type TranslationKey =
   | 'nav.notifications'
   | 'nav.logout'
   
+  // Notifications
+  | 'notifications.markAllRead'
+  | 'notifications.viewAll'
+  | 'notifications.empty'
+  | 'notifications.time.minutes'
+  | 'notifications.time.hours'
+  | 'notifications.time.days'
+  | 'notifications.approval.title'
+  | 'notifications.approval.message'
+  | 'notifications.approved.title'
+  | 'notifications.approved.message'
+  | 'notifications.rejected.title'
+  | 'notifications.rejected.message'
+  | 'notifications.assignment.title'
+  | 'notifications.assignment.message'
+  | 'notifications.reminder.title'
+  | 'notifications.reminder.message'
+  
   // Dashboard
   | 'dashboard.welcome'
   | 'dashboard.subtitle'
@@ -38,6 +56,39 @@ export type TranslationKey =
   | 'dashboard.createNewRequest'
   | 'dashboard.reviewPending'
   | 'dashboard.myRequests'
+  | 'dashboard.approvalRateDesc'
+  | 'dashboard.budgetAlertDesc'
+  | 'dashboard.performanceDesc'
+  | 'dashboard.filters.allRequests'
+  | 'dashboard.filters.purchaseRequests'
+  | 'dashboard.filters.projectRequests'
+  | 'dashboard.requestType.purchase'
+  | 'dashboard.requestType.project'
+  | 'dashboard.totalProjects'
+  | 'dashboard.totalProjectValue'
+  | 'dashboard.totalProjectBenefit'
+  | 'dashboard.projectsCompletionRate'
+  | 'dashboard.activeProjects'
+  | 'dashboard.estimatedValue'
+  | 'dashboard.projectedBenefit'
+  | 'dashboard.client'
+  | 'dashboard.featuredInsights'
+  | 'dashboard.performanceMetrics'
+  | 'dashboard.performanceMetricsDesc'
+  | 'dashboard.resourceAllocation'
+  | 'dashboard.resourceAllocationDesc'
+  | 'dashboard.approvalEfficiency'
+  | 'dashboard.costOptimization'
+  | 'dashboard.userSatisfaction'
+  | 'dashboard.viewDetailedAnalytics'
+  | 'dashboard.totalBudget'
+  | 'dashboard.availableFunds'
+  | 'dashboard.completedRequests'
+  | 'dashboard.avgProcessTime'
+  | 'dashboard.days'
+  | 'dashboard.budgetForecast'
+  | 'dashboard.budgetForecastDesc'
+  | 'dashboard.viewResourceDashboard'
   
   // Reports
   | 'reports.title'
@@ -92,6 +143,10 @@ export type TranslationKey =
   | 'common.notifications'
   | 'common.searchPlaceholder'
   | 'common.reset'
+  | 'common.by'
+  | 'common.priority.high'
+  | 'common.priority.medium'
+  | 'common.priority.low'
   
   // PR Create
   | 'prCreate.backToPRs'
@@ -99,6 +154,7 @@ export type TranslationKey =
   | 'prCreate.subtitle'
   | 'prCreate.stepBasicInfo'
   | 'prCreate.stepItems'
+  | 'prCreate.stepProjectDetails'
   | 'prCreate.stepReview'
   | 'prCreate.basicInfoTitle'
   | 'prCreate.basicInfoDescription'
@@ -120,6 +176,9 @@ export type TranslationKey =
   | 'prCreate.fieldNeededByDate'
   | 'prCreate.errorNeededByDate'
   | 'prCreate.pickDate'
+  | 'prCreate.fieldRequestType'
+  | 'prCreate.requestType.purchase'
+  | 'prCreate.requestType.project'
   | 'prCreate.itemsTitle'
   | 'prCreate.itemsDescription'
   | 'prCreate.item'
@@ -135,8 +194,12 @@ export type TranslationKey =
   | 'prCreate.fieldTotal'
   | 'prCreate.addItem'
   | 'prCreate.totalCost'
+  | 'prCreate.errorAtLeastOneItem'
   | 'prCreate.uploadQuotesTitle'
   | 'prCreate.uploadQuotesDescription'
+  | 'prCreate.accountantQuotesOnly'
+  | 'prCreate.quotesAddedByAccountant'
+  | 'prCreate.supportedFormats'
   | 'prCreate.reviewTitle'
   | 'prCreate.reviewDescription'
   | 'prCreate.reviewFieldTitle'
@@ -150,6 +213,41 @@ export type TranslationKey =
   | 'prCreate.buttonPrevious'
   | 'prCreate.buttonNext'
   | 'prCreate.buttonSubmit'
+  | 'prCreate.categories.itEquipment'
+  | 'prCreate.categories.officeSupplies'
+  | 'prCreate.categories.softwareLicenses'
+  | 'prCreate.categories.marketingMaterials'
+  | 'prCreate.categories.travelAccommodation'
+  | 'prCreate.categories.professionalServices'
+  | 'prCreate.categories.trainingDevelopment'
+  | 'prCreate.categories.facilitiesMaintenance'
+  | 'prCreate.categories.other'
+  | 'prCreate.categories.softwareDevelopment'
+  | 'prCreate.categories.consultingServices'
+  | 'prCreate.categories.researchDevelopment'
+  | 'prCreate.categories.infrastructureProjects'
+  | 'prCreate.categories.digitalTransformation'
+  | 'prCreate.fieldClientName'
+  | 'prCreate.fieldClientNamePlaceholder'
+  | 'prCreate.fieldProjectDescription'
+  | 'prCreate.fieldProjectDescriptionPlaceholder'
+  | 'prCreate.fieldTotalCost'
+  | 'prCreate.fieldTotalBenefit'
+  | 'prCreate.fieldTotalPrice'
+  | 'prCreate.projectDetailsTitle'
+  | 'prCreate.projectDetailsDescription'
+  | 'prCreate.itemsDescriptionPurchase'
+  | 'prCreate.itemsDescriptionProject'
+  | 'prCreate.projectItemsOptionalMessage'
+  | 'prCreate.reviewProjectDetails'
+  | 'prCreate.requestType.label'
+  | 'prCreate.fieldBenefitPlaceholder'
+  | 'prCreate.fieldPricePlaceholder'
+  | 'prCreate.errorClientNameRequired'
+  | 'prCreate.errorProjectDescriptionRequired'
+  | 'prCreate.errorTotalCost'
+  | 'prCreate.errorTotalBenefit'
+  | 'prCreate.errorTotalPrice'
 
   // PR Details
   | 'prDetails.backToPRs'
@@ -205,8 +303,22 @@ export type TranslationKey =
   | 'prDetails.view'
   | 'prDetails.download'
   | 'prDetails.noQuotes'
+  | 'prDetails.uploadQuote'
+  | 'prDetails.accountantQuotesOnly'
+  | 'prDetails.uploadQuoteDialogTitle'
+  | 'prDetails.uploadQuoteDialogDescription'
+  | 'prDetails.vendorName'
+  | 'prDetails.vendorNamePlaceholder'
+  | 'prDetails.quoteTotal'
+  | 'prDetails.submitQuote'
+  | 'prDetails.toast.quoteUploadSuccess'
+  | 'prDetails.toast.noQuoteFiles'
+  | 'prDetails.toast.fileTooLarge'
   | 'prDetails.approvalHistory'
   | 'prDetails.stageApproval'
+  | 'prDetails.stage.DM'
+  | 'prDetails.stage.ACCT'
+  | 'prDetails.stage.FINAL'
   | 'prDetails.decided'
   | 'prDetails.pendingSince'
   | 'prDetails.requester'
@@ -215,6 +327,12 @@ export type TranslationKey =
   | 'prDetails.exportPdf'
   | 'prDetails.addComment'
   | 'prDetails.editRequest'
+  | 'prDetails.toast.approvalSuccess'
+  | 'prDetails.toast.approvalError'
+  | 'prDetails.toast.fundsSuccess'
+  | 'prDetails.toast.fundsError'
+  | 'prDetails.toast.downloadingQuote'
+  | 'prDetails.payoutReferenceRequired'
 
   // Accounting
   | 'accounting.title'
@@ -250,6 +368,8 @@ export type TranslationKey =
   | 'accounting.reports.transactionHistory.title'
   | 'accounting.reports.transactionHistory.description'
   | 'accounting.reports.generate'
+  | 'accounting.toast.transferInitiated'
+  | 'accounting.toast.reportGenerating'
 
   // Admin Users
   | 'admin.users.title'
@@ -281,6 +401,10 @@ export type TranslationKey =
   | 'admin.users.editDialog.title'
   | 'admin.users.editDialog.description'
   | 'admin.users.editDialog.save'
+  | 'admin.users.toast.created'
+  | 'admin.users.toast.deleted'
+  | 'admin.users.toast.statusUpdated'
+  | 'admin.users.toast.updated'
   // Admin Settings
   | 'admin.settings.title'
   | 'admin.settings.subtitle'
@@ -406,6 +530,37 @@ export type TranslationKey =
   | 'roles.ADMIN'
   | 'roles.DIRECT_MANAGER'
   | 'roles.FINAL_MANAGER'
+  
+  // Unauthorized Page
+  | 'unauthorized.title'
+  | 'unauthorized.message'
+  | 'unauthorized.back'
+  
+  // PR Store Toasts
+  | 'pr.toast.createSuccess'
+  | 'pr.toast.createError'
+  | 'pr.toast.updateSuccess'
+  | 'pr.toast.updateError'
+  | 'pr.toast.deleteSuccess'
+  | 'pr.toast.deleteError'
+  | 'pr.toast.fetchError'
+  | 'pr.toast.approveSuccess'
+  | 'pr.toast.approveError'
+  | 'pr.toast.rejectSuccess'
+  | 'pr.toast.rejectError'
+
+  // Auth Toasts
+  | 'auth.toast.welcomeBack'
+  | 'auth.toast.logoutSuccess'
+  
+  // Approvals Page
+  | 'approvals.stats.urgentWithin3Days'
+  | 'approvals.labels.sla'
+  | 'approvals.labels.id'
+  | 'approvals.labels.due'
+  | 'approvals.empty.title'
+  | 'approvals.empty.filtered'
+  | 'approvals.empty.allCaughtUp'
   ;
 
 export const translations: Record<'en' | 'ar', Record<TranslationKey, string>> = {
@@ -449,7 +604,39 @@ export const translations: Record<'en' | 'ar', Record<TranslationKey, string>> =
     'dashboard.createNewRequest': 'Create New Request',
     'dashboard.reviewPending': 'Review Pending',
     'dashboard.myRequests': 'My Requests',
-    
+  'dashboard.approvalRateDesc': '92% of requests approved this month (+5% vs last month)',
+  'dashboard.budgetAlertDesc': 'Team budget is 78% utilized for this quarter',
+    'dashboard.performanceDesc': 'Average approval time reduced by 2 days',
+    'dashboard.filters.allRequests': 'All Requests',
+    'dashboard.filters.purchaseRequests': 'Purchase Requests',
+    'dashboard.filters.projectRequests': 'Project Requests',
+    'dashboard.requestType.purchase': 'Purchase',
+    'dashboard.requestType.project': 'Project',
+    'dashboard.totalProjects': 'Total Projects',
+    'dashboard.totalProjectValue': 'Project Value',
+    'dashboard.totalProjectBenefit': 'Project Benefit',
+    'dashboard.projectsCompletionRate': 'Completion Rate',
+    'dashboard.activeProjects': 'active projects',
+    'dashboard.estimatedValue': 'estimated total value',
+    'dashboard.projectedBenefit': 'projected ROI',
+    'dashboard.client': 'Client',
+  'dashboard.featuredInsights': 'Featured Insights',
+  'dashboard.performanceMetrics': 'Performance Metrics',
+  'dashboard.performanceMetricsDesc': 'Key performance indicators and trends',
+  'dashboard.resourceAllocation': 'Resource Allocation',
+  'dashboard.resourceAllocationDesc': 'Budget allocation and resource management',
+  'dashboard.approvalEfficiency': 'Approval Efficiency',
+  'dashboard.costOptimization': 'Cost Optimization',
+  'dashboard.userSatisfaction': 'User Satisfaction',
+  'dashboard.viewDetailedAnalytics': 'View Detailed Analytics',
+  'dashboard.totalBudget': 'Total Budget',
+  'dashboard.availableFunds': 'Available Funds',
+  'dashboard.completedRequests': 'Completed Requests',
+  'dashboard.avgProcessTime': 'Avg. Process Time',
+  'dashboard.days': 'days',
+  'dashboard.budgetForecast': 'Budget Forecast',
+  'dashboard.budgetForecastDesc': 'Based on current spending, you are projected to remain 12% under budget for this quarter.',
+  'dashboard.viewResourceDashboard': 'View Resource Dashboard',
     // Reports
     'reports.title': 'Reports',
     'reports.subtitle': 'Manager insights and analytics',
@@ -503,6 +690,10 @@ export const translations: Record<'en' | 'ar', Record<TranslationKey, string>> =
     'common.notifications': 'Notifications',
   'common.searchPlaceholder': 'Search purchase requests...',
   'common.reset': 'Reset',
+    'common.by': 'By',
+  'common.priority.high': 'High',
+  'common.priority.medium': 'Medium',
+  'common.priority.low': 'Low',
     
     // PR Create
     'prCreate.backToPRs': 'Back to PRs',
@@ -510,6 +701,7 @@ export const translations: Record<'en' | 'ar', Record<TranslationKey, string>> =
     'prCreate.subtitle': 'Fill out the form to create a new purchase request',
     'prCreate.stepBasicInfo': 'Basic Info',
     'prCreate.stepItems': 'Items',
+    'prCreate.stepProjectDetails': 'Project Details',
     'prCreate.stepReview': 'Quotes & Review',
     'prCreate.basicInfoTitle': 'Basic Information',
     'prCreate.basicInfoDescription': 'Provide the essential details for your purchase request',
@@ -546,8 +738,12 @@ export const translations: Record<'en' | 'ar', Record<TranslationKey, string>> =
     'prCreate.fieldTotal': 'Total',
     'prCreate.addItem': 'Add Item',
     'prCreate.totalCost': 'Total Cost',
+  'prCreate.errorAtLeastOneItem': 'At least one item is required',
     'prCreate.uploadQuotesTitle': 'Upload Quotes',
     'prCreate.uploadQuotesDescription': 'Upload vendor quotes or supporting documents (optional)',
+    'prCreate.accountantQuotesOnly': 'Only accountants can upload vendor quotes. Quotes will be added by the accounting team during review.',
+    'prCreate.quotesAddedByAccountant': 'Vendor quotes can only be added by the accounting team. They will review and add appropriate quotes during the approval process.',
+    'prCreate.supportedFormats': 'Supported formats',
     'prCreate.reviewTitle': 'Review & Submit',
     'prCreate.reviewDescription': 'Please review your purchase request before submitting',
     'prCreate.reviewFieldTitle': 'Title',
@@ -561,8 +757,48 @@ export const translations: Record<'en' | 'ar', Record<TranslationKey, string>> =
     'prCreate.buttonPrevious': 'Previous',
     'prCreate.buttonNext': 'Next',
     'prCreate.buttonSubmit': 'Create Purchase Request',
+  'prCreate.categories.itEquipment': 'IT Equipment',
+  'prCreate.categories.officeSupplies': 'Office Supplies',
+  'prCreate.categories.softwareLicenses': 'Software Licenses',
+  'prCreate.categories.marketingMaterials': 'Marketing Materials',
+  'prCreate.categories.travelAccommodation': 'Travel & Accommodation',
+  'prCreate.categories.professionalServices': 'Professional Services',
+    'prCreate.categories.trainingDevelopment': 'Training & Development',
+    'prCreate.categories.facilitiesMaintenance': 'Facilities & Maintenance',
+    'prCreate.categories.other': 'Other',
+    'prCreate.categories.softwareDevelopment': 'Software Development',
+    'prCreate.categories.consultingServices': 'Consulting Services',
+    'prCreate.categories.researchDevelopment': 'Research & Development',
+    'prCreate.categories.infrastructureProjects': 'Infrastructure Projects',
+    'prCreate.categories.digitalTransformation': 'Digital Transformation',
 
-    // PR Details
+    // Request Type
+    'prCreate.fieldRequestType': 'Request Type *',
+    'prCreate.requestType.purchase': 'Purchase Request',
+    'prCreate.requestType.project': 'Project Request',
+    
+    // Project specific fields
+    'prCreate.fieldClientName': 'Client Name *',
+    'prCreate.fieldClientNamePlaceholder': 'Enter client name',
+    'prCreate.fieldProjectDescription': 'Project Description *',
+    'prCreate.fieldProjectDescriptionPlaceholder': 'Describe the project details and requirements',
+    'prCreate.fieldTotalCost': 'Total Cost *',
+    'prCreate.fieldTotalBenefit': 'Total Benefit (ROI) *',
+    'prCreate.fieldTotalPrice': 'Total Price *',
+    'prCreate.projectDetailsTitle': 'Project Details',
+    'prCreate.projectDetailsDescription': 'Provide specific details about the project',
+    'prCreate.itemsDescriptionPurchase': 'Add the specific items you need to purchase',
+    'prCreate.itemsDescriptionProject': 'Add any items needed for this project (optional)',
+    'prCreate.projectItemsOptionalMessage': 'For projects, adding items is optional. You can continue without adding items if they are not applicable to your project request.',
+    'prCreate.reviewProjectDetails': 'Project Details',
+    'prCreate.requestType.label': 'Request Type',
+    'prCreate.fieldBenefitPlaceholder': '0.00',
+    'prCreate.fieldPricePlaceholder': '0.00',
+    'prCreate.errorClientNameRequired': 'Client name is required',
+    'prCreate.errorProjectDescriptionRequired': 'Project description is required',
+    'prCreate.errorTotalCost': 'Total cost must be greater than 0',
+    'prCreate.errorTotalBenefit': 'Total benefit must be a positive number',
+    'prCreate.errorTotalPrice': 'Total price must be greater than 0',    // PR Details
     'prDetails.backToPRs': 'Back to PRs',
     'prDetails.prNumber': 'PR #',
     'prDetails.review': 'Review',
@@ -616,8 +852,20 @@ export const translations: Record<'en' | 'ar', Record<TranslationKey, string>> =
     'prDetails.view': 'View',
     'prDetails.download': 'Download',
     'prDetails.noQuotes': 'No quotes uploaded yet',
+    'prDetails.uploadQuote': 'Upload Vendor Quote',
+    'prDetails.accountantQuotesOnly': 'Only accountants can upload vendor quotes',
+    'prDetails.uploadQuoteDialogTitle': 'Upload Vendor Quote',
+    'prDetails.uploadQuoteDialogDescription': 'Add a new vendor quote to this purchase request',
+    'prDetails.vendorNamePlaceholder': 'Enter vendor name',
+    'prDetails.submitQuote': 'Upload Quote',
+    'prDetails.toast.quoteUploadSuccess': 'Quote from {vendor} uploaded successfully',
+    'prDetails.toast.noQuoteFiles': 'Please select a quote file to upload',
+    'prDetails.toast.fileTooLarge': 'File size exceeds the maximum limit of 5MB',
     'prDetails.approvalHistory': 'Approval History',
     'prDetails.stageApproval': '{stage} Approval',
+  'prDetails.stage.DM': 'Direct Manager Approval',
+  'prDetails.stage.ACCT': 'Accountant Approval',
+  'prDetails.stage.FINAL': 'Final Approval',
     'prDetails.decided': 'Decided',
     'prDetails.pendingSince': 'Pending since',
     'prDetails.requester': 'Requester',
@@ -626,6 +874,12 @@ export const translations: Record<'en' | 'ar', Record<TranslationKey, string>> =
     'prDetails.exportPdf': 'Export PDF',
     'prDetails.addComment': 'Add Comment',
     'prDetails.editRequest': 'Edit Request',
+  'prDetails.toast.approvalSuccess': 'Decision submitted successfully',
+  'prDetails.toast.approvalError': 'Failed to process approval',
+  'prDetails.toast.fundsSuccess': 'Funds marked as transferred successfully',
+  'prDetails.toast.fundsError': 'Failed to mark funds as transferred',
+  'prDetails.toast.downloadingQuote': 'Downloading {vendor} quote',
+  'prDetails.payoutReferenceRequired': 'Payout reference is required',
 
     // Accounting
     'accounting.title': 'Accounting Dashboard',
@@ -661,6 +915,8 @@ export const translations: Record<'en' | 'ar', Record<TranslationKey, string>> =
     'accounting.reports.transactionHistory.title': 'Transaction History',
     'accounting.reports.transactionHistory.description': 'Detailed transaction log',
     'accounting.reports.generate': 'Generate Report',
+  'accounting.toast.transferInitiated': 'Initiating fund transfer for {id}',
+  'accounting.toast.reportGenerating': 'Generating {type} report... ',
 
     // Admin Users
     'admin.users.title': 'User Management',
@@ -692,6 +948,10 @@ export const translations: Record<'en' | 'ar', Record<TranslationKey, string>> =
     'admin.users.editDialog.title': 'Edit User',
     'admin.users.editDialog.description': 'Update user information and permissions.',
     'admin.users.editDialog.save': 'Save Changes',
+  'admin.users.toast.created': 'User {name} created successfully!',
+  'admin.users.toast.deleted': 'User deleted successfully!',
+  'admin.users.toast.statusUpdated': 'User status updated!',
+  'admin.users.toast.updated': 'User updated successfully!',
 
     // Admin Settings
     'admin.settings.title': 'System Settings',
@@ -829,6 +1089,55 @@ export const translations: Record<'en' | 'ar', Record<TranslationKey, string>> =
     'roles.ADMIN': 'Admin',
     'roles.DIRECT_MANAGER': 'Direct Manager',
     'roles.FINAL_MANAGER': 'Final Manager',
+
+    // Unauthorized Page
+    'unauthorized.title': 'Access Denied',
+    'unauthorized.message': "You don't have permission to access this page. Please contact your administrator if you believe this is an error.",
+    'unauthorized.back': 'Back to Dashboard',
+
+    // PR Store Toasts
+    'pr.toast.createSuccess': 'Purchase request created successfully!',
+    'pr.toast.createError': 'Failed to create purchase request',
+    'pr.toast.updateSuccess': 'Purchase request updated successfully!',
+    'pr.toast.updateError': 'Failed to update purchase request',
+    'pr.toast.deleteSuccess': 'Purchase request deleted successfully!',
+    'pr.toast.deleteError': 'Failed to delete purchase request',
+    'pr.toast.fetchError': 'Failed to fetch purchase requests',
+    'pr.toast.approveSuccess': 'Purchase request approved successfully!',
+    'pr.toast.approveError': 'Failed to approve purchase request',
+    'pr.toast.rejectSuccess': 'Purchase request rejected',
+    'pr.toast.rejectError': 'Failed to reject purchase request',
+
+    // Auth Toasts
+    'auth.toast.welcomeBack': 'Welcome back, {name}!',
+    'auth.toast.logoutSuccess': 'Logged out successfully',
+    
+    // Notifications
+    'notifications.markAllRead': 'Mark all read',
+    'notifications.viewAll': 'View all notifications',
+    'notifications.empty': 'No notifications',
+    'notifications.time.minutes': '{value} minutes ago',
+    'notifications.time.hours': '{value} hour(s) ago',
+    'notifications.time.days': '{value} day(s) ago',
+    'notifications.approval.title': 'Purchase Request Needs Approval',
+    'notifications.approval.message': 'PR-2024-001: Office Supplies requires your approval',
+    'notifications.approved.title': 'Purchase Request Approved',
+    'notifications.approved.message': 'Your request for Marketing Materials has been approved',
+    'notifications.rejected.title': 'Purchase Request Rejected',
+    'notifications.rejected.message': 'PR-2024-003: Equipment Purchase was rejected',
+    'notifications.assignment.title': 'New Assignment',
+    'notifications.assignment.message': 'You have been assigned as approver for IT Equipment',
+    'notifications.reminder.title': 'Pending Approval Reminder',
+    'notifications.reminder.message': 'You have 2 pending approvals that need attention',
+
+    // Approvals Page
+    'approvals.stats.urgentWithin3Days': 'Due within 3 days',
+    'approvals.labels.sla': 'SLA',
+    'approvals.labels.id': 'ID',
+    'approvals.labels.due': 'Due',
+    'approvals.empty.title': 'No pending approvals',
+    'approvals.empty.filtered': 'No requests match your current filters.',
+    'approvals.empty.allCaughtUp': 'All caught up! No purchase requests require your approval at this time.',
   },
   ar: {
     // App
@@ -870,6 +1179,39 @@ export const translations: Record<'en' | 'ar', Record<TranslationKey, string>> =
     'dashboard.createNewRequest': 'إنشاء طلب جديد',
     'dashboard.reviewPending': 'مراجعة المعلق',
     'dashboard.myRequests': 'طلباتي',
+  'dashboard.approvalRateDesc': 'تمت الموافقة على 92% من الطلبات هذا الشهر (+5% مقارنة بالشهر الماضي)',
+  'dashboard.budgetAlertDesc': 'ميزانية الفريق مستخدمة بنسبة 78% لهذا الربع',
+  'dashboard.performanceDesc': 'انخفض متوسط وقت الموافقة بمقدار يومين',
+  'dashboard.filters.allRequests': 'جميع الطلبات',
+  'dashboard.filters.purchaseRequests': 'طلبات الشراء',
+  'dashboard.filters.projectRequests': 'طلبات المشاريع',
+  'dashboard.requestType.purchase': 'شراء',
+  'dashboard.requestType.project': 'مشروع',
+  'dashboard.totalProjects': 'إجمالي المشاريع',
+  'dashboard.totalProjectValue': 'قيمة المشروع',
+  'dashboard.totalProjectBenefit': 'فائدة المشروع',
+  'dashboard.projectsCompletionRate': 'معدل الإكمال',
+  'dashboard.activeProjects': 'المشاريع النشطة',
+  'dashboard.estimatedValue': 'القيمة الإجمالية المقدرة',
+  'dashboard.projectedBenefit': 'العائد المتوقع على الاستثمار',
+  'dashboard.client': 'العميل',
+  'dashboard.featuredInsights': 'رؤى مميزة',
+  'dashboard.performanceMetrics': 'مقاييس الأداء',
+  'dashboard.performanceMetricsDesc': 'مؤشرات الأداء الرئيسية والاتجاهات',
+  'dashboard.resourceAllocation': 'تخصيص الموارد',
+  'dashboard.resourceAllocationDesc': 'تخصيص الميزانية وإدارة الموارد',
+  'dashboard.approvalEfficiency': 'كفاءة الموافقة',
+  'dashboard.costOptimization': 'تحسين التكلفة',
+  'dashboard.userSatisfaction': 'رضا المستخدم',
+  'dashboard.viewDetailedAnalytics': 'عرض تحليلات مفصلة',
+  'dashboard.totalBudget': 'إجمالي الميزانية',
+  'dashboard.availableFunds': 'الأموال المتاحة',
+  'dashboard.completedRequests': 'الطلبات المكتملة',
+  'dashboard.avgProcessTime': 'متوسط وقت المعالجة',
+  'dashboard.days': 'أيام',
+  'dashboard.budgetForecast': 'توقعات الميزانية',
+  'dashboard.budgetForecastDesc': 'بناءً على الإنفاق الحالي، من المتوقع أن تظل أقل من الميزانية بنسبة 12٪ لهذا الربع.',
+  'dashboard.viewResourceDashboard': 'عرض لوحة تحكم الموارد',
     
     // Reports
     'reports.title': 'التقارير',
@@ -924,6 +1266,10 @@ export const translations: Record<'en' | 'ar', Record<TranslationKey, string>> =
     'common.notifications': 'الإشعارات',
   'common.searchPlaceholder': 'ابحث في طلبات الشراء...',
   'common.reset': 'إعادة تعيين',
+    'common.by': 'بواسطة',
+  'common.priority.high': 'عالي',
+  'common.priority.medium': 'متوسط',
+  'common.priority.low': 'منخفض',
     
     // PR Create
     'prCreate.backToPRs': 'العودة إلى طلبات الشراء',
@@ -931,6 +1277,7 @@ export const translations: Record<'en' | 'ar', Record<TranslationKey, string>> =
     'prCreate.subtitle': 'املأ النموذج لإنشاء طلب شراء جديد',
     'prCreate.stepBasicInfo': 'المعلومات الأساسية',
     'prCreate.stepItems': 'البنود',
+    'prCreate.stepProjectDetails': 'تفاصيل المشروع',
     'prCreate.stepReview': 'عروض الأسعار والمراجعة',
     'prCreate.basicInfoTitle': 'المعلومات الأساسية',
     'prCreate.basicInfoDescription': 'قدم التفاصيل الأساسية لطلب الشراء الخاص بك',
@@ -967,8 +1314,12 @@ export const translations: Record<'en' | 'ar', Record<TranslationKey, string>> =
     'prCreate.fieldTotal': 'الإجمالي',
     'prCreate.addItem': 'إضافة بند',
     'prCreate.totalCost': 'التكلفة الإجمالية',
+  'prCreate.errorAtLeastOneItem': 'مطلوب عنصر واحد على الأقل',
     'prCreate.uploadQuotesTitle': 'تحميل عروض الأسعار',
     'prCreate.uploadQuotesDescription': 'قم بتحميل عروض أسعار الموردين أو المستندات الداعمة (اختياري)',
+    'prCreate.accountantQuotesOnly': 'يمكن للمحاسبين فقط تحميل عروض أسعار الموردين. سيتم إضافة عروض الأسعار بواسطة فريق المحاسبة أثناء المراجعة.',
+    'prCreate.quotesAddedByAccountant': 'يمكن إضافة عروض أسعار الموردين فقط بواسطة فريق المحاسبة. سيقومون بالمراجعة وإضافة العروض المناسبة خلال عملية الموافقة.',
+    'prCreate.supportedFormats': 'التنسيقات المدعومة',
     'prCreate.reviewTitle': 'مراجعة وتقديم',
     'prCreate.reviewDescription': 'يرجى مراجعة طلب الشراء الخاص بك قبل التقديم',
     'prCreate.reviewFieldTitle': 'العنوان',
@@ -982,6 +1333,48 @@ export const translations: Record<'en' | 'ar', Record<TranslationKey, string>> =
     'prCreate.buttonPrevious': 'السابق',
     'prCreate.buttonNext': 'التالي',
     'prCreate.buttonSubmit': 'إنشاء طلب شراء',
+  'prCreate.categories.itEquipment': 'معدات تقنية المعلومات',
+  'prCreate.categories.officeSupplies': 'مستلزمات المكاتب',
+  'prCreate.categories.softwareLicenses': 'تراخيص البرامج',
+  'prCreate.categories.marketingMaterials': 'مواد تسويقية',
+  'prCreate.categories.travelAccommodation': 'السفر والإقامة',
+  'prCreate.categories.professionalServices': 'خدمات احترافية',
+  'prCreate.categories.trainingDevelopment': 'التدريب والتطوير',
+  'prCreate.categories.facilitiesMaintenance': 'المرافق والصيانة',
+  'prCreate.categories.other': 'أخرى',
+  'prCreate.categories.softwareDevelopment': 'تطوير البرمجيات',
+  'prCreate.categories.consultingServices': 'خدمات استشارية',
+  'prCreate.categories.researchDevelopment': 'البحث والتطوير',
+  'prCreate.categories.infrastructureProjects': 'مشاريع البنية التحتية',
+  'prCreate.categories.digitalTransformation': 'التحول الرقمي',
+
+  // Request Type
+  'prCreate.fieldRequestType': 'نوع الطلب *',
+  'prCreate.requestType.purchase': 'طلب شراء',
+  'prCreate.requestType.project': 'طلب مشروع',
+  
+  // Project specific fields
+  'prCreate.fieldClientName': 'اسم العميل *',
+  'prCreate.fieldClientNamePlaceholder': 'أدخل اسم العميل',
+  'prCreate.fieldProjectDescription': 'وصف المشروع *',
+  'prCreate.fieldProjectDescriptionPlaceholder': 'وصف تفاصيل المشروع ومتطلباته',
+  'prCreate.fieldTotalCost': 'التكلفة الإجمالية *',
+  'prCreate.fieldTotalBenefit': 'الفائدة الإجمالية (العائد على الاستثمار) *',
+  'prCreate.fieldTotalPrice': 'السعر الإجمالي *',
+  'prCreate.projectDetailsTitle': 'تفاصيل المشروع',
+  'prCreate.projectDetailsDescription': 'قدم تفاصيل محددة عن المشروع',
+  'prCreate.itemsDescriptionPurchase': 'أضف العناصر المحددة التي تحتاج إلى شرائها',
+  'prCreate.itemsDescriptionProject': 'أضف أي عناصر مطلوبة لهذا المشروع (اختياري)',
+  'prCreate.projectItemsOptionalMessage': 'بالنسبة للمشاريع، إضافة العناصر اختيارية. يمكنك المتابعة دون إضافة عناصر إذا كانت غير قابلة للتطبيق على طلب المشروع الخاص بك.',
+  'prCreate.reviewProjectDetails': 'تفاصيل المشروع',
+  'prCreate.requestType.label': 'نوع الطلب',
+  'prCreate.fieldBenefitPlaceholder': '0.00',
+  'prCreate.fieldPricePlaceholder': '0.00',
+  'prCreate.errorClientNameRequired': 'اسم العميل مطلوب',
+  'prCreate.errorProjectDescriptionRequired': 'وصف المشروع مطلوب',
+  'prCreate.errorTotalCost': 'يجب أن تكون التكلفة الإجمالية أكبر من 0',
+  'prCreate.errorTotalBenefit': 'يجب أن يكون إجمالي الفائدة رقمًا موجبًا',
+  'prCreate.errorTotalPrice': 'يجب أن يكون السعر الإجمالي أكبر من 0',
 
     // PR Details
     'prDetails.backToPRs': 'العودة إلى طلبات الشراء',
@@ -1037,8 +1430,20 @@ export const translations: Record<'en' | 'ar', Record<TranslationKey, string>> =
     'prDetails.view': 'عرض',
     'prDetails.download': 'تنزيل',
     'prDetails.noQuotes': 'لم يتم رفع عروض أسعار بعد',
+    'prDetails.uploadQuote': 'تحميل عرض سعر المورد',
+    'prDetails.accountantQuotesOnly': 'يمكن للمحاسبين فقط تحميل عروض أسعار الموردين',
+    'prDetails.uploadQuoteDialogTitle': 'تحميل عرض سعر المورد',
+    'prDetails.uploadQuoteDialogDescription': 'إضافة عرض سعر جديد لطلب الشراء هذا',
+    'prDetails.vendorNamePlaceholder': 'أدخل اسم المورد',
+    'prDetails.submitQuote': 'تحميل عرض السعر',
+    'prDetails.toast.quoteUploadSuccess': 'تم تحميل عرض سعر {vendor} بنجاح',
+    'prDetails.toast.noQuoteFiles': 'يرجى تحديد ملف عرض السعر للتحميل',
+    'prDetails.toast.fileTooLarge': 'حجم الملف يتجاوز الحد الأقصى البالغ 5 ميجابايت',
     'prDetails.approvalHistory': 'سجل الموافقات',
     'prDetails.stageApproval': 'موافقة {stage}',
+  'prDetails.stage.DM': 'موافقة المدير المباشر',
+  'prDetails.stage.ACCT': 'موافقة المحاسب',
+  'prDetails.stage.FINAL': 'موافقة نهائية',
     'prDetails.decided': 'تم اتخاذ القرار',
     'prDetails.pendingSince': 'معلق منذ',
     'prDetails.requester': 'مقدم الطلب',
@@ -1047,6 +1452,12 @@ export const translations: Record<'en' | 'ar', Record<TranslationKey, string>> =
     'prDetails.exportPdf': 'تصدير PDF',
     'prDetails.addComment': 'إضافة تعليق',
     'prDetails.editRequest': 'تعديل الطلب',
+  'prDetails.toast.approvalSuccess': 'تم إرسال القرار بنجاح',
+  'prDetails.toast.approvalError': 'فشل في معالجة الموافقة',
+  'prDetails.toast.fundsSuccess': 'تم وضع علامة على تحويل الأموال بنجاح',
+  'prDetails.toast.fundsError': 'فشل وضع علامة على تحويل الأموال',
+  'prDetails.toast.downloadingQuote': 'جاري تنزيل عرض {vendor}',
+  'prDetails.payoutReferenceRequired': 'مرجع الدفع مطلوب',
 
     // Accounting
     'accounting.title': 'لوحة تحكم المحاسبة',
@@ -1082,6 +1493,8 @@ export const translations: Record<'en' | 'ar', Record<TranslationKey, string>> =
     'accounting.reports.transactionHistory.title': 'سجل المعاملات',
     'accounting.reports.transactionHistory.description': 'سجل معاملات مفصل',
     'accounting.reports.generate': 'إنشاء تقرير',
+  'accounting.toast.transferInitiated': 'بدء تحويل الأموال للطلب {id}',
+  'accounting.toast.reportGenerating': 'جارٍ إنشاء تقرير {type}... ',
 
     // Admin Users
     'admin.users.title': 'إدارة المستخدمين',
@@ -1113,6 +1526,10 @@ export const translations: Record<'en' | 'ar', Record<TranslationKey, string>> =
     'admin.users.editDialog.title': 'تعديل المستخدم',
     'admin.users.editDialog.description': 'تحديث معلومات المستخدم والأذونات.',
     'admin.users.editDialog.save': 'حفظ التغييرات',
+  'admin.users.toast.created': 'تم إنشاء المستخدم {name} بنجاح!',
+  'admin.users.toast.deleted': 'تم حذف المستخدم بنجاح!',
+  'admin.users.toast.statusUpdated': 'تم تحديث حالة المستخدم!',
+  'admin.users.toast.updated': 'تم تحديث المستخدم بنجاح!',
 
     // Admin Settings
     'admin.settings.title': 'إعدادات النظام',
@@ -1250,5 +1667,54 @@ export const translations: Record<'en' | 'ar', Record<TranslationKey, string>> =
     'roles.ADMIN': 'مسؤول',
     'roles.DIRECT_MANAGER': 'مدير مباشر',
     'roles.FINAL_MANAGER': 'مدير نهائي',
+
+    // Unauthorized Page
+    'unauthorized.title': 'تم رفض الوصول',
+    'unauthorized.message': 'ليس لديك صلاحية للوصول إلى هذه الصفحة. يرجى التواصل مع المسؤول إذا كنت تعتقد أن هذا خطأ.',
+    'unauthorized.back': 'العودة إلى لوحة التحكم',
+
+    // PR Store Toasts
+    'pr.toast.createSuccess': 'تم إنشاء طلب الشراء بنجاح!',
+    'pr.toast.createError': 'فشل إنشاء طلب الشراء',
+    'pr.toast.updateSuccess': 'تم تحديث طلب الشراء بنجاح!',
+    'pr.toast.updateError': 'فشل تحديث طلب الشراء',
+    'pr.toast.deleteSuccess': 'تم حذف طلب الشراء بنجاح!',
+    'pr.toast.deleteError': 'فشل حذف طلب الشراء',
+    'pr.toast.fetchError': 'فشل جلب طلبات الشراء',
+    'pr.toast.approveSuccess': 'تمت الموافقة على طلب الشراء بنجاح!',
+    'pr.toast.approveError': 'فشل في الموافقة على طلب الشراء',
+    'pr.toast.rejectSuccess': 'تم رفض طلب الشراء',
+    'pr.toast.rejectError': 'فشل رفض طلب الشراء',
+
+    // Auth Toasts
+    'auth.toast.welcomeBack': 'مرحباً بعودتك، {name}!',
+    'auth.toast.logoutSuccess': 'تم تسجيل الخروج بنجاح',
+    
+    // Notifications
+    'notifications.markAllRead': 'تحديد الكل كمقروء',
+    'notifications.viewAll': 'عرض جميع الإشعارات',
+    'notifications.empty': 'لا توجد إشعارات',
+    'notifications.time.minutes': 'منذ {value} دقائق',
+    'notifications.time.hours': 'منذ {value} ساعة/ساعات',
+    'notifications.time.days': 'منذ {value} يوم/أيام',
+    'notifications.approval.title': 'طلب شراء يحتاج إلى موافقة',
+    'notifications.approval.message': 'طلب شراء-2024-001: المستلزمات المكتبية تتطلب موافقتك',
+    'notifications.approved.title': 'تمت الموافقة على طلب الشراء',
+    'notifications.approved.message': 'تمت الموافقة على طلب المواد التسويقية الخاص بك',
+    'notifications.rejected.title': 'تم رفض طلب الشراء',
+    'notifications.rejected.message': 'تم رفض طلب شراء-2024-003: شراء المعدات',
+    'notifications.assignment.title': 'مهمة جديدة',
+    'notifications.assignment.message': 'تم تعيينك كموافق لمعدات تكنولوجيا المعلومات',
+    'notifications.reminder.title': 'تذكير بالموافقات المعلقة',
+    'notifications.reminder.message': 'لديك موافقتين معلقتين تحتاجان إلى اهتمامك',
+
+    // Approvals Page
+    'approvals.stats.urgentWithin3Days': 'خلال ٣ أيام',
+    'approvals.labels.sla': 'اتفاقية مستوى الخدمة',
+    'approvals.labels.id': 'معرّف',
+    'approvals.labels.due': 'مطلوب بحلول',
+    'approvals.empty.title': 'لا توجد موافقات معلّقة',
+    'approvals.empty.filtered': 'لا توجد طلبات تطابق عوامل التصفية الحالية.',
+    'approvals.empty.allCaughtUp': 'كل شيء منتهٍ! لا توجد طلبات شراء تتطلب موافقتك حالياً.',
   },
 };

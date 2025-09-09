@@ -10,15 +10,17 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useState } from "react";
+import { useTranslation } from "@/hooks/use-translation";
 
-// Mock notifications data
+// Mock notifications data - these will be translated in the component
 const mockNotifications = [
   {
     id: '1',
     type: 'approval_request',
-    title: 'Purchase Request Needs Approval',
-    message: 'PR-2024-001: Office Supplies requires your approval',
-    time: '2 minutes ago',
+    titleKey: 'notifications.approval.title',
+    messageKey: 'notifications.approval.message',
+    timeKey: 'notifications.time.minutes',
+    timeValue: '2',
     unread: true,
     icon: FileText,
     color: 'text-blue-500'
@@ -26,9 +28,10 @@ const mockNotifications = [
   {
     id: '2',
     type: 'approved',
-    title: 'Purchase Request Approved',
-    message: 'Your request for Marketing Materials has been approved',
-    time: '1 hour ago',
+    titleKey: 'notifications.approved.title',
+    messageKey: 'notifications.approved.message',
+    timeKey: 'notifications.time.hours',
+    timeValue: '1',
     unread: true,
     icon: Check,
     color: 'text-green-500'
@@ -36,9 +39,10 @@ const mockNotifications = [
   {
     id: '3',
     type: 'rejected',
-    title: 'Purchase Request Rejected',
-    message: 'PR-2024-003: Equipment Purchase was rejected',
-    time: '3 hours ago',
+    titleKey: 'notifications.rejected.title',
+    messageKey: 'notifications.rejected.message',
+    timeKey: 'notifications.time.hours',
+    timeValue: '3',
     unread: false,
     icon: X,
     color: 'text-red-500'
@@ -46,9 +50,10 @@ const mockNotifications = [
   {
     id: '4',
     type: 'assignment',
-    title: 'New Assignment',
-    message: 'You have been assigned as approver for IT Equipment',
-    time: '1 day ago',
+    titleKey: 'notifications.assignment.title',
+    messageKey: 'notifications.assignment.message',
+    timeKey: 'notifications.time.days',
+    timeValue: '1',
     unread: false,
     icon: User,
     color: 'text-purple-500'
@@ -56,9 +61,10 @@ const mockNotifications = [
   {
     id: '5',
     type: 'reminder',
-    title: 'Pending Approval Reminder',
-    message: 'You have 2 pending approvals that need attention',
-    time: '2 days ago',
+    titleKey: 'notifications.reminder.title',
+    messageKey: 'notifications.reminder.message',
+    timeKey: 'notifications.time.days',
+    timeValue: '2',
     unread: false,
     icon: Clock,
     color: 'text-orange-500'
@@ -66,8 +72,17 @@ const mockNotifications = [
 ];
 
 export function NotificationDropdown() {
+  const { t } = useTranslation();
   const [notifications, setNotifications] = useState(mockNotifications);
   const unreadCount = notifications.filter(n => n.unread).length;
+
+  // Function to get time text - we need to manually interpolate the value
+  const getTimeText = (notification: typeof mockNotifications[0]) => {
+    const key = notification.timeKey as any;
+    // Extract the translation and then replace {value} with the actual value
+    const translatedTemplate = t(key);
+    return translatedTemplate.replace('{value}', notification.timeValue);
+  };
 
   const markAsRead = (id: string) => {
     setNotifications(prev => 
@@ -99,7 +114,7 @@ export function NotificationDropdown() {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-80" align="end" forceMount>
         <div className="flex items-center justify-between px-4 py-2">
-          <h3 className="font-semibold">Notifications</h3>
+          <h3 className="font-semibold">{t('common.notifications')}</h3>
           {unreadCount > 0 && (
             <Button 
               variant="ghost" 
@@ -107,7 +122,7 @@ export function NotificationDropdown() {
               onClick={markAllAsRead}
               className="text-xs h-auto p-1"
             >
-              Mark all read
+              {t('notifications.markAllRead')}
             </Button>
           )}
         </div>
@@ -122,7 +137,7 @@ export function NotificationDropdown() {
                   className="flex items-start p-4 cursor-pointer"
                   onClick={() => markAsRead(notification.id)}
                 >
-                  <div className="flex-shrink-0 mr-3 mt-1">
+                  <div className="flex-shrink-0 mr-3 rtl:mr-0 rtl:ml-3 mt-1">
                     <div className={`p-2 rounded-full bg-muted`}>
                       <IconComponent className={`h-4 w-4 ${notification.color}`} />
                     </div>
@@ -130,17 +145,17 @@ export function NotificationDropdown() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
                       <p className={`text-sm font-medium ${notification.unread ? 'text-foreground' : 'text-muted-foreground'}`}>
-                        {notification.title}
+                        {t(notification.titleKey as any)}
                       </p>
                       {notification.unread && (
-                        <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 ml-2"></div>
+                        <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 ml-2 rtl:ml-0 rtl:mr-2"></div>
                       )}
                     </div>
                     <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                      {notification.message}
+                      {t(notification.messageKey as any)}
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      {notification.time}
+                      {getTimeText(notification)}
                     </p>
                   </div>
                 </DropdownMenuItem>
@@ -149,7 +164,7 @@ export function NotificationDropdown() {
           ) : (
             <div className="flex flex-col items-center justify-center py-8 text-center">
               <Bell className="h-8 w-8 text-muted-foreground mb-2" />
-              <p className="text-sm text-muted-foreground">No notifications</p>
+              <p className="text-sm text-muted-foreground">{t('notifications.empty')}</p>
             </div>
           )}
         </ScrollArea>
@@ -158,7 +173,7 @@ export function NotificationDropdown() {
             <DropdownMenuSeparator />
             <div className="p-2">
               <Button variant="ghost" size="sm" className="w-full text-xs">
-                View all notifications
+                {t('notifications.viewAll')}
               </Button>
             </div>
           </>

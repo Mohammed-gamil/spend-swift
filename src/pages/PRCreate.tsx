@@ -15,32 +15,82 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CalendarIcon, Plus, Trash2, ArrowLeft, ArrowRight } from "lucide-react";
 import { format } from "date-fns";
+import { arSA } from "date-fns/locale";
 import { cn } from "@/lib/utils";
-import { Currency } from "@/types";
+import { Currency, RequestType } from "@/types";
 import { usePRStore } from "@/stores/prStore";
+import { useTranslation } from "@/hooks/use-translation";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import RoleGuard from "@/components/auth/RoleGuard";
+import { useAuthStore } from "@/stores/authStore";
 
 const prItemSchema = z.object({
-  name: z.string().min(1, "Item name is required"),
-  quantity: z.number().min(1, "Quantity must be at least 1"),
-  unitPrice: z.number().gt(0, "Unit price must be greater than 0"),
+  name: z.string().min(1, "prCreate.errorItemNameRequired"),
+  quantity: z.number().min(1, "prCreate.errorQuantityMin"),
+  unitPrice: z.number().gt(0, "prCreate.errorUnitPrice"),
   vendorHint: z.string().optional(),
 });
 
-const prFormSchema = z.object({
-  title: z.string().min(3, "Title must be at least 3 characters").max(120, "Title must be less than 120 characters"),
-  description: z.string().max(5000, "Description must be less than 5000 characters"),
-  category: z.string().min(1, "Category is required"),
-  desiredCost: z.number().gt(0, "Desired cost must be greater than 0"),
+// Base form schema with common fields for both request types
+const baseFormSchema = z.object({
+  type: z.enum(["purchase", "project"] as const),
+  title: z.string().min(3, "prCreate.errorTitleMin").max(120, "prCreate.errorTitleMax"),
+  description: z.string().max(5000, "prCreate.errorDescriptionMax"),
+  category: z.string().min(1, "prCreate.errorCategoryRequired"),
+  desiredCost: z.number().gt(0, "prCreate.errorDesiredCost"),
   currency: z.enum(["EGP", "SAR", "USD", "EUR", "GBP", "AED"] as const),
-  neededByDate: z.date().min(new Date(), "Date must be in the future"),
-  items: z.array(prItemSchema).min(1, "At least one item is required"),
+  neededByDate: z.date().min(new Date(), "prCreate.errorNeededByDate"),
 });
+
+// Complete form schema with conditional validation based on request type
+const prFormSchema = z.discriminatedUnion("type", [
+  // Purchase request schema
+  z.object({
+    type: z.literal("purchase"),
+    title: z.string().min(3, "prCreate.errorTitleMin").max(120, "prCreate.errorTitleMax"),
+    description: z.string().max(5000, "prCreate.errorDescriptionMax"),
+    category: z.string().min(1, "prCreate.errorCategoryRequired"),
+    desiredCost: z.number().gt(0, "prCreate.errorDesiredCost"),
+    currency: z.enum(["EGP", "SAR", "USD", "EUR", "GBP", "AED"] as const),
+    neededByDate: z.date().min(new Date(), "prCreate.errorNeededByDate"),
+    items: z.array(prItemSchema).min(1, "prCreate.errorAtLeastOneItem"),
+  }),
+  // Project request schema
+  z.object({
+    type: z.literal("project"),
+    title: z.string().min(3, "prCreate.errorTitleMin").max(120, "prCreate.errorTitleMax"),
+    description: z.string().max(5000, "prCreate.errorDescriptionMax"),
+    category: z.string().min(1, "prCreate.errorCategoryRequired"),
+    desiredCost: z.number().gt(0, "prCreate.errorDesiredCost"),
+    currency: z.enum(["EGP", "SAR", "USD", "EUR", "GBP", "AED"] as const),
+    neededByDate: z.date().min(new Date(), "prCreate.errorNeededByDate"),
+    // Project-specific fields
+    clientName: z.string().min(1, "prCreate.errorClientNameRequired"),
+    projectDescription: z.string().min(1, "prCreate.errorProjectDescriptionRequired"),
+    totalCost: z.number().gt(0, "prCreate.errorTotalCost"),
+    totalBenefit: z.number().min(0, "prCreate.errorTotalBenefit"),
+    totalPrice: z.number().gt(0, "prCreate.errorTotalPrice"),
+    // Items are optional for projects
+    items: z.array(prItemSchema).optional(),
+  })
+]);
 
 type PRFormData = z.infer<typeof prFormSchema>;
 
-const steps = ["Basic Info", "Items", "Quotes & Review"];
+const purchaseSteps = [
+  "prCreate.stepBasicInfo",
+  "prCreate.stepItems",
+  "prCreate.stepReview",
+];
 
-const categories = [
+const projectSteps = [
+  "prCreate.stepBasicInfo",
+  "prCreate.stepProjectDetails",
+  "prCreate.stepItems",
+  "prCreate.stepReview",
+];
+
+const purchaseCategories = [
   "IT Equipment",
   "Office Supplies",
   "Software Licenses",
@@ -49,12 +99,26 @@ const categories = [
   "Professional Services",
   "Training & Development",
   "Facilities & Maintenance",
-  "Other"
+  "Other",
+];
+
+const projectCategories = [
+  "Software Development",
+  "IT Infrastructure",
+  "Digital Transformation",
+  "Business Process Optimization",
+  "Marketing Campaign",
+  "Research & Development",
+  "Product Launch",
+  "Consulting Services",
+  "Other",
 ];
 
 const currencies: Currency[] = ["EGP", "SAR", "USD", "EUR", "GBP", "AED"];
+const requestTypes: RequestType[] = ["purchase", "project"];
 
 export default function PRCreate() {
+  const { t, language } = useTranslation();
   const [currentStep, setCurrentStep] = useState(0);
   const [files, setFiles] = useState<File[]>([]);
   const navigate = useNavigate();
@@ -62,6 +126,7 @@ export default function PRCreate() {
   const form = useForm<PRFormData>({
     resolver: zodResolver(prFormSchema),
     defaultValues: {
+      type: "purchase",
       title: "",
       description: "",
       category: "",
@@ -72,27 +137,72 @@ export default function PRCreate() {
     },
   });
 
+  // Watch the request type to conditionally render form fields
+  const requestType = form.watch("type");
+  
+  // Use appropriate steps based on request type
+  const steps = requestType === "purchase" ? purchaseSteps : projectSteps;
+  
+  // Get appropriate categories based on request type
+  const categories = requestType === "purchase" ? purchaseCategories : projectCategories;
+
+  // Field array for items (used for purchase requests primarily)
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "items",
   });
 
-  const watchedItems = form.watch("items");
+  // Handle items list conditionally based on request type
+  const watchedItems = form.watch("items") || [];
   const totalCost = watchedItems.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
 
-  const nextStep = async () => {
-    let fieldsToValidate: (keyof PRFormData)[] = [];
+  // Handle request type change
+  const handleRequestTypeChange = (type: RequestType) => {
+    form.setValue("type", type);
     
-    switch (currentStep) {
-      case 0:
-        fieldsToValidate = ["title", "description", "category", "desiredCost", "currency", "neededByDate"];
-        break;
-      case 1:
-        fieldsToValidate = ["items"];
-        break;
+    // Reset category when changing request types since they have different options
+    form.setValue("category", "");
+    
+    // Initialize project-specific fields if switching to project
+    if (type === "project") {
+      form.setValue("clientName", form.getValues("clientName") || "");
+      form.setValue("projectDescription", form.getValues("projectDescription") || "");
+      form.setValue("totalCost", form.getValues("totalCost") || 0);
+      form.setValue("totalBenefit", form.getValues("totalBenefit") || 0);
+      form.setValue("totalPrice", form.getValues("totalPrice") || 0);
+    }
+    
+    // Reset current step when changing request type
+    setCurrentStep(0);
+  };
+
+  const nextStep = async () => {
+    let fieldsToValidate: string[] = [];
+    
+    if (requestType === "purchase") {
+      switch (currentStep) {
+        case 0:
+          fieldsToValidate = ["type", "title", "description", "category", "desiredCost", "currency", "neededByDate"];
+          break;
+        case 1:
+          fieldsToValidate = ["items"];
+          break;
+      }
+    } else { // project
+      switch (currentStep) {
+        case 0:
+          fieldsToValidate = ["type", "title", "description", "category", "desiredCost", "currency", "neededByDate"];
+          break;
+        case 1:
+          fieldsToValidate = ["clientName", "projectDescription", "totalCost", "totalBenefit", "totalPrice"];
+          break;
+        case 2:
+          // Items are optional for projects
+          break;
+      }
     }
 
-    const isValid = await form.trigger(fieldsToValidate);
+    const isValid = await form.trigger(fieldsToValidate as any);
     if (isValid) {
       setCurrentStep(prev => Math.min(prev + 1, steps.length - 1));
     }
@@ -102,36 +212,56 @@ export default function PRCreate() {
     setCurrentStep(prev => Math.max(prev - 1, 0));
   };
 
-  const { createPR } = usePRStore();
+  const { createRequest } = usePRStore();
   const { reset } = form;
 
   const onSubmit = async (data: PRFormData) => {
     try {
-      console.log('Submitting PR:', data);
+      console.log('Submitting Request:', data);
       
-      await createPR({
-        title: data.title,
-        description: data.description,
-        category: data.category,
-        desiredCost: data.desiredCost,
-        currency: data.currency,
-        neededByDate: data.neededByDate,
-        items: data.items.map((item, index) => ({
-          id: `item-${index + 1}`,
-          name: item.name,
-          quantity: item.quantity,
-          unitPrice: item.unitPrice,
-          vendorHint: item.vendorHint,
-          total: item.quantity * item.unitPrice,
-        })),
-        quotes: [],
-        approvals: [],
-        currentApproverId: undefined,
-        currentApprover: undefined,
-        fundsTransferredAt: undefined,
-      });
+      if (data.type === "purchase") {
+        // Handle purchase request submission
+        await createRequest({
+          type: "purchase",
+          title: data.title,
+          description: data.description,
+          category: data.category,
+          desiredCost: data.desiredCost,
+          currency: data.currency,
+          neededByDate: data.neededByDate,
+          items: data.items.map((item, index) => ({
+            name: item.name,
+            quantity: item.quantity,
+            unitPrice: item.unitPrice,
+            vendorHint: item.vendorHint,
+          }))
+        });
+      } else {
+        // Handle project request submission
+        await createRequest({
+          type: "project",
+          title: data.title,
+          description: data.description,
+          category: data.category,
+          desiredCost: data.desiredCost,
+          currency: data.currency,
+          neededByDate: data.neededByDate,
+          clientName: data.clientName,
+          projectDescription: data.projectDescription,
+          totalCost: data.totalCost,
+          totalBenefit: data.totalBenefit,
+          totalPrice: data.totalPrice,
+          // Include items if any were added (optional for projects)
+          items: data.items?.map((item, index) => ({
+            name: item.name,
+            quantity: item.quantity,
+            unitPrice: item.unitPrice,
+            vendorHint: item.vendorHint,
+          }))
+        });
+      }
       
-      console.log('PR created successfully');
+      console.log('Request created successfully');
       
       // Reset form after successful submission
       reset();
@@ -142,15 +272,16 @@ export default function PRCreate() {
       }, 100);
       
     } catch (error) {
-      console.error('Failed to create PR:', error);
+      console.error('Failed to create request:', error);
       // Error is already handled by the store with toast
     }
   };
 
   const formatCurrency = (amount: number, currency: string) => {
-    return new Intl.NumberFormat('en-US', {
+    const locale = language === 'ar' ? 'ar-EG' : 'en-US';
+    return new Intl.NumberFormat(locale, {
       style: 'currency',
-      currency: currency,
+      currency,
     }).format(amount);
   };
 
@@ -160,157 +291,292 @@ export default function PRCreate() {
       <div className="flex items-center gap-4">
         <Button variant="ghost" onClick={() => navigate("/prs")}>
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to PRs
+          {t('prCreate.backToPRs')}
         </Button>
         <div>
-          <h1 className="text-3xl font-bold">Create Purchase Request</h1>
-          <p className="text-gray-600">Fill out the form to create a new purchase request</p>
+          <h1 className="text-3xl font-bold">{t('prCreate.title')}</h1>
+          <p className="text-gray-600">{t('prCreate.subtitle')}</p>
         </div>
       </div>
 
       {/* Stepper */}
-      <Stepper steps={steps} currentStep={currentStep} />
+  <Stepper steps={steps.map((k) => t(k as any))} currentStep={currentStep} />
 
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        {/* Step 1: Basic Information */}
-        {currentStep === 0 && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Basic Information</CardTitle>
-              <CardDescription>
-                Provide the essential details for your purchase request
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="title">Title *</Label>
-                  <Input
-                    id="title"
-                    placeholder="Enter request title"
-                    {...form.register("title")}
-                  />
-                  {form.formState.errors.title && (
-                    <p className="text-sm text-red-500">{form.formState.errors.title.message}</p>
-                  )}
-                </div>
+      {/* Step 1: Basic Information */}
+      {currentStep === 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>{t('prCreate.basicInfoTitle')}</CardTitle>
+            <CardDescription>
+              {t('prCreate.basicInfoDescription')}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Request Type Selection */}
+            <div className="space-y-2">
+              <Label>{t('prCreate.fieldRequestType')}</Label>
+              <RadioGroup
+                value={form.watch("type")}
+                onValueChange={(value) => handleRequestTypeChange(value as RequestType)}
+                className="flex space-x-4"
+              >
+                {requestTypes.map((type) => (
+                  <div key={type} className="flex items-center space-x-2">
+                    <RadioGroupItem value={type} id={`type-${type}`} />
+                    <Label htmlFor={`type-${type}`} className="capitalize">
+                      {t(`prCreate.requestType.${type}`)}
+                    </Label>
+                  </div>
+                ))}
+              </RadioGroup>
+            </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="category">Category *</Label>
-                  <Select onValueChange={(value) => form.setValue("category", value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {categories.map((category) => (
-                        <SelectItem key={category} value={category}>
-                          {category}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {form.formState.errors.category && (
-                    <p className="text-sm text-red-500">{form.formState.errors.category.message}</p>
-                  )}
-                </div>
-              </div>
-
+            <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  placeholder="Describe what you need and why"
-                  rows={4}
-                  {...form.register("description")}
+                <Label htmlFor="title">{t('prCreate.fieldTitle')}</Label>
+                <Input
+                  id="title"
+                  placeholder={t('prCreate.fieldTitlePlaceholder')}
+                  {...form.register("title")}
                 />
-                {form.formState.errors.description && (
-                  <p className="text-sm text-red-500">{form.formState.errors.description.message}</p>
+                {form.formState.errors.title && (
+                  <p className="text-sm text-red-500">{t(form.formState.errors.title.message as any)}</p>
                 )}
               </div>
 
-              <div className="grid gap-4 md:grid-cols-3">
-                <div className="space-y-2">
-                  <Label htmlFor="desiredCost">Estimated Cost *</Label>
-                  <Input
-                    id="desiredCost"
-                    type="number"
-                    step="0.01"
-                    placeholder="0.00"
-                    {...form.register("desiredCost", { valueAsNumber: true })}
-                  />
-                  {form.formState.errors.desiredCost && (
-                    <p className="text-sm text-red-500">{form.formState.errors.desiredCost.message}</p>
-                  )}
-                </div>
+              <div className="space-y-2">
+                <Label htmlFor="category">{t('prCreate.fieldCategory')}</Label>
+                <Select 
+                  value={form.watch("category")}
+                  onValueChange={(value) => form.setValue("category", value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={t('prCreate.fieldCategoryPlaceholder')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((category) => {
+                      // Explicitly create the translation key with proper casing
+                      let translationKey = 'prCreate.categories.';
+                      if (category === 'IT Equipment') translationKey += 'itEquipment';
+                      else if (category === 'Office Supplies') translationKey += 'officeSupplies';
+                      else if (category === 'Software Licenses') translationKey += 'softwareLicenses';
+                      else if (category === 'Marketing Materials') translationKey += 'marketingMaterials';
+                      else if (category === 'Travel & Accommodation') translationKey += 'travelAccommodation';
+                      else if (category === 'Professional Services') translationKey += 'professionalServices';
+                      else if (category === 'Training & Development') translationKey += 'trainingDevelopment';
+                      else if (category === 'Facilities & Maintenance') translationKey += 'facilitiesMaintenance';
+                      else if (category === 'Software Development') translationKey += 'softwareDevelopment';
+                      else if (category === 'IT Infrastructure') translationKey += 'infrastructureProjects';
+                      else if (category === 'Digital Transformation') translationKey += 'digitalTransformation';
+                      else if (category === 'Research & Development') translationKey += 'researchDevelopment';
+                      else if (category === 'Consulting Services') translationKey += 'consultingServices';
+                      else translationKey += 'other';
 
-                <div className="space-y-2">
-                  <Label htmlFor="currency">Currency *</Label>
-                  <Select onValueChange={(value: Currency) => form.setValue("currency", value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select currency" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {currencies.map((currency) => (
-                        <SelectItem key={currency} value={currency}>
-                          {currency}
+                      return (
+                        <SelectItem key={category} value={category}>
+                          {t(translationKey as any)}
                         </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Needed By Date *</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className={cn(
-                          "w-full justify-start text-left font-normal",
-                          !form.watch("neededByDate") && "text-muted-foreground"
-                        )}
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {form.watch("neededByDate") ? (
-                          format(form.watch("neededByDate"), "PPP")
-                        ) : (
-                          <span>Pick a date</span>
-                        )}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0">
-                      <Calendar
-                        mode="single"
-                        selected={form.watch("neededByDate")}
-                        onSelect={(date) => date && form.setValue("neededByDate", date)}
-                        disabled={(date) => date < new Date()}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                  {form.formState.errors.neededByDate && (
-                    <p className="text-sm text-red-500">{form.formState.errors.neededByDate.message}</p>
-                  )}
-                </div>
+                      );
+                    })}
+                  </SelectContent>
+                </Select>
+                {form.formState.errors.category && (
+                  <p className="text-sm text-red-500">{t(form.formState.errors.category.message as any)}</p>
+                )}
               </div>
-            </CardContent>
-          </Card>
-        )}
+            </div>
 
-        {/* Step 2: Items */}
-        {currentStep === 1 && (
+            <div className="space-y-2">
+              <Label htmlFor="description">{t('prCreate.fieldDescription')}</Label>
+              <Textarea
+                id="description"
+                placeholder={t('prCreate.fieldDescriptionPlaceholder')}
+                rows={4}
+                {...form.register("description")}
+              />
+              {form.formState.errors.description && (
+                <p className="text-sm text-red-500">{t(form.formState.errors.description.message as any)}</p>
+              )}
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-3">
+              <div className="space-y-2">
+                <Label htmlFor="desiredCost">{t('prCreate.fieldEstimatedCost')}</Label>
+                <Input
+                  id="desiredCost"
+                  type="number"
+                  step="0.01"
+                  placeholder={t('prCreate.fieldCostPlaceholder')}
+                  {...form.register("desiredCost", { valueAsNumber: true })}
+                />
+                {form.formState.errors.desiredCost && (
+                  <p className="text-sm text-red-500">{t(form.formState.errors.desiredCost.message as any)}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="currency">{t('prCreate.fieldCurrency')}</Label>
+                <Select 
+                  value={form.watch("currency")}
+                  onValueChange={(value: Currency) => form.setValue("currency", value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={t('prCreate.fieldCurrencyPlaceholder')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {currencies.map((currency) => (
+                      <SelectItem key={currency} value={currency}>
+                        {currency}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label>{t('prCreate.fieldNeededByDate')}</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !form.watch("neededByDate") && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {form.watch("neededByDate") ? (
+                        format(form.watch("neededByDate"), "PPP", { locale: language === 'ar' ? arSA : undefined })
+                      ) : (
+                        <span>{t('prCreate.pickDate')}</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      selected={form.watch("neededByDate")}
+                      onSelect={(date) => date && form.setValue("neededByDate", date)}
+                      disabled={(date) => date < new Date()}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+                {form.formState.errors.neededByDate && (
+                  <p className="text-sm text-red-500">{t(form.formState.errors.neededByDate.message as any)}</p>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Project-specific Details (Step 2 for project requests) */}
+      {requestType === "project" && currentStep === 1 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>{t('prCreate.projectDetailsTitle')}</CardTitle>
+            <CardDescription>
+              {t('prCreate.projectDetailsDescription')}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="clientName">{t('prCreate.fieldClientName')}</Label>
+              <Input
+                id="clientName"
+                placeholder={t('prCreate.fieldClientNamePlaceholder')}
+                {...form.register("clientName")}
+              />
+              {(form.formState.errors as any).clientName && (
+                <p className="text-sm text-red-500">{t((form.formState.errors as any).clientName?.message)}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="projectDescription">{t('prCreate.fieldProjectDescription')}</Label>
+              <Textarea
+                id="projectDescription"
+                placeholder={t('prCreate.fieldProjectDescriptionPlaceholder')}
+                rows={4}
+                {...form.register("projectDescription")}
+              />
+              {(form.formState.errors as any).projectDescription && (
+                <p className="text-sm text-red-500">{t((form.formState.errors as any).projectDescription?.message)}</p>
+              )}
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-3">
+              <div className="space-y-2">
+                <Label htmlFor="totalCost">{t('prCreate.fieldTotalCost')}</Label>
+                <Input
+                  id="totalCost"
+                  type="number"
+                  step="0.01"
+                  placeholder={t('prCreate.fieldCostPlaceholder')}
+                  {...form.register("totalCost", { valueAsNumber: true })}
+                />
+                {(form.formState.errors as any).totalCost && (
+                  <p className="text-sm text-red-500">{t((form.formState.errors as any).totalCost?.message)}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="totalBenefit">{t('prCreate.fieldTotalBenefit')}</Label>
+                <Input
+                  id="totalBenefit"
+                  type="number"
+                  step="0.01"
+                  placeholder="0.00"
+                  {...form.register("totalBenefit", { valueAsNumber: true })}
+                />
+                {(form.formState.errors as any).totalBenefit && (
+                  <p className="text-sm text-red-500">{t((form.formState.errors as any).totalBenefit?.message)}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="totalPrice">{t('prCreate.fieldTotalPrice')}</Label>
+                <Input
+                  id="totalPrice"
+                  type="number"
+                  step="0.01"
+                  placeholder="0.00"
+                  {...form.register("totalPrice", { valueAsNumber: true })}
+                />
+                {(form.formState.errors as any).totalPrice && (
+                  <p className="text-sm text-red-500">{t((form.formState.errors as any).totalPrice?.message)}</p>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}        {/* Step 2 for purchase, Step 3 for project: Items */}
+        {((requestType === "purchase" && currentStep === 1) || (requestType === "project" && currentStep === 2)) && (
           <Card>
             <CardHeader>
-              <CardTitle>Items</CardTitle>
+              <CardTitle>{t('prCreate.itemsTitle')}</CardTitle>
               <CardDescription>
-                Add the specific items you need to purchase
+                {requestType === "purchase" 
+                  ? t('prCreate.itemsDescriptionPurchase') 
+                  : t('prCreate.itemsDescriptionProject')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
+              {/* Show a message for project requests indicating items are optional */}
+              {requestType === "project" && (
+                <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-md border border-blue-200 dark:border-blue-700 mb-4">
+                  <p className="text-sm text-blue-700 dark:text-blue-300">
+                    {t('prCreate.projectItemsOptionalMessage')}
+                  </p>
+                </div>
+              )}
+              
               {fields.map((field, index) => (
                 <div key={field.id} className="border rounded-lg p-4 space-y-4">
                   <div className="flex items-center justify-between">
-                    <h4 className="font-medium">Item {index + 1}</h4>
+                    <h4 className="font-medium">{t('prCreate.item')} {index + 1}</h4>
                     {fields.length > 1 && (
                       <Button
                         type="button"
@@ -325,22 +591,22 @@ export default function PRCreate() {
 
                   <div className="grid gap-4 md:grid-cols-2">
                     <div className="space-y-2">
-                      <Label>Item Name *</Label>
+                      <Label>{t('prCreate.fieldItemName')}</Label>
                       <Input
-                        placeholder="Enter item name"
+                        placeholder={t('prCreate.fieldItemNamePlaceholder')}
                         {...form.register(`items.${index}.name`)}
                       />
                       {form.formState.errors.items?.[index]?.name && (
                         <p className="text-sm text-red-500">
-                          {form.formState.errors.items[index]?.name?.message}
+                          {t(form.formState.errors.items[index]?.name?.message as any)}
                         </p>
                       )}
                     </div>
 
                     <div className="space-y-2">
-                      <Label>Vendor Hint</Label>
+                      <Label>{t('prCreate.fieldVendorHint')}</Label>
                       <Input
-                        placeholder="Preferred vendor (optional)"
+                        placeholder={t('prCreate.fieldVendorHintPlaceholder')}
                         {...form.register(`items.${index}.vendorHint`)}
                       />
                     </div>
@@ -348,7 +614,7 @@ export default function PRCreate() {
 
                   <div className="grid gap-4 md:grid-cols-3">
                     <div className="space-y-2">
-                      <Label>Quantity *</Label>
+                      <Label>{t('prCreate.fieldQuantity')}</Label>
                       <Input
                         type="number"
                         min="1"
@@ -356,28 +622,28 @@ export default function PRCreate() {
                       />
                       {form.formState.errors.items?.[index]?.quantity && (
                         <p className="text-sm text-red-500">
-                          {form.formState.errors.items[index]?.quantity?.message}
+                          {t(form.formState.errors.items[index]?.quantity?.message as any)}
                         </p>
                       )}
                     </div>
 
                     <div className="space-y-2">
-                      <Label>Unit Price *</Label>
+                      <Label>{t('prCreate.fieldUnitPrice')}</Label>
                       <Input
                         type="number"
                         step="0.01"
-                        placeholder="0.00"
+                        placeholder={t('prCreate.fieldCostPlaceholder')}
                         {...form.register(`items.${index}.unitPrice`, { valueAsNumber: true })}
                       />
                       {form.formState.errors.items?.[index]?.unitPrice && (
                         <p className="text-sm text-red-500">
-                          {form.formState.errors.items[index]?.unitPrice?.message}
+                          {t(form.formState.errors.items[index]?.unitPrice?.message as any)}
                         </p>
                       )}
                     </div>
 
                     <div className="space-y-2">
-                      <Label>Total</Label>
+                      <Label>{t('prCreate.fieldTotal')}</Label>
                       <Input
                         value={formatCurrency(
                           (watchedItems[index]?.quantity || 0) * (watchedItems[index]?.unitPrice || 0),
@@ -397,11 +663,11 @@ export default function PRCreate() {
                   onClick={() => append({ name: "", quantity: 1, unitPrice: 0, vendorHint: "" })}
                 >
                   <Plus className="h-4 w-4 mr-2" />
-                  Add Item
+                  {t('prCreate.addItem')}
                 </Button>
 
                 <div className="text-right">
-                  <p className="text-sm text-gray-600">Total Cost</p>
+                  <p className="text-sm text-gray-600">{t('prCreate.totalCost')}</p>
                   <p className="text-xl font-bold">
                     {formatCurrency(totalCost, form.watch("currency"))}
                   </p>
@@ -411,85 +677,129 @@ export default function PRCreate() {
           </Card>
         )}
 
-        {/* Step 3: Quotes & Review */}
-        {currentStep === 2 && (
+        {/* Final Step: Quotes & Review */}
+        {((requestType === "purchase" && currentStep === 2) || (requestType === "project" && currentStep === 3)) && (
           <div className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Upload Quotes</CardTitle>
+                <CardTitle>{t('prCreate.uploadQuotesTitle')}</CardTitle>
                 <CardDescription>
-                  Upload vendor quotes or supporting documents (optional)
+                  {t('prCreate.uploadQuotesDescription')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <FileUpload
-                  onFilesChange={setFiles}
-                  maxFiles={5}
-                  maxSize={10 * 1024 * 1024}
-                  acceptedTypes={["application/pdf", "image/jpeg", "image/png"]}
-                />
+                <div className="py-6 text-center text-gray-500 border border-dashed rounded-lg">
+                  {t('prCreate.quotesAddedByAccountant')}
+                </div>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader>
-                <CardTitle>Review & Submit</CardTitle>
+                <CardTitle>{t('prCreate.reviewTitle')}</CardTitle>
                 <CardDescription>
-                  Please review your purchase request before submitting
+                  {t('prCreate.reviewDescription')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
+                <div className="bg-gray-50 dark:bg-gray-800/50 p-3 rounded-md border mb-4">
+                  <div className="flex items-center space-x-2 mb-1">
+                    <p className="font-medium">Request Type:</p>
+                    <p className="capitalize">{t(`prCreate.requestType.${requestType}`)}</p>
+                  </div>
+                </div>
+
                 <div className="grid gap-4 md:grid-cols-2">
                   <div>
-                    <h4 className="font-medium">Title</h4>
+                    <h4 className="font-medium">{t('prCreate.reviewFieldTitle')}</h4>
                     <p className="text-gray-600">{form.watch("title")}</p>
                   </div>
                   <div>
-                    <h4 className="font-medium">Category</h4>
+                    <h4 className="font-medium">{t('prCreate.reviewFieldCategory')}</h4>
                     <p className="text-gray-600">{form.watch("category")}</p>
                   </div>
                   <div>
-                    <h4 className="font-medium">Estimated Cost</h4>
+                    <h4 className="font-medium">{t('prCreate.reviewFieldEstimatedCost')}</h4>
                     <p className="text-gray-600">
                       {formatCurrency(form.watch("desiredCost"), form.watch("currency"))}
                     </p>
                   </div>
                   <div>
-                    <h4 className="font-medium">Needed By</h4>
+                    <h4 className="font-medium">{t('prCreate.reviewFieldNeededBy')}</h4>
                     <p className="text-gray-600">
-                      {form.watch("neededByDate") && format(form.watch("neededByDate"), "PPP")}
+                      {form.watch("neededByDate") && format(form.watch("neededByDate"), "PPP", { locale: language === 'ar' ? arSA : undefined })}
                     </p>
                   </div>
                 </div>
 
                 {form.watch("description") && (
                   <div>
-                    <h4 className="font-medium">Description</h4>
+                    <h4 className="font-medium">{t('prCreate.reviewFieldDescription')}</h4>
                     <p className="text-gray-600">{form.watch("description")}</p>
                   </div>
                 )}
 
-                <div>
-                  <h4 className="font-medium">Items ({watchedItems.length})</h4>
-                  <div className="mt-2 space-y-2">
-                    {watchedItems.map((item, index) => (
-                      <div key={index} className="flex justify-between items-center p-2 bg-gray-50 rounded">
-                        <span>{item.name} (x{item.quantity})</span>
-                        <span className="font-medium">
-                          {formatCurrency(item.quantity * item.unitPrice, form.watch("currency"))}
-                        </span>
+                {/* Project-specific fields in review */}
+                {requestType === "project" && (
+                  <div className="border rounded-lg p-4 space-y-4 bg-blue-50 dark:bg-blue-900/20">
+                    <h4 className="font-medium text-lg">{t('prCreate.reviewProjectDetails')}</h4>
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <div>
+                        <h4 className="font-medium">{t('prCreate.fieldClientName')}</h4>
+                        <p className="text-gray-600">{form.watch("clientName")}</p>
                       </div>
-                    ))}
-                    <div className="flex justify-between items-center p-2 border-t font-bold">
-                      <span>Total</span>
-                      <span>{formatCurrency(totalCost, form.watch("currency"))}</span>
+                      <div>
+                        <h4 className="font-medium">{t('prCreate.fieldProjectDescription')}</h4>
+                        <p className="text-gray-600">{form.watch("projectDescription")}</p>
+                      </div>
+                    </div>
+                    <div className="grid gap-4 md:grid-cols-3">
+                      <div>
+                        <h4 className="font-medium">{t('prCreate.fieldTotalCost')}</h4>
+                        <p className="text-gray-600">
+                          {formatCurrency(form.watch("totalCost"), form.watch("currency"))}
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="font-medium">{t('prCreate.fieldTotalBenefit')}</h4>
+                        <p className="text-gray-600">
+                          {formatCurrency(form.watch("totalBenefit"), form.watch("currency"))}
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="font-medium">{t('prCreate.fieldTotalPrice')}</h4>
+                        <p className="text-gray-600">
+                          {formatCurrency(form.watch("totalPrice"), form.watch("currency"))}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
+
+                {/* Items (required for purchase, optional for project) */}
+                {(watchedItems && watchedItems.length > 0) && (
+                  <div>
+                    <h4 className="font-medium">{t('prCreate.reviewItems')} ({watchedItems.length})</h4>
+                    <div className="mt-2 space-y-2">
+                      {watchedItems.map((item, index) => (
+                        <div key={index} className="flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-800 rounded">
+                          <span>{item.name} ({language === 'ar' ? '×' : 'x'}{item.quantity})</span>
+                          <span className="font-medium">
+                            {formatCurrency(item.quantity * item.unitPrice, form.watch("currency"))}
+                          </span>
+                        </div>
+                      ))}
+                      <div className="flex justify-between items-center p-2 border-t font-bold">
+                        <span>{t('prCreate.reviewTotal')}</span>
+                        <span>{formatCurrency(totalCost, form.watch("currency"))}</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {files.length > 0 && (
                   <div>
-                    <h4 className="font-medium">Uploaded Files ({files.length})</h4>
+                    <h4 className="font-medium">{t('prCreate.reviewUploadedFiles')} ({files.length})</h4>
                     <div className="mt-2 space-y-1">
                       {files.map((file, index) => (
                         <p key={index} className="text-sm text-gray-600">
@@ -513,17 +823,17 @@ export default function PRCreate() {
             disabled={currentStep === 0}
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Previous
+            {t('prCreate.buttonPrevious')}
           </Button>
 
           {currentStep < steps.length - 1 ? (
             <Button type="button" onClick={nextStep}>
-              Next
+              {t('prCreate.buttonNext')}
               <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
           ) : (
             <Button type="submit">
-              Create Purchase Request
+              {t('prCreate.buttonSubmit')}
             </Button>
           )}
         </div>

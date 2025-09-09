@@ -1,7 +1,6 @@
 import type { Config } from "tailwindcss";
 
 export default {
-	darkMode: ["class"],
 	content: [
 		"./pages/**/*.{ts,tsx}",
 		"./components/**/*.{ts,tsx}",
@@ -19,16 +18,18 @@ export default {
 		},
 		extend: {
 			colors: {
-				border: 'hsl(var(--border))',
-				input: 'hsl(var(--input))',
-				ring: 'hsl(var(--ring))',
-				background: 'hsl(var(--background))',
-				foreground: 'hsl(var(--foreground))',
+				// Our custom fixed color theme
+				border: '#f2aa38',
+				input: '#2b2b2b',
+				ring: '#f2aa38',
+				background: '#1b1b1b',
+				foreground: '#fefefe',
+				subtext: '#bcbcbd',
 				primary: {
-					DEFAULT: 'hsl(var(--primary))',
-					foreground: 'hsl(var(--primary-foreground))',
-					light: 'hsl(var(--primary-light))',
-					dark: 'hsl(var(--primary-dark))'
+					DEFAULT: '#f2aa38',
+					foreground: '#1b1b1b',
+					light: '#f5bb5a',
+					dark: '#d99425'
 				},
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary))',

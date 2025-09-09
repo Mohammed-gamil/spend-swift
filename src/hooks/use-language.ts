@@ -24,9 +24,9 @@ export const useLanguageStore = create<LanguageState & LanguageActions>()(
   persist(
     (set, get) => ({
       // State
-      language: 'en',
-      direction: 'ltr',
-      isRTL: false,
+  language: 'ar',
+  direction: 'rtl',
+  isRTL: true,
 
       // Actions
       setLanguage: (language: Language) => {

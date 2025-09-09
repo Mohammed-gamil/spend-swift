@@ -23,7 +23,12 @@ const CardHeader = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("flex flex-col space-y-1.5 p-6", className)}
+    className={cn(
+      "flex flex-col space-y-1.5 p-6 rtl:text-right", 
+      // Enhanced RTL support for card headers
+      "rtl:[&>div]:flex-row-reverse rtl:[&>div]:justify-between",
+      className
+    )}
     {...props}
   />
 ))
@@ -36,7 +41,7 @@ const CardTitle = React.forwardRef<
   <h3
     ref={ref}
     className={cn(
-      "text-2xl font-semibold leading-none tracking-tight",
+      "text-2xl font-semibold leading-none tracking-tight rtl:text-right",
       className
     )}
     {...props}
@@ -50,7 +55,7 @@ const CardDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <p
     ref={ref}
-    className={cn("text-sm text-muted-foreground", className)}
+    className={cn("text-sm text-muted-foreground rtl:text-right", className)}
     {...props}
   />
 ))
@@ -60,7 +65,16 @@ const CardContent = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />
+  <div 
+    ref={ref} 
+    className={cn(
+      "p-6 pt-0 rtl:text-right", 
+      // Enhanced RTL support for card content
+      "rtl:[&>div]:flex-row-reverse rtl:[&>div]:justify-between",
+      className
+    )} 
+    {...props} 
+  />
 ))
 CardContent.displayName = "CardContent"
 
@@ -70,7 +84,12 @@ const CardFooter = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("flex items-center p-6 pt-0", className)}
+    className={cn(
+      "flex items-center p-6 pt-0 rtl:flex-row-reverse",
+      // Enhanced RTL support for nested elements in footer
+      "rtl:[&>div]:flex-row-reverse rtl:[&>button]:flex-row-reverse",
+      className
+    )}
     {...props}
   />
 ))

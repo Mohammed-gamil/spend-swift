@@ -9,7 +9,9 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        // Default: outline gold, hover fill gold
+        default:
+          "border border-primary bg-transparent text-primary hover:bg-primary hover:text-primary-foreground",
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline:
@@ -44,7 +46,13 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const Comp = asChild ? Slot : "button"
     return (
       <Comp
-        className={cn(buttonVariants({ variant, size, className }))}
+        className={cn(
+          buttonVariants({ variant, size, className }), 
+          "rtl:space-x-reverse",
+          // Enhanced RTL support for buttons with icons
+          "[&>svg]:rtl:mr-0 [&>svg]:rtl:ml-2",
+          "[&>svg+span]:rtl:mr-2 [&>svg+span]:rtl:ml-0"
+        )}
         ref={ref}
         {...props}
       />

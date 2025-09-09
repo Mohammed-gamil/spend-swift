@@ -11,17 +11,19 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, Eye, EyeOff } from 'lucide-react';
+import { useTranslation } from '@/hooks/use-translation';
 import toast from 'react-hot-toast';
 
 const loginSchema = z.object({
-  email: z.string().email('Please enter a valid email address'),
-  password: z.string().min(1, 'Password is required'),
+  email: z.string().email('login.errors.invalidEmail'),
+  password: z.string().min(1, 'login.errors.passwordRequired'),
   remember: z.boolean().optional(),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function Login() {
+  const { t } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
   const { login, isLoading, error, clearError, isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
@@ -70,18 +72,18 @@ export default function Login() {
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-            Sign in to your account
+            {t('login.title')}
           </h2>
           <p className="mt-2 text-sm text-gray-600">
-            Purchase Request Management System
+            {t('login.subtitle')}
           </p>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle>Welcome back</CardTitle>
+            <CardTitle>{t('login.welcome')}</CardTitle>
             <CardDescription>
-              Enter your credentials to access your account
+              {t('login.welcomeSubtitle')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -93,28 +95,28 @@ export default function Login() {
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email address</Label>
+                <Label htmlFor="email">{t('login.emailLabel')}</Label>
                 <Input
                   id="email"
                   type="email"
                   autoComplete="email"
-                  placeholder="Enter your email"
+                  placeholder={t('login.emailPlaceholder')}
                   {...register('email')}
                   className={errors.email ? 'border-red-500' : ''}
                 />
                 {errors.email && (
-                  <p className="text-sm text-red-500">{errors.email.message}</p>
+                  <p className="text-sm text-red-500">{t(errors.email.message as any)}</p>
                 )}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">{t('login.passwordLabel')}</Label>
                 <div className="relative">
                   <Input
                     id="password"
                     type={showPassword ? 'text' : 'password'}
                     autoComplete="current-password"
-                    placeholder="Enter your password"
+                    placeholder={t('login.passwordPlaceholder')}
                     {...register('password')}
                     className={errors.password ? 'border-red-500 pr-10' : 'pr-10'}
                   />
@@ -131,7 +133,7 @@ export default function Login() {
                   </button>
                 </div>
                 {errors.password && (
-                  <p className="text-sm text-red-500">{errors.password.message}</p>
+                  <p className="text-sm text-red-500">{t(errors.password.message as any)}</p>
                 )}
               </div>
 
@@ -146,7 +148,7 @@ export default function Login() {
                     htmlFor="remember"
                     className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
-                    Remember me
+                    {t('login.rememberMe')}
                   </Label>
                 </div>
 
@@ -154,7 +156,7 @@ export default function Login() {
                   to="/forgot-password"
                   className="text-sm text-primary hover:text-primary/80"
                 >
-                  Forgot your password?
+                  {t('login.forgotPassword')}
                 </Link>
               </div>
 
@@ -166,10 +168,10 @@ export default function Login() {
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Signing in...
+                    {t('login.signingInButton')}
                   </>
                 ) : (
-                  'Sign in'
+                  t('login.signInButton')
                 )}
               </Button>
             </form>
@@ -180,30 +182,30 @@ export default function Login() {
                   <div className="w-full border-t border-gray-300" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">Demo Credentials</span>
+                  <span className="px-2 bg-white text-gray-500">{t('login.demoCredentials')}</span>
                 </div>
               </div>
 
               <div className="mt-4 grid grid-cols-2 gap-3 text-xs">
                 <div className="bg-gray-50 p-2 rounded">
-                  <strong>Admin:</strong><br />
+                  <strong>{t('login.demo.admin')}</strong><br />
                   admin@demo.com<br />
-                  any password
+                  {t('login.demo.password')}
                 </div>
                 <div className="bg-gray-50 p-2 rounded">
-                  <strong>Manager:</strong><br />
+                  <strong>{t('login.demo.manager')}</strong><br />
                   manager@demo.com<br />
-                  any password
+                  {t('login.demo.password')}
                 </div>
                 <div className="bg-gray-50 p-2 rounded">
-                  <strong>Accountant:</strong><br />
+                  <strong>{t('login.demo.accountant')}</strong><br />
                   accountant@demo.com<br />
-                  any password
+                  {t('login.demo.password')}
                 </div>
                 <div className="bg-gray-50 p-2 rounded">
-                  <strong>User:</strong><br />
+                  <strong>{t('login.demo.user')}</strong><br />
                   user@demo.com<br />
-                  any password
+                  {t('login.demo.password')}
                 </div>
               </div>
             </div>

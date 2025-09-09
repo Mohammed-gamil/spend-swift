@@ -1,0 +1,937 @@
+/* Google Fonts for Arabic Support */
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Purchase Request Management System Design System */
+
+@layer base {
+  :root {
+    /* Core Brand Colors - Modern Professional Palette */
+    --background: 240 100% 99%;
+    --foreground: 240 10% 10%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 10%;
+
+    /* Primary - Deep Professional Blue */
+    --primary: 217 91% 35%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 217 91% 45%;
+    --primary-dark: 217 91% 25%;
+
+    /* Secondary - Warm Accent */
+    --secondary: 240 5% 96%;
+    --secondary-foreground: 240 6% 10%;
+
+    /* Success - PR Approved */
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 100%;
+    --success-light: 142 76% 46%;
+
+    /* Warning - Pending Actions */
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    --warning-light: 38 92% 60%;
+
+    /* Muted Elements */
+    --muted: 240 5% 96%;
+    --muted-foreground: 240 4% 46%;
+
+    /* Accent - Interactive Elements */
+    --accent: 240 5% 96%;
+    --accent-foreground: 240 6% 10%;
+
+    /* Destructive - Rejections/Errors */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* UI Elements */
+    --border: 240 6% 90%;
+    --input: 240 6% 90%;
+    --ring: 217 91% 35%;
+
+    /* Status Specific Colors */
+    --status-draft: 240 5% 64%;
+    --status-submitted: 217 91% 45%;
+    --status-approved: 142 76% 36%;
+    --status-rejected: 0 84% 60%;
+    --status-transferred: 142 76% 26%;
+
+    /* Gradients */
+    /* Gradients - Enhanced with smooth transitions */
+    --gradient-primary: linear-gradient(135deg, hsl(217 91% 35%), hsl(217 91% 45%));
+    --gradient-success: linear-gradient(135deg, hsl(142 76% 36%), hsl(142 76% 46%));
+    --gradient-hero: linear-gradient(135deg, hsl(217 91% 35%) 0%, hsl(217 91% 45%) 50%, hsl(142 76% 36%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(240 20% 99%) 100%);
+    --gradient-primary-soft: linear-gradient(135deg, hsl(217 91% 35% / 0.1), hsl(217 91% 45% / 0.1));
+    --gradient-success-soft: linear-gradient(135deg, hsl(142 76% 36% / 0.1), hsl(142 76% 46% / 0.1));
+    
+    /* Luxury gradients with subtle opacity */
+    --gradient-luxury-bg: linear-gradient(135deg, hsl(217 91% 35% / 0.03), hsl(142 76% 36% / 0.02), hsl(217 91% 45% / 0.03));
+    --gradient-luxury-card: linear-gradient(135deg, hsl(0 0% 100% / 0.8), hsl(240 100% 99% / 0.9), hsl(217 91% 98% / 0.7));
+    --gradient-luxury-header: linear-gradient(90deg, hsl(217 91% 35% / 0.05), hsl(217 91% 45% / 0.03));
+    --gradient-luxury-accent: radial-gradient(ellipse at top, hsl(217 91% 35% / 0.1), transparent 50%);
+    --gradient-luxury-glass: linear-gradient(135deg, hsl(0 0% 100% / 0.1), hsl(0 0% 100% / 0.05));
+
+    /* Enhanced Shadows with color tints */
+    --shadow-sm: 0 1px 2px 0 hsl(217 91% 35% / 0.04);
+    --shadow-md: 0 4px 6px -1px hsl(217 91% 35% / 0.1), 0 2px 4px -2px hsl(217 91% 35% / 0.1);
+    --shadow-lg: 0 10px 15px -3px hsl(217 91% 35% / 0.1), 0 4px 6px -4px hsl(217 91% 35% / 0.1);
+    --shadow-primary: 0 10px 25px -3px hsl(217 91% 35% / 0.3);
+    --shadow-success: 0 10px 25px -3px hsl(142 76% 36% / 0.25);
+    --shadow-glow: 0 0 40px hsl(217 91% 35% / 0.15);
+
+    /* Backdrop blur effects */
+    --backdrop-blur: blur(20px);
+    --backdrop-blur-sm: blur(8px);
+
+    /* Enhanced Animations */
+    --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-normal: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 6.9%; /* Slightly lighter than background for better distinction */
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 6.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 23%;  /* Lighter for better visibility */
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 24%;  /* Lighter for better distinction */
+    --muted-foreground: 215 20.2% 80%;  /* Much lighter for better readability */
+
+    --accent: 217.2 32.6% 20%;  /* Consistent with secondary */
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 84% 50%;  /* Bright, vibrant red for better visibility */
+    --destructive-foreground: 210 40% 98%;
+    
+    /* Adding status colors for dark mode with better visibility */
+    --success: 142 76% 45%;  /* Brighter success color */
+    --success-foreground: 0 0% 100%;
+    --success-light: 142 76% 55%;
+    
+    --warning: 38 92% 55%;  /* Brighter warning color */
+    --warning-foreground: 0 0% 100%;
+    --warning-light: 38 92% 65%;
+
+    --border: 217.2 32.6% 30%;  /* Even lighter border for better element separation */
+    --input: 217.2 32.6% 25%;  /* Slightly lighter input background */
+    --ring: 212.7 70% 80%;  /* Brighter ring for focus states */
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Dark mode gradients with improved visibility */
+    --gradient-primary: linear-gradient(135deg, hsl(217 91% 70%), hsl(217 91% 80%));
+    --gradient-success: linear-gradient(135deg, hsl(142 76% 50%), hsl(142 76% 60%));
+    --gradient-hero: linear-gradient(135deg, hsl(217 91% 70%) 0%, hsl(217 91% 80%) 50%, hsl(142 76% 50%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(222.2 84% 6.9%) 0%, hsl(217.2 32.6% 23%) 100%); /* Updated to match new card/secondary colors */
+    --gradient-primary-soft: linear-gradient(135deg, hsl(210 40% 98% / 0.15), hsl(212.7 70% 80% / 0.15)); /* Increased opacity for better visibility */
+    --gradient-success-soft: linear-gradient(135deg, hsl(142 76% 50% / 0.15), hsl(142 76% 60% / 0.15)); /* Increased opacity for better visibility */
+    
+    /* Dark mode luxury gradients */
+    --gradient-luxury-bg: linear-gradient(135deg, hsl(217 91% 65% / 0.02), hsl(142 76% 46% / 0.01), hsl(217 91% 75% / 0.02));
+    --gradient-luxury-card: linear-gradient(135deg, hsl(222.2 84% 4.9% / 0.9), hsl(217.2 32.6% 17.5% / 0.8), hsl(217 91% 15% / 0.7));
+    --gradient-luxury-header: linear-gradient(90deg, hsl(217 91% 65% / 0.03), hsl(217 91% 75% / 0.02));
+    --gradient-luxury-accent: radial-gradient(ellipse at top, hsl(217 91% 65% / 0.08), transparent 50%);
+    --gradient-luxury-glass: linear-gradient(135deg, hsl(0 0% 100% / 0.05), hsl(0 0% 100% / 0.02));
+
+    /* Dark mode shadows */
+    --shadow-sm: 0 1px 2px 0 hsl(217 91% 65% / 0.08);
+    --shadow-md: 0 4px 6px -1px hsl(217 91% 65% / 0.15), 0 2px 4px -2px hsl(217 91% 65% / 0.15);
+    --shadow-lg: 0 10px 15px -3px hsl(217 91% 65% / 0.15), 0 4px 6px -4px hsl(217 91% 65% / 0.15);
+    --shadow-primary: 0 10px 25px -3px hsl(217 91% 65% / 0.4);
+    --shadow-success: 0 10px 25px -3px hsl(142 76% 46% / 0.35);
+    --shadow-glow: 0 0 40px hsl(217 91% 65% / 0.25);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer components {
+  /* Custom component styles */
+  .glass-effect {
+    @apply backdrop-blur-sm bg-white/80 dark:bg-gray-900/80 border border-white/20 dark:border-gray-800/20;
+  }
+  
+  .floating-card {
+    @apply transform transition-all duration-300 hover:scale-105 hover:shadow-lg dark:hover:shadow-primary/20;
+  }
+  
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-light;
+  }
+  
+  .shimmer-effect {
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+  }
+
+  /* Luxury gradient utilities */
+  .luxury-bg {
+    background: var(--gradient-luxury-bg);
+  }
+  
+  .luxury-card {
+    background: var(--gradient-luxury-card);
+    backdrop-filter: blur(10px);
+    border: 1px solid hsl(var(--border) / 0.1);
+  }
+  
+  .luxury-header {
+    background: var(--gradient-luxury-header);
+  }
+  
+  .luxury-accent {
+    background: var(--gradient-luxury-accent);
+  }
+  
+  .luxury-glass {
+    background: var(--gradient-luxury-glass);
+    backdrop-filter: blur(20px);
+  }
+
+  /* Dark mode specific enhancements */
+  .dark .gradient-text {
+    @apply from-blue-300 to-cyan-200; /* Lighter and more vibrant colors for better visibility in dark mode */
+  }
+}
+
+/* RTL Support and Arabic Typography */
+@layer base {
+  /* Arabic font family with proper weights for better readability */
+  [dir="rtl"] {
+    font-family: 'Cairo', 'Tajawal', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  /* Optimize Arabic font rendering */
+  [dir="rtl"] {
+    font-feature-settings: "kern", "liga", "clig", "calt", "rlig";
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* Ensure proper text direction */
+  [dir="rtl"] {
+    direction: rtl;
+    text-align: right;
+  }
+  
+  [dir="ltr"] {
+    direction: ltr;
+    text-align: left;
+  }
+  
+  /* Fix input text alignment and padding */
+  [dir="rtl"] input,
+  [dir="rtl"] textarea,
+  [dir="rtl"] select {
+    text-align: right;
+  }
+  
+  [dir="ltr"] input,
+  [dir="ltr"] textarea,
+  [dir="ltr"] select {
+    text-align: left;
+  }
+  
+  /* Fix placeholder text alignment */
+  [dir="rtl"] input::placeholder,
+  [dir="rtl"] textarea::placeholder {
+    text-align: right;
+  }
+  
+  /* Adjust Arabic letter spacing for better readability */
+  [dir="rtl"] {
+    letter-spacing: -0.01em;
+  }
+}
+
+@layer components {
+  /* RTL Text Direction Overrides */
+  [dir="rtl"] .text-left {
+    text-align: right !important;
+  }
+
+  [dir="rtl"] .text-right {
+    text-align: left !important;
+  }
+
+  [dir="rtl"] .text-start {
+    text-align: right !important;
+  }
+
+  [dir="rtl"] .text-end {
+    text-align: left !important;
+  }
+
+  [dir="rtl"] h1, 
+  [dir="rtl"] h2, 
+  [dir="rtl"] h3, 
+  [dir="rtl"] h4, 
+  [dir="rtl"] h5, 
+  [dir="rtl"] h6, 
+  [dir="rtl"] p, 
+  [dir="rtl"] span, 
+  [dir="rtl"] div {
+    text-align: inherit;
+  }
+  
+  /* Dark Mode Accessibility Improvements */
+  .dark a {
+    color: hsl(210 100% 80%); /* Brighter link color for dark mode */
+    text-decoration-color: hsl(210 100% 80% / 0.5);
+    text-underline-offset: 2px;
+  }
+  
+  .dark a:hover {
+    color: hsl(210 100% 90%);
+    text-decoration-color: hsl(210 100% 90%);
+  }
+  
+  .dark code {
+    background-color: hsl(217.2 32.6% 17.5%);
+    border: 1px solid hsl(217.2 32.6% 30%);
+    padding: 0.1rem 0.3rem;
+    border-radius: 0.25rem;
+  }
+  
+  /* Add a subtle outline to interactive elements in dark mode for better visibility */
+  .dark button:focus-visible,
+  .dark [role="button"]:focus-visible,
+  .dark input:focus-visible,
+  .dark select:focus-visible,
+  .dark textarea:focus-visible {
+    outline: 2px solid hsl(var(--primary));
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  /* RTL Navigation adjustments - enhanced for all navigation components */
+  [dir="rtl"] .nav-items,
+  [dir="rtl"] .tabs,
+  [dir="rtl"] .breadcrumbs,
+  [dir="rtl"] .pagination {
+    flex-direction: row-reverse;
+  }
+  
+  /* RTL Flexbox layouts with more comprehensive selectors */
+  [dir="rtl"] .flex-row,
+  [dir="rtl"] .inline-flex {
+    flex-direction: row-reverse;
+  }
+  
+  /* Prevent double-reversing for explicitly reversed flexbox */
+  [dir="rtl"] .flex-row-reverse {
+    flex-direction: row;
+  }
+  
+  /* RTL margins and padding adjustments with !important to override Tailwind utilities */
+  [dir="rtl"] .ml-auto {
+    margin-left: 0 !important;
+    margin-right: auto !important;
+  }
+  
+  [dir="rtl"] .mr-auto {
+    margin-right: 0 !important;
+    margin-left: auto !important;
+  }
+  
+  /* RTL margin sides swap */
+  [dir="rtl"] .mr-1, [dir="rtl"] .mr-2, [dir="rtl"] .mr-3, 
+  [dir="rtl"] .mr-4, [dir="rtl"] .mr-5, [dir="rtl"] .mr-6 {
+    margin-right: 0 !important;
+  }
+  
+  [dir="rtl"] .ml-1, [dir="rtl"] .ml-2, [dir="rtl"] .ml-3,
+  [dir="rtl"] .ml-4, [dir="rtl"] .ml-5, [dir="rtl"] .ml-6 {
+    margin-left: 0 !important;
+  }
+  
+  /* RTL positioning with !important to ensure override */
+  [dir="rtl"] .left-0 {
+    left: auto !important;
+    right: 0 !important;
+  }
+  
+  [dir="rtl"] .right-0 {
+    right: auto !important;
+    left: 0 !important;
+  }
+  
+  /* RTL padding sides swap */
+  [dir="rtl"] .pl-1, [dir="rtl"] .pl-2, [dir="rtl"] .pl-3, 
+  [dir="rtl"] .pl-4, [dir="rtl"] .pl-5, [dir="rtl"] .pl-6 {
+    padding-left: 0 !important;
+  }
+  
+  [dir="rtl"] .pr-1, [dir="rtl"] .pr-2, [dir="rtl"] .pr-3,
+  [dir="rtl"] .pr-4, [dir="rtl"] .pr-5, [dir="rtl"] .pr-6 {
+    padding-right: 0 !important;
+  }
+  
+  /* RTL transforms for icons that need flipping */
+  [dir="rtl"] .rtl-flip {
+    transform: scaleX(-1);
+  }
+  
+  /* RTL specific spacing */
+  [dir="rtl"] .space-x-reverse > :not([hidden]) ~ :not([hidden]) {
+    --tw-space-x-reverse: 1;
+  }
+  
+  /* RTL grid adjustments */
+  [dir="rtl"] .grid-flow-col {
+    grid-auto-flow: column reverse;
+  }
+  
+  /* RTL border radius adjustments - properly swapping left/right radius */
+  [dir="rtl"] .rounded-l-none {
+    border-top-left-radius: initial;
+    border-bottom-left-radius: initial;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  
+  [dir="rtl"] .rounded-r-none {
+    border-top-right-radius: initial;
+    border-bottom-right-radius: initial;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+  
+  [dir="rtl"] .rounded-l-md, 
+  [dir="rtl"] .rounded-l-lg,
+  [dir="rtl"] .rounded-l-xl {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-top-right-radius: 0.375rem;
+    border-bottom-right-radius: 0.375rem;
+  }
+  
+  [dir="rtl"] .rounded-r-md,
+  [dir="rtl"] .rounded-r-lg,
+  [dir="rtl"] .rounded-r-xl {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-top-left-radius: 0.375rem;
+    border-bottom-left-radius: 0.375rem;
+  }
+  
+  /* RTL dropdown and popover positioning */
+  [dir="rtl"] .dropdown-content {
+    left: auto;
+    right: 0;
+  }
+  
+  /* RTL text truncation */
+  [dir="rtl"] .truncate {
+    direction: rtl;
+    text-align: right;
+  }
+  
+  /* RTL form elements */
+  [dir="rtl"] .form-input {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+  
+  /* RTL button icon spacing */
+  [dir="rtl"] .btn-icon-left {
+    margin-right: 0;
+    margin-left: 0.5rem;
+  }
+  
+  [dir="rtl"] .btn-icon-right {
+    margin-left: 0;
+    margin-right: 0.5rem;
+  }
+  
+  /* RTL table adjustments */
+  [dir="rtl"] table {
+    direction: rtl;
+  }
+  
+  [dir="rtl"] th,
+  [dir="rtl"] td {
+    text-align: right;
+  }
+  
+  [dir="rtl"] th:first-child,
+  [dir="rtl"] td:first-child {
+    text-align: right;
+  }
+  
+  [dir="rtl"] th:last-child,
+  [dir="rtl"] td:last-child {
+    text-align: left;
+  }
+  
+  /* RTL chart and visualization adjustments */
+  [dir="rtl"] .recharts-wrapper {
+    direction: ltr; /* Keep charts LTR for proper data visualization */
+  }
+  
+  [dir="rtl"] .chart-legend {
+    direction: rtl;
+  }
+  
+  /* RTL toast notifications */
+  [dir="rtl"] .toast-container {
+    left: 1rem;
+    right: auto;
+  }
+  
+  /* RTL modal and dialog adjustments */
+  [dir="rtl"] .modal-content {
+    text-align: right;
+  }
+  
+  /* RTL animation adjustments */
+  [dir="rtl"] .slide-in-right {
+    transform: translateX(-100%);
+  }
+  
+  [dir="rtl"] .slide-in-left {
+    transform: translateX(100%);
+  }
+  
+  /* RTL breadcrumb adjustments */
+  [dir="rtl"] .breadcrumb-separator {
+    transform: scaleX(-1);
+  }
+  
+  /* RTL progress bar */
+  [dir="rtl"] .progress-bar {
+    direction: ltr; /* Keep progress direction consistent */
+  }
+  
+  /* RTL specific utility classes */
+  .rtl\:text-right[dir="rtl"] {
+    text-align: right;
+  }
+  
+  .rtl\:text-left[dir="rtl"] {
+    text-align: left;
+  }
+  
+  .rtl\:flex-row-reverse[dir="rtl"] {
+    flex-direction: row-reverse;
+  }
+  
+  .rtl\:ml-auto[dir="rtl"] {
+    margin-left: auto;
+    margin-right: 0;
+  }
+  
+  .rtl\:mr-auto[dir="rtl"] {
+    margin-right: auto;
+    margin-left: 0;
+  }
+}
+
+/* Targeted RTL tweaks for spacing in navigation and icons */
+@layer components {
+  /* RTL Override for the Top Header and Page Header */
+  [dir="rtl"] .top-header,
+  [dir="rtl"] .page-header {
+    flex-direction: row-reverse;
+  }
+  /* Also flip the inner flex wrapper of the top header so the spacer and actions swap */
+  [dir="rtl"] .top-header > .flex.flex-1,
+  [dir="rtl"] .top-header > .flex-1 {
+    flex-direction: row-reverse;
+  }
+
+  /* RTL Override for attribute-identified headers in main content */
+  [dir="rtl"] .main-content [data-component-name="nav"][class*="justify-Right"] {
+    flex-direction: row-reverse;
+  }
+  
+  [dir="rtl"] .main-content [data-component-name="div"][class*="justify-Right"] {
+    flex-direction: row-reverse;
+  }
+
+  /* Generic RTL flip for flex headers with justify-between inside main content */
+  [dir="rtl"] .main-content .flex[class*="justify-between"] {
+    flex-direction: row-reverse;
+  }
+
+  /* Ensure auto margins play nice in RTL: swap ml-auto/mr-auto */
+  [dir="rtl"] .ml-auto { margin-left: 0; margin-right: auto; }
+  [dir="rtl"] .mr-auto { margin-right: 0; margin-left: auto; }
+
+  /* Sidebar navigation icon margin in RTL */
+  [dir="rtl"] nav a > .mr-3 {
+    margin-right: 0;
+    margin-left: 0.75rem; /* 3 * 0.25rem = 0.75rem */
+  }
+
+  /* Generic small icon margin flip (e.g., logout) */
+  [dir="rtl"] .mr-2 {
+    margin-right: 0;
+    margin-left: 0.5rem; /* 2 * 0.25rem = 0.5rem */
+  }
+}
+
+/* High-specificity RTL header overrides placed in utilities layer to win over Tailwind utilities */
+@layer utilities {
+  /* Flip known header containers */
+  [dir="rtl"] .top-header,
+  [dir="rtl"] .page-header {
+    flex-direction: row-reverse !important;
+  }
+
+  /* Flip inner wrapper in top header (spacer and actions) */
+  [dir="rtl"] .top-header > .flex.flex-1,
+  [dir="rtl"] .top-header > .flex-1 {
+    flex-direction: row-reverse !important;
+  }
+
+  /* Flip attribute-identified flex headers inside main content */
+  [dir="rtl"] .main-content [data-component-name="nav"][class*="justify-between"],
+  [dir="rtl"] .main-content [data-component-name="div"][class*="justify-between"] {
+    flex-direction: row-reverse !important;
+  }
+
+  /* Global flip for attribute-identified containers even outside main content */
+  [dir="rtl"] [data-component-name="nav"][class*="justify-between"],
+  [dir="rtl"] [data-component-name="div"][class*="justify-between"] {
+    flex-direction: row-reverse !important;
+  }
+
+  /* Flip the reusable header component container */
+  [dir="rtl"] header .container.flex[class*="justify-between"] {
+    flex-direction: row-reverse !important;
+  }
+  /* Adjust horizontal spacing utilities inside header in RTL */
+  [dir="rtl"] header .container .space-x-4 > :not([hidden]) ~ :not([hidden]) {
+    --tw-space-x-reverse: 1;
+  }
+
+  /* Generic flip for flex headers with justify-between inside main content */
+  [dir="rtl"] .main-content .flex-row[class*="justify-between"],
+  [dir="rtl"] .main-content .flex[class*="justify-between"] {
+    flex-direction: row-reverse !important;
+  }
+}
+
+@layer components {
+  /* App Layout - CSS Grid Implementation (responsive) */
+  .app-layout {
+    display: grid;
+    grid-template-columns: 1fr; /* Mobile: single column */
+    min-height: 100vh;
+  }
+  
+  /* Alternative Flexbox Implementation */
+  .app-layout.flex {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .sidebar {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+  }
+
+  .main-content {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+    overflow-y: auto; /* Allow content to scroll */
+  }
+
+  /* Desktop and up */
+  @media (min-width: 1024px) {
+    .app-layout {
+      grid-template-columns: 250px 1fr; /* Sidebar width and main content */
+    }
+
+    .sidebar {
+      grid-column: 1 / 2;
+    }
+
+    .main-content {
+      grid-column: 2 / 3;
+    }
+
+  /* RTL Override for Grid Layout: flip columns so sidebar appears on the right when [dir="rtl"] */
+    [dir="rtl"] .app-layout {
+      grid-template-columns: 1fr 250px; /* Main content and sidebar */
+    }
+
+    [dir="rtl"] .sidebar {
+      grid-column: 2 / 3;
+    }
+
+    [dir="rtl"] .main-content {
+      grid-column: 1 / 2;
+    }
+  }
+}
+
+/* ==========================================================================
+   Purchase Request (PR) Page - Modern UI Overhaul
+   ========================================================================== */
+
+/* 1. Global Layout & Spacing
+   -------------------------------------------------------------------------- */
+.pr-page-container {
+  padding: 2rem; /* Increased padding for more breathing room */
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* Consistent vertical gap */
+}
+
+/* 2. Typography & Visual Hierarchy
+   -------------------------------------------------------------------------- */
+.pr-page-title {
+  font-size: 1.75rem; /* 28px */
+  font-weight: 700;
+  color: hsl(var(--foreground));
+}
+
+.pr-page-subtitle {
+  font-size: 1rem;
+  color: hsl(var(--muted-foreground));
+  margin-top: 0.25rem;
+}
+
+/* 3. Filter & Search Controls
+   -------------------------------------------------------------------------- */
+.pr-filters-card {
+  background-color: hsl(var(--card));
+  border-radius: var(--radius);
+  border: 1px solid hsl(var(--border));
+}
+
+.search-input-wrapper {
+  position: relative;
+}
+
+.search-input-icon {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  inset-inline-start: 0.75rem;
+  color: hsl(var(--muted-foreground));
+}
+
+.search-input {
+  padding-inline-start: 2.5rem; /* Space for the icon */
+  background-color: hsl(var(--input));
+  border-color: hsl(var(--border));
+}
+
+.search-input:focus {
+  border-color: hsl(var(--ring));
+  box-shadow: 0 0 0 1px hsl(var(--ring));
+}
+
+/* 4. Request Card Grid
+   -------------------------------------------------------------------------- */
+.pr-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+}
+
+/* 5. The Request Card Component (`.pr-card`)
+   -------------------------------------------------------------------------- */
+.pr-card {
+  background-color: hsl(var(--card));
+  border-radius: 0.75rem; /* 12px */
+  border: 1px solid hsl(var(--border));
+  box-shadow: var(--shadow-sm);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.pr-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Enhanced card elements for dark mode */
+.dark .card,
+.dark .pr-card {
+  border: 1px solid hsl(var(--border));
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+}
+
+.dark .card:hover,
+.dark .pr-card:hover {
+  border-color: hsl(var(--primary) / 0.3);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+}
+
+/* Card Header: Title and Status */
+.pr-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.pr-card-title {
+  font-size: 1.125rem; /* 18px */
+  font-weight: 600;
+  color: hsl(var(--foreground));
+  line-height: 1.4;
+}
+
+/* Card Body: Description */
+.pr-card-body {
+  flex-grow: 1;
+}
+
+.pr-card-description {
+  font-size: 0.875rem; /* 14px */
+  color: hsl(var(--muted-foreground));
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Card Footer: Metadata and Actions */
+.pr-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid hsl(var(--border));
+  padding-top: 1rem;
+  margin-top: auto;
+}
+
+.pr-card-metadata {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.8125rem; /* 13px */
+  color: hsl(var(--muted-foreground));
+}
+
+.metadata-item {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.metadata-icon {
+  width: 0.875rem; /* 14px */
+  height: 0.875rem;
+  color: hsl(var(--muted-foreground));
+}
+
+.pr-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* 6. Status Badges
+   -------------------------------------------------------------------------- */
+.status-badge {
+  padding: 0.25rem 0.625rem;
+  border-radius: 9999px;
+  font-size: 0.75rem; /* 12px */
+  font-weight: 500;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.status-submitted {
+  background-color: hsl(var(--primary) / 0.1);
+  color: hsl(var(--primary));
+}
+.status-dm_approved {
+  background-color: hsl(var(--success) / 0.1);
+  color: hsl(var(--success));
+}
+.status-rejected {
+  background-color: hsl(var(--destructive) / 0.1);
+  color: hsl(var(--destructive));
+}
+
+/* Dark mode status badge enhancements for better visibility */
+.dark .status-submitted {
+  background-color: hsl(var(--primary) / 0.2);
+  color: hsl(var(--primary));
+  border: 1px solid hsl(var(--primary) / 0.3);
+}
+.dark .status-dm_approved {
+  background-color: hsl(var(--success) / 0.2);
+  color: hsl(var(--success));
+  border: 1px solid hsl(var(--success) / 0.3);
+}
+.dark .status-rejected {
+  background-color: hsl(var(--destructive) / 0.2);
+  color: hsl(var(--destructive));
+  border: 1px solid hsl(var(--destructive) / 0.3);
+}
+/* Add other status colors as needed */
+
+/* 7. Avatars
+   -------------------------------------------------------------------------- */
+.avatar-group {
+  display: flex;
+  padding-inline-end: 0.5rem;
+}
+
+.avatar-circle {
+  width: 2rem; /* 32px */
+  height: 2rem;
+  border: 2px solid hsl(var(--card));
+}
+
+.avatar-circle:not(:first-child) {
+  margin-inline-start: -0.75rem;
+}
+
+.avatar-fallback {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+/* End of avatar styles */

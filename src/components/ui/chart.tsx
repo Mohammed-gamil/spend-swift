@@ -60,9 +60,29 @@ const ChartContainer = React.forwardRef<
         data-chart={chartId}
         ref={ref}
         className={cn(
-          "flex aspect-video justify-center text-xs [&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground [&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-border/50 [&_.recharts-curve.recharts-tooltip-cursor]:stroke-border [&_.recharts-dot[stroke='#fff']]:stroke-transparent [&_.recharts-layer]:outline-none [&_.recharts-polar-grid_[stroke='#ccc']]:stroke-border [&_.recharts-radial-bar-background-sector]:fill-muted [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-muted [&_.recharts-reference-line_[stroke='#ccc']]:stroke-border [&_.recharts-sector[stroke='#fff']]:stroke-transparent [&_.recharts-sector]:outline-none [&_.recharts-surface]:outline-none",
+          "flex aspect-video justify-center text-xs",
+          "[&_.recharts-cartesian-axis-tick_text]:fill-[--chart-grid]",
+          "[&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-[--chart-grid]",
+          "[&_.recharts-curve.recharts-tooltip-cursor]:stroke-border",
+          "[&_.recharts-dot[stroke='#fff']]:stroke-transparent",
+          "[&_.recharts-layer]:outline-none",
+          "[&_.recharts-polar-grid_[stroke='#ccc']]:stroke-[--chart-grid]",
+          "[&_.recharts-radial-bar-background-sector]:fill-muted",
+          "[&_.recharts-rectangle.recharts-tooltip-cursor]:fill-muted",
+          "[&_.recharts-reference-line_[stroke='#ccc']]:stroke-[--chart-grid]",
+          "[&_.recharts-sector[stroke='#fff']]:stroke-transparent",
+          "[&_.recharts-sector]:outline-none [&_.recharts-surface]:outline-none",
           className
         )}
+        style={{
+          // Ensure grid/ticks pick muted gray and primary series use gold by default
+          // Consumers can still override via config or props
+          //--chart-primary maps to #f2aa38, --chart-grid to #bcbcbd in index.css
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore - CSSProperties allows string values
+          "--chart-grid": "var(--chart-grid)",
+          "--chart-primary": "var(--chart-primary)",
+        } as React.CSSProperties}
         {...props}
       >
         <ChartStyle id={chartId} config={config} />

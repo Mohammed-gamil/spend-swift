@@ -17,6 +17,7 @@ import {
   Line
 } from "recharts";
 import { Download, Filter, Percent, PieChart, TrendingUp, Users } from "lucide-react";
+import { useTranslation } from "@/hooks/use-translation";
 
 type Status = "ALL" | "SUBMITTED" | "DM_APPROVED" | "ACCT_APPROVED" | "FINAL_APPROVED" | "REJECTED" | "FUNDS_TRANSFERRED";
 
@@ -58,6 +59,7 @@ const mockRequesters: RequesterStat[] = [
 ];
 
 export default function Reports() {
+  const { t } = useTranslation();
   const [status, setStatus] = useState<Status>("ALL");
   const [from, setFrom] = useState<string>("");
   const [to, setTo] = useState<string>("");
@@ -118,12 +120,12 @@ export default function Reports() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Reports</h1>
-          <p className="text-muted-foreground mt-1">Manager insights and analytics</p>
+          <h1 className="text-3xl font-bold">{t('reports.title')}</h1>
+          <p className="text-muted-foreground mt-1">{t('reports.subtitle')}</p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" onClick={exportCSV}>
-            <Download className="mr-2 h-4 w-4" /> Export CSV
+            <Download className="mr-2 h-4 w-4" /> {t('reports.exportCSV')}
           </Button>
         </div>
       </div>
@@ -132,33 +134,33 @@ export default function Reports() {
       <Card className="luxury-card">
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-base">
-            <Filter className="h-4 w-4" /> Filters
+            <Filter className="h-4 w-4" /> {t('reports.filters')}
           </CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4 md:grid-cols-3">
           <div className="grid gap-1">
-            <label className="text-sm text-muted-foreground">Status</label>
+            <label className="text-sm text-muted-foreground">{t('reports.status')}</label>
             <Select value={status} onValueChange={(v: Status) => setStatus(v)}>
               <SelectTrigger>
-                <SelectValue placeholder="All" />
+                <SelectValue placeholder={t('common.all')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="ALL">All</SelectItem>
-                <SelectItem value="SUBMITTED">Submitted</SelectItem>
-                <SelectItem value="DM_APPROVED">DM Approved</SelectItem>
-                <SelectItem value="ACCT_APPROVED">Accounting Approved</SelectItem>
-                <SelectItem value="FINAL_APPROVED">Final Approved</SelectItem>
-                <SelectItem value="FUNDS_TRANSFERRED">Funds Transferred</SelectItem>
-                <SelectItem value="REJECTED">Rejected</SelectItem>
+                <SelectItem value="ALL">{t('common.all')}</SelectItem>
+                <SelectItem value="SUBMITTED">{t('status.SUBMITTED')}</SelectItem>
+                <SelectItem value="DM_APPROVED">{t('status.DM_APPROVED')}</SelectItem>
+                <SelectItem value="ACCT_APPROVED">{t('status.ACCT_APPROVED')}</SelectItem>
+                <SelectItem value="FINAL_APPROVED">{t('status.FINAL_APPROVED')}</SelectItem>
+                <SelectItem value="FUNDS_TRANSFERRED">{t('status.FUNDS_TRANSFERRED')}</SelectItem>
+                <SelectItem value="REJECTED">{t('status.REJECTED')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div className="grid gap-1">
-            <label className="text-sm text-muted-foreground">From</label>
+            <label className="text-sm text-muted-foreground">{t('reports.from')}</label>
             <Input type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
           </div>
           <div className="grid gap-1">
-            <label className="text-sm text-muted-foreground">To</label>
+            <label className="text-sm text-muted-foreground">{t('reports.to')}</label>
             <Input type="date" value={to} onChange={(e) => setTo(e.target.value)} />
           </div>
         </CardContent>
@@ -168,7 +170,7 @@ export default function Reports() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card className="luxury-card">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">Total Submitted</CardTitle>
+            <CardTitle className="text-sm text-muted-foreground">{t('reports.totalSubmitted')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totals.submitted}</div>
@@ -176,7 +178,7 @@ export default function Reports() {
         </Card>
         <Card className="luxury-card">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">Total Approved</CardTitle>
+            <CardTitle className="text-sm text-muted-foreground">{t('reports.totalApproved')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totals.approved}</div>
@@ -184,7 +186,7 @@ export default function Reports() {
         </Card>
         <Card className="luxury-card">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">Total Spend</CardTitle>
+            <CardTitle className="text-sm text-muted-foreground">{t('reports.totalSpend')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">${totals.spend.toLocaleString()}</div>
@@ -193,7 +195,7 @@ export default function Reports() {
         <Card className="luxury-card">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm text-muted-foreground flex items-center gap-2">
-              <Percent className="h-4 w-4" /> Approval Rate
+              <Percent className="h-4 w-4" /> {t('reports.approvalRate')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -208,7 +210,7 @@ export default function Reports() {
         <Card className="lg:col-span-2 luxury-card">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-blue-600 dark:text-blue-500" /> PR Volume by Month
+              <TrendingUp className="h-5 w-5 text-blue-600 dark:text-blue-500" /> {t('reports.prVolumeByMonth')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -230,7 +232,7 @@ export default function Reports() {
         <Card className="luxury-card">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <PieChart className="h-5 w-5 text-green-600 dark:text-green-500" /> Approval Rate
+              <PieChart className="h-5 w-5 text-green-600 dark:text-green-500" /> {t('reports.approvalRate')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -259,7 +261,7 @@ export default function Reports() {
         <Card className="luxury-card">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <PieChart className="h-5 w-5 text-amber-600 dark:text-amber-400" /> Spend by Category
+              <PieChart className="h-5 w-5 text-amber-600 dark:text-amber-400" /> {t('reports.spendByCategory')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -280,7 +282,7 @@ export default function Reports() {
         <Card className="luxury-card">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Users className="h-5 w-5 text-purple-600 dark:text-purple-400" /> Top Requesters
+              <Users className="h-5 w-5 text-purple-600 dark:text-purple-400" /> {t('reports.topRequesters')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -288,9 +290,9 @@ export default function Reports() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="text-muted-foreground border-b">
-                    <th className="py-2 text-left font-medium">Name</th>
-                    <th className="py-2 text-right font-medium">Requests</th>
-                    <th className="py-2 text-right font-medium">Total Spend</th>
+                    <th className="py-2 text-left font-medium">{t('reports.name')}</th>
+                    <th className="py-2 text-right font-medium">{t('reports.requests')}</th>
+                    <th className="py-2 text-right font-medium">{t('reports.totalSpendCol')}</th>
                   </tr>
                 </thead>
                 <tbody>

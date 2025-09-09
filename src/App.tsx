@@ -40,12 +40,14 @@ const App = () => (
                 background: 'hsl(var(--background))',
                 color: 'hsl(var(--foreground))',
                 border: '1px solid hsl(var(--border))',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
               },
               success: {
                 style: {
                   background: 'hsl(142.1 76.2% 36.3%)',
-                  color: 'hsl(355.7 100% 97.3%)',
+                  color: 'hsl(0 0% 100%)', // Pure white for maximum contrast
                   border: '1px solid hsl(142.1 70.6% 45.3%)',
+                  boxShadow: '0 4px 12px rgba(20, 184, 100, 0.2)',
                 },
               },
               error: {
@@ -53,6 +55,7 @@ const App = () => (
                   background: 'hsl(var(--destructive))',
                   color: 'hsl(var(--destructive-foreground))',
                   border: '1px solid hsl(var(--destructive))',
+                  boxShadow: '0 4px 12px rgba(225, 29, 72, 0.2)',
                 },
               },
             }}

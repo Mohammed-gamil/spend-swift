@@ -1,0 +1,96 @@
+import type { Config } from "tailwindcss";
+import { fontFamily } from "tailwindcss/defaultTheme";
+import tailwindAnimate from "tailwindcss-animate";
+
+const config: Config = {
+  content: [
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
+  ],
+  prefix: "",
+  theme: {
+    extend: {
+      colors: {
+        // Our custom fixed color theme
+        border: '#f2aa38',
+        input: '#2b2b2b',
+        ring: '#f2aa38',
+        background: '#1b1b1b',
+        foreground: '#fefefe',
+        subtext: '#bcbcbd',
+        primary: {
+          DEFAULT: '#f2aa38',
+          foreground: '#1b1b1b',
+          light: '#f5bb5a',
+          dark: '#d99425'
+        },
+        secondary: {
+          DEFAULT: '#2b2b2b',
+          foreground: '#fefefe',
+        },
+        muted: {
+          DEFAULT: '#2b2b2b',
+          foreground: '#bcbcbd',
+        },
+        accent: {
+          DEFAULT: '#f2aa38',
+          foreground: '#1b1b1b',
+        },
+        destructive: {
+          DEFAULT: '#f2aa38',
+          foreground: '#1b1b1b',
+        },
+        success: {
+          DEFAULT: '#f2aa38',
+          foreground: '#1b1b1b',
+        },
+        warning: {
+          DEFAULT: '#f2aa38',
+          foreground: '#1b1b1b',
+        },
+        popover: {
+          DEFAULT: '#1b1b1b',
+          foreground: '#fefefe',
+        },
+        card: {
+          DEFAULT: '#1b1b1b',
+          foreground: '#fefefe',
+        },
+      },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
+      fontFamily: {
+        sans: ["var(--font-sans)", ...fontFamily.sans],
+        cairo: ["Cairo", "sans-serif"],
+        tajawal: ["Tajawal", "sans-serif"],
+      },
+      keyframes: {
+        "accordion-down": {
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+        shimmer: {
+          "0%, 100%": { backgroundPosition: "200% 0" },
+          "50%": { backgroundPosition: "-200% 0" },
+        },
+      },
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
+        shimmer: "shimmer 8s infinite",
+      },
+    },
+  },
+  plugins: [tailwindAnimate],
+};
+
+export default config;

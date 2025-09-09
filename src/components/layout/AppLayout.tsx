@@ -62,11 +62,14 @@ export default function AppLayout() {
     user && item.roles.includes(user.role as UserRole)
   );
 
+  const dirClass = direction === 'rtl' ? 'rtl' : 'ltr';
+  const isRtl = direction === 'rtl';
+  
   return (
-    <div className="app-layout">
+    <div className={`app-layout ${dirClass} flex ${isRtl ? 'flex-row-reverse' : 'flex-row'} min-h-screen`}>
       {/* Desktop sidebar */}
-      <div className="sidebar hidden lg:flex lg:flex-col">
-        <div className="flex flex-col flex-grow luxury-card border-r border-border/50 backdrop-blur-xl">
+      <div className="sidebar hidden lg:block w-64 flex-shrink-0">
+        <div className={`flex flex-col h-full luxury-card ${isRtl ? 'border-l' : 'border-r'} border-border/50 backdrop-blur-xl`}>
           <div className="flex items-center px-6 py-4 border-b border-border/50 luxury-header">
             <h1 className="text-xl font-bold text-foreground">{t('app.title')}</h1>
           </div>
@@ -81,7 +84,7 @@ export default function AppLayout() {
                     : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
                 }`}
               >
-                <item.icon className="mr-3 h-5 w-5" />
+                <item.icon className={`${isRtl ? 'ml-3' : 'mr-3'} h-5 w-5 ${isRtl && item.icon.name === 'ArrowRight' ? 'rtl-flip' : ''}`} />
                 {t(item.name as any)}
               </Link>
             ))}
@@ -90,7 +93,7 @@ export default function AppLayout() {
       </div>
 
       {/* Main content area including mobile header */}
-      <div className="main-content flex flex-col">
+      <div className="main-content flex flex-col flex-grow">
         {/* Mobile sidebar */}
         <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
           <SheetContent side={direction === 'rtl' ? 'right' : 'left'} className="w-64 p-0 luxury-card backdrop-blur-xl">
@@ -110,7 +113,7 @@ export default function AppLayout() {
                         : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
                     }`}
                   >
-                    <item.icon className="mr-3 h-5 w-5" />
+                    <item.icon className={`${isRtl ? 'ml-3' : 'mr-3'} h-5 w-5 ${isRtl && item.icon.name === 'ArrowRight' ? 'rtl-flip' : ''}`} />
                     {t(item.name as any)}
                   </Link>
                 ))}
@@ -169,7 +172,7 @@ export default function AppLayout() {
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleLogout}>
-                      <LogOut className="mr-2 h-4 w-4" />
+                      <LogOut className={`${isRtl ? 'ml-2' : 'mr-2'} h-4 w-4 ${isRtl ? 'rtl-flip' : ''}`} />
                       {t('nav.logout')}
                     </DropdownMenuItem>
                   </DropdownMenuContent>

@@ -12,6 +12,7 @@ import { Plus, Search, Filter, Eye, Edit, Calendar, DollarSign, Clock } from "lu
 import { formatDistanceToNow, format } from "date-fns";
 import { PurchaseRequest } from "@/types";
 import RoleGuard from "@/components/auth/RoleGuard";
+import { useTranslation } from "@/hooks/use-translation";
 
 // Mock data
 const mockPRs: PurchaseRequest[] = [
@@ -56,6 +57,7 @@ export default function PRList() {
   const { prs, isLoading, getPRs } = usePRStore();
   const [searchQuery, setSearchQuery] = useState("");
   const [stateFilter, setStateFilter] = useState<string>("all");
+  const { t } = useTranslation();
 
   useEffect(() => {
     getPRs();
@@ -98,15 +100,15 @@ export default function PRList() {
       {/* Header */}
       <div className="page-header flex items-center justify-between">
         <div>
-          <h1 className="pr-page-title">Purchase Requests</h1>
-          <p className="pr-page-subtitle">Manage and track your purchase requests</p>
+          <h1 className="pr-page-title">{t('nav.myPRs')}</h1>
+          <p className="pr-page-subtitle">{t('dashboard.recentRequests')}</p>
         </div>
         
         <RoleGuard allowedRoles={['USER']}>
           <Button asChild>
             <Link to="/prs/create">
               <Plus className="mr-2 h-4 w-4" />
-              Create Request
+              {t('nav.createPR')}
             </Link>
           </Button>
         </RoleGuard>
@@ -117,7 +119,7 @@ export default function PRList() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Filter className="h-5 w-5" />
-            Filters
+            {t('reports.filters')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -126,7 +128,7 @@ export default function PRList() {
               <div className="search-input-wrapper">
                 <Search className="search-input-icon" />
                 <Input
-                  placeholder="Search by title or PR ID..."
+                  placeholder={t('common.searchPlaceholder')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="search-input"
@@ -136,16 +138,16 @@ export default function PRList() {
             
             <Select value={stateFilter} onValueChange={setStateFilter}>
               <SelectTrigger className="w-full md:w-48">
-                <SelectValue placeholder="Filter by state" />
+                <SelectValue placeholder={t('common.filter')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All States</SelectItem>
-                <SelectItem value="DRAFT">Draft</SelectItem>
-                <SelectItem value="SUBMITTED">Submitted</SelectItem>
-                <SelectItem value="DM_APPROVED">Manager Approved</SelectItem>
-                <SelectItem value="ACCT_APPROVED">Accountant Approved</SelectItem>
-                <SelectItem value="FINAL_APPROVED">Final Approved</SelectItem>
-                <SelectItem value="FUNDS_TRANSFERRED">Funds Transferred</SelectItem>
+                <SelectItem value="all">{t('common.all')}</SelectItem>
+                <SelectItem value="DRAFT">{t('status.DRAFT')}</SelectItem>
+                <SelectItem value="SUBMITTED">{t('status.SUBMITTED')}</SelectItem>
+                <SelectItem value="DM_APPROVED">{t('status.DM_APPROVED')}</SelectItem>
+                <SelectItem value="ACCT_APPROVED">{t('status.ACCT_APPROVED')}</SelectItem>
+                <SelectItem value="FINAL_APPROVED">{t('status.FINAL_APPROVED')}</SelectItem>
+                <SelectItem value="FUNDS_TRANSFERRED">{t('status.FUNDS_TRANSFERRED')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -156,12 +158,12 @@ export default function PRList() {
       <Card>
         <CardHeader>
           <CardTitle>
-            Purchase Requests ({filteredPRs.length})
+            {t('nav.myPRs')} ({filteredPRs.length})
           </CardTitle>
           <CardDescription>
             {stateFilter === "all" 
-              ? "All your purchase requests" 
-              : `Purchase requests with status: ${stateFilter.replace('_', ' ')}`
+              ? t('dashboard.recentRequests') 
+              : `${t('common.status')}: ${t(('status.' + stateFilter) as any)}`
             }
           </CardDescription>
         </CardHeader>
@@ -188,14 +190,14 @@ export default function PRList() {
                     <div className="pr-card-metadata">
                       <div className="metadata-item">
                         <Calendar className="metadata-icon" />
-                        <span>Due {format(pr.neededByDate, "MMM d")}</span>
+                        <span>{t('prDetails.neededBy')} {format(pr.neededByDate, "MMM d")}</span>
                       </div>
                       <div className="metadata-item">
                         <DollarSign className="metadata-icon" />
                         <span>{formatCurrency(pr.desiredCost, pr.currency)}</span>
                       </div>
                       <div className="metadata-item">
-                        <span className="font-mono text-xs">ID: {pr.id}</span>
+                        <span className="font-mono text-xs">{pr.id}</span>
                       </div>
                     </div>
                     <div className="pr-card-actions">
@@ -207,14 +209,14 @@ export default function PRList() {
                           </AvatarFallback>
                         </Avatar>
                       </div>
-                      <Button variant="ghost" size="icon" asChild>
+                      <Button variant="ghost" size="icon" title={t('dashboard.view')} asChild>
                         <Link to={`/prs/${pr.id}`}>
                           <Eye className="h-5 w-5" />
                         </Link>
                       </Button>
                       <RoleGuard allowedRoles={['USER']}>
                         {pr.state === 'DRAFT' && (
-                          <Button variant="ghost" size="icon" asChild>
+                          <Button variant="ghost" size="icon" title={t('prDetails.editRequest')} asChild>
                             <Link to={`/prs/${pr.id}/edit`}>
                               <Edit className="h-5 w-5" />
                             </Link>
@@ -234,12 +236,12 @@ export default function PRList() {
                 </svg>
               </div>
               <h3 className="text-lg font-medium text-gray-900 mb-2">
-                No purchase requests found
+                {t('notfound.message')}
               </h3>
               <p className="text-gray-600 mb-4">
                 {searchQuery || stateFilter !== 'all' 
-                  ? 'No requests match your current filters.' 
-                  : 'Get started by creating your first purchase request.'
+                  ? t('common.error') 
+                  : t('prCreate.subtitle')
                 }
               </p>
               {(searchQuery || stateFilter !== 'all') ? (
@@ -250,14 +252,14 @@ export default function PRList() {
                     setStateFilter('all');
                   }}
                 >
-                  Clear Filters
+                  {t('common.reset')}
                 </Button>
               ) : (
                 <RoleGuard allowedRoles={['USER']}>
                   <Button asChild>
                     <Link to="/prs/create">
                       <Plus className="mr-2 h-4 w-4" />
-                      Create Your First Request
+                      {t('dashboard.createNewRequest')}
                     </Link>
                   </Button>
                 </RoleGuard>

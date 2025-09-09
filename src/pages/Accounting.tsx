@@ -19,14 +19,17 @@ import {
   AlertCircle
 } from "lucide-react";
 import { format } from "date-fns";
+import { ar as arSA } from "date-fns/locale";
 import toast from "react-hot-toast";
+import { useTranslation } from "@/hooks/use-translation";
 
 export default function Accounting() {
+  const { t, language } = useTranslation();
   const [selectedPeriod, setSelectedPeriod] = useState("current-month");
 
   const stats = [
     {
-      title: "Pending Transfers",
+  title: t('accounting.stats.pendingTransfers'),
       value: "$45,230",
       change: "+12%",
       icon: CreditCard,
@@ -34,7 +37,7 @@ export default function Accounting() {
       trend: "up"
     },
     {
-      title: "Monthly Budget Used",
+  title: t('accounting.stats.monthlyBudgetUsed'),
       value: "68%",
       change: "+5%",
       icon: TrendingUp,
@@ -42,7 +45,7 @@ export default function Accounting() {
       trend: "up"
     },
     {
-      title: "Approved This Month",
+  title: t('accounting.stats.approvedThisMonth'),
       value: "$128,450",
       change: "+18%",
       icon: DollarSign,
@@ -50,7 +53,7 @@ export default function Accounting() {
       trend: "up"
     },
     {
-      title: "Active Departments",
+  title: t('accounting.stats.activeDepartments'),
       value: "12",
       change: "0%",
       icon: Building,
@@ -151,11 +154,11 @@ export default function Accounting() {
   ];
 
   const handleTransferFunds = (prId: string) => {
-    toast.success(`Initiating fund transfer for ${prId}`);
+    toast.success(t('accounting.toast.transferInitiated').replace('{id}', prId));
   };
 
   const handleExportReport = (type: string) => {
-    toast.success(`Generating ${type} report...`);
+    toast.success(t('accounting.toast.reportGenerating').replace('{type}', type));
   };
 
   return (
@@ -163,9 +166,9 @@ export default function Accounting() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Accounting Dashboard</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t('accounting.title')}</h1>
           <p className="text-muted-foreground">
-            Manage financial approvals, transfers, and budgets
+            {t('accounting.subtitle')}
           </p>
         </div>
         <div className="flex items-center space-x-2">
@@ -174,15 +177,15 @@ export default function Accounting() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="current-month">Current Month</SelectItem>
-              <SelectItem value="last-month">Last Month</SelectItem>
-              <SelectItem value="quarter">This Quarter</SelectItem>
-              <SelectItem value="year">This Year</SelectItem>
+              <SelectItem value="current-month">{t('accounting.period.currentMonth')}</SelectItem>
+              <SelectItem value="last-month">{t('accounting.period.lastMonth')}</SelectItem>
+              <SelectItem value="quarter">{t('accounting.period.quarter')}</SelectItem>
+              <SelectItem value="year">{t('accounting.period.year')}</SelectItem>
             </SelectContent>
           </Select>
           <Button onClick={() => handleExportReport('financial')}>
             <Download className="mr-2 h-4 w-4" />
-            Export Report
+            {t('accounting.exportReport')}
           </Button>
         </div>
       </div>
@@ -210,7 +213,7 @@ export default function Accounting() {
                   <span className={stat.trend === "up" ? "text-green-600" : stat.trend === "down" ? "text-red-600" : ""}>
                     {stat.change}
                   </span>
-                  <span className="ml-1">from last month</span>
+                  <span className="ml-1">{t('accounting.stats.fromLastMonth')}</span>
                 </div>
               </CardContent>
             </Card>
@@ -221,19 +224,19 @@ export default function Accounting() {
       {/* Main Content Tabs */}
       <Tabs defaultValue="transfers" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="transfers">Pending Transfers</TabsTrigger>
-          <TabsTrigger value="transactions">Recent Transactions</TabsTrigger>
-          <TabsTrigger value="budgets">Department Budgets</TabsTrigger>
-          <TabsTrigger value="reports">Reports</TabsTrigger>
+          <TabsTrigger value="transfers">{t('accounting.tabs.transfers')}</TabsTrigger>
+          <TabsTrigger value="transactions">{t('accounting.tabs.transactions')}</TabsTrigger>
+          <TabsTrigger value="budgets">{t('accounting.tabs.budgets')}</TabsTrigger>
+          <TabsTrigger value="reports">{t('accounting.tabs.reports')}</TabsTrigger>
         </TabsList>
 
         {/* Pending Transfers Tab */}
         <TabsContent value="transfers" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Pending Fund Transfers</CardTitle>
+              <CardTitle>{t('accounting.transfers.title')}</CardTitle>
               <CardDescription>
-                Purchase requests approved and awaiting fund transfer
+                {t('accounting.transfers.description')}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -247,13 +250,13 @@ export default function Accounting() {
                           {transfer.id} • {transfer.requester} • {transfer.department}
                         </div>
                         <div className="text-xs text-muted-foreground">
-                          Approved: {format(transfer.approvedDate, "MMM dd, yyyy")}
+                          {t('common.approved')}: {format(transfer.approvedDate, "MMM dd, yyyy", { locale: language === 'ar' ? arSA : undefined })}
                         </div>
                       </div>
                     </div>
                     <div className="flex items-center space-x-4">
                       <Badge variant={transfer.priority === "high" ? "destructive" : "secondary"}>
-                        {transfer.priority}
+                        {t(`common.priority.${transfer.priority}` as any)}
                       </Badge>
                       <div className="text-right">
                         <div className="font-bold">${transfer.amount.toLocaleString()}</div>
@@ -266,7 +269,7 @@ export default function Accounting() {
                           size="sm" 
                           onClick={() => handleTransferFunds(transfer.id)}
                         >
-                          Transfer Funds
+                          {t('accounting.transfers.transferFunds')}
                         </Button>
                       </div>
                     </div>
@@ -281,9 +284,9 @@ export default function Accounting() {
         <TabsContent value="transactions" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Recent Transactions</CardTitle>
+              <CardTitle>{t('accounting.transactions.title')}</CardTitle>
               <CardDescription>
-                Recently completed and pending fund transfers
+                {t('accounting.transactions.description')}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -306,7 +309,7 @@ export default function Accounting() {
                           {transaction.prId} • {transaction.method}
                         </div>
                         <div className="text-xs text-muted-foreground">
-                          {format(transaction.transferredDate, "MMM dd, yyyy")}
+                          {format(transaction.transferredDate, "MMM dd, yyyy", { locale: language === 'ar' ? arSA : undefined })}
                         </div>
                       </div>
                     </div>
@@ -332,9 +335,9 @@ export default function Accounting() {
         <TabsContent value="budgets" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Department Budget Overview</CardTitle>
+              <CardTitle>{t('accounting.budgets.title')}</CardTitle>
               <CardDescription>
-                Current budget utilization by department
+                {t('accounting.budgets.description')}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -349,8 +352,8 @@ export default function Accounting() {
                     </div>
                     <Progress value={budget.utilization} className="h-2" />
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <span>{budget.utilization.toFixed(1)}% utilized</span>
-                      <span>${budget.remaining.toLocaleString()} remaining</span>
+                      <span>{budget.utilization.toFixed(1)}% {t('accounting.budgets.utilized')}</span>
+                      <span>${budget.remaining.toLocaleString()} {t('accounting.budgets.remaining')}</span>
                     </div>
                   </div>
                 ))}
@@ -364,8 +367,8 @@ export default function Accounting() {
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Financial Summary</CardTitle>
-                <CardDescription>Monthly financial overview</CardDescription>
+                <CardTitle className="text-lg">{t('accounting.reports.financialSummary.title')}</CardTitle>
+                <CardDescription>{t('accounting.reports.financialSummary.description')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <Button 
@@ -374,15 +377,15 @@ export default function Accounting() {
                   onClick={() => handleExportReport('financial-summary')}
                 >
                   <Download className="mr-2 h-4 w-4" />
-                  Generate Report
+                  {t('accounting.reports.generate')}
                 </Button>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Budget Analysis</CardTitle>
-                <CardDescription>Department budget breakdown</CardDescription>
+                <CardTitle className="text-lg">{t('accounting.reports.budgetAnalysis.title')}</CardTitle>
+                <CardDescription>{t('accounting.reports.budgetAnalysis.description')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <Button 
@@ -391,15 +394,15 @@ export default function Accounting() {
                   onClick={() => handleExportReport('budget-analysis')}
                 >
                   <Download className="mr-2 h-4 w-4" />
-                  Generate Report
+                  {t('accounting.reports.generate')}
                 </Button>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Transaction History</CardTitle>
-                <CardDescription>Detailed transaction log</CardDescription>
+                <CardTitle className="text-lg">{t('accounting.reports.transactionHistory.title')}</CardTitle>
+                <CardDescription>{t('accounting.reports.transactionHistory.description')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <Button 
@@ -408,7 +411,7 @@ export default function Accounting() {
                   onClick={() => handleExportReport('transaction-history')}
                 >
                   <Download className="mr-2 h-4 w-4" />
-                  Generate Report
+                  {t('accounting.reports.generate')}
                 </Button>
               </CardContent>
             </Card>

@@ -4,9 +4,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useAuthStore } from "@/stores/authStore";
+import RoleGuard from "@/components/auth/RoleGuard";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Textarea } from "@/components/ui/textarea";
@@ -24,14 +26,16 @@ import {
   XCircle, 
   Download,
   Eye,
+  Plus,
   Calendar,
   Building,
   MessageSquare
 } from "lucide-react";
 import { formatDistanceToNow, format } from "date-fns";
+import { ar as arSA } from "date-fns/locale";
 import { PurchaseRequest, PayoutChannel, UserRole } from "@/types";
-import RoleGuard from "@/components/auth/RoleGuard";
 import toast from "react-hot-toast";
+import { useTranslation } from "@/hooks/use-translation";
 
 // Mock data - in real app this would come from API
 const mockPR: PurchaseRequest = {
@@ -43,6 +47,7 @@ const mockPR: PurchaseRequest = {
   category: "IT Equipment",
   desiredCost: 2499,
   currency: "USD",
+  type: 'purchase',
   neededByDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
   state: "SUBMITTED",
   currentApproverId: "1",
@@ -75,14 +80,27 @@ const approvalSchema = z.object({
 });
 
 const fundsTransferSchema = z.object({
-  payoutReference: z.string().min(1, "Reference is required"),
+  payoutReference: z.string().min(1, "prDetails.payoutReferenceRequired"),
   transferredAt: z.date(),
+});
+
+const quoteUploadSchema = z.object({
+  vendorName: z.string().min(1, "prDetails.vendorNameRequired"),
+  quoteTotal: z.number().positive("prDetails.quoteTotalPositive"),
 });
 
 type ApprovalFormData = z.infer<typeof approvalSchema>;
 type FundsTransferFormData = z.infer<typeof fundsTransferSchema>;
+type QuoteUploadFormData = z.infer<typeof quoteUploadSchema>;
 
-const stateSteps = ["Draft", "Submitted", "Manager Approved", "Accountant Approved", "Final Approved", "Funds Transferred"];
+const stateSteps = [
+  'prDetails.stepDraft',
+  'prDetails.stepSubmitted',
+  'prDetails.stepManagerApproved',
+  'prDetails.stepAccountantApproved',
+  'prDetails.stepFinalApproved',
+  'prDetails.stepFundsTransferred',
+];
 const rejectedStates = ["DM_REJECTED", "ACCT_REJECTED", "FINAL_REJECTED"];
 
 export default function PRDetails() {
@@ -91,6 +109,9 @@ export default function PRDetails() {
   const { user } = useAuthStore();
   const [showApprovalDialog, setShowApprovalDialog] = useState(false);
   const [showFundsDialog, setShowFundsDialog] = useState(false);
+  const [showQuoteDialog, setShowQuoteDialog] = useState(false);
+  const [quoteFiles, setQuoteFiles] = useState<File[]>([]);
+  const { t, language } = useTranslation();
 
   const approvalForm = useForm<ApprovalFormData>({
     resolver: zodResolver(approvalSchema),
@@ -105,6 +126,14 @@ export default function PRDetails() {
     defaultValues: {
       payoutReference: "",
       transferredAt: new Date(),
+    },
+  });
+  
+  const quoteForm = useForm<QuoteUploadFormData>({
+    resolver: zodResolver(quoteUploadSchema),
+    defaultValues: {
+      vendorName: "",
+      quoteTotal: 0,
     },
   });
 
@@ -134,7 +163,8 @@ export default function PRDetails() {
   };
 
   const formatCurrency = (amount: number, currency: string) => {
-    return new Intl.NumberFormat('en-US', {
+    const locale = language === 'ar' ? 'ar-EG' : 'en-US';
+    return new Intl.NumberFormat(locale, {
       style: 'currency',
       currency: currency,
     }).format(amount);
@@ -153,27 +183,63 @@ export default function PRDetails() {
   const handleApproval = async (data: ApprovalFormData) => {
     try {
       console.log("Submitting approval:", data);
-      toast.success(`PR ${data.decision.toLowerCase()} successfully`);
+      toast.success(t('prDetails.toast.approvalSuccess'));
       setShowApprovalDialog(false);
       // In real app, this would update the PR state and navigate
     } catch (error) {
-      toast.error("Failed to process approval");
+      toast.error(t('prDetails.toast.approvalError'));
     }
   };
 
   const handleFundsTransfer = async (data: FundsTransferFormData) => {
     try {
       console.log("Marking funds as transferred:", data);
-      toast.success("Funds marked as transferred successfully");
+      toast.success(t('prDetails.toast.fundsSuccess'));
       setShowFundsDialog(false);
     } catch (error) {
-      toast.error("Failed to mark funds as transferred");
+      toast.error(t('prDetails.toast.fundsError'));
     }
   };
 
   const downloadQuote = (quote: any) => {
     // In real app, this would download the file
-    toast.success(`Downloading ${quote.vendorName} quote`);
+    toast.success(t('prDetails.toast.downloadingQuote').replace('{vendor}', quote.vendorName));
+  };
+  
+  const handleQuoteUpload = async (data: QuoteUploadFormData) => {
+    try {
+      if (quoteFiles.length === 0) {
+        toast.error(t('prDetails.toast.noQuoteFiles'));
+        return;
+      }
+      
+      // Get the first file (since we only allow one)
+      const file = quoteFiles[0];
+      
+      // Check file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error(t('prDetails.toast.fileTooLarge'));
+        return;
+      }
+      
+      console.log("Uploading quote:", {
+        ...data,
+        fileName: file.name,
+        fileSize: file.size,
+        fileType: file.type
+      });
+      
+      // In a real app, this would be an API call to upload the file and create the quote
+      // For demo, we'll just show success and close the dialog
+      toast.success(t('prDetails.toast.quoteUploadSuccess').replace('{vendor}', data.vendorName));
+      
+      // Reset form and close dialog
+      quoteForm.reset();
+      setQuoteFiles([]);
+      setShowQuoteDialog(false);
+    } catch (error) {
+      toast.error(t('common.errorOccurred'));
+    }
   };
 
   return (
@@ -183,16 +249,16 @@ export default function PRDetails() {
         <div className="flex items-center gap-4">
           <Button variant="ghost" onClick={() => navigate("/prs")}>
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to PRs
+            {t('prDetails.backToPRs')}
           </Button>
           <div>
             <div className="flex items-center gap-3">
               <h1 className="text-3xl font-bold">{mockPR.title}</h1>
               <Badge className={getStateColor(mockPR.state)}>
-                {mockPR.state.replace('_', ' ')}
+                {t((`status.${mockPR.state}`) as any)}
               </Badge>
             </div>
-            <p className="text-gray-600 mt-1">PR #{mockPR.id}</p>
+            <p className="text-gray-600 mt-1">{t('prDetails.prNumber')}{mockPR.id}</p>
           </div>
         </div>
 
@@ -203,60 +269,60 @@ export default function PRDetails() {
                 <DialogTrigger asChild>
                   <Button>
                     <CheckCircle className="h-4 w-4 mr-2" />
-                    Review
+                    {t('prDetails.review')}
                   </Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Review Purchase Request</DialogTitle>
+                    <DialogTitle>{t('prDetails.reviewDialogTitle')}</DialogTitle>
                     <DialogDescription>
-                      Please review and make a decision on this purchase request.
+                      {t('prDetails.reviewDialogDescription')}
                     </DialogDescription>
                   </DialogHeader>
                   <form onSubmit={approvalForm.handleSubmit(handleApproval)} className="space-y-4">
                     <div className="space-y-2">
-                      <Label>Decision</Label>
+                      <Label>{t('prDetails.decision')}</Label>
                       <Select onValueChange={(value: "APPROVED" | "REJECTED") => approvalForm.setValue("decision", value)}>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select decision" />
+                          <SelectValue placeholder={t('prDetails.selectDecision')} />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="APPROVED">Approve</SelectItem>
-                          <SelectItem value="REJECTED">Reject</SelectItem>
+                          <SelectItem value="APPROVED">{t('prDetails.approve')}</SelectItem>
+                          <SelectItem value="REJECTED">{t('prDetails.reject')}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
 
                     {user?.role === 'ACCOUNTANT' && approvalForm.watch("decision") === "APPROVED" && (
                       <div className="space-y-2">
-                        <Label>Payout Channel</Label>
+                        <Label>{t('prDetails.payoutChannel')}</Label>
                         <Select onValueChange={(value: PayoutChannel) => approvalForm.setValue("payoutChannel", value)}>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select payout channel" />
+                            <SelectValue placeholder={t('prDetails.selectPayoutChannel')} />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="WALLET">Digital Wallet</SelectItem>
-                            <SelectItem value="COMPANY">Company Account</SelectItem>
-                            <SelectItem value="COURIER">Cash on Delivery</SelectItem>
+                            <SelectItem value="WALLET">{t('prDetails.payoutWallet')}</SelectItem>
+                            <SelectItem value="COMPANY">{t('prDetails.payoutCompany')}</SelectItem>
+                            <SelectItem value="COURIER">{t('prDetails.payoutCourier')}</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
                     )}
 
                     <div className="space-y-2">
-                      <Label>Comment {approvalForm.watch("decision") === "REJECTED" && "*"}</Label>
+                      <Label>{approvalForm.watch("decision") === "REJECTED" ? t('prDetails.commentRequired') : t('prDetails.comment')}</Label>
                       <Textarea
-                        placeholder="Add your comments..."
+                        placeholder={t('prDetails.commentPlaceholder')}
                         {...approvalForm.register("comment")}
                       />
                     </div>
 
                     <div className="flex justify-end gap-2">
                       <Button type="button" variant="outline" onClick={() => setShowApprovalDialog(false)}>
-                        Cancel
+                        {t('common.cancel')}
                       </Button>
                       <Button type="submit">
-                        Submit Decision
+                        {t('prDetails.submitDecision')}
                       </Button>
                     </div>
                   </form>
@@ -271,29 +337,29 @@ export default function PRDetails() {
                 <DialogTrigger asChild>
                   <Button variant="outline">
                     <DollarSign className="h-4 w-4 mr-2" />
-                    Mark Funds Transferred
+                    {t('prDetails.markFundsTransferred')}
                   </Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Mark Funds as Transferred</DialogTitle>
+                    <DialogTitle>{t('prDetails.fundsDialogTitle')}</DialogTitle>
                     <DialogDescription>
-                      Confirm that the funds have been transferred for this purchase request.
+                      {t('prDetails.fundsDialogDescription')}
                     </DialogDescription>
                   </DialogHeader>
                   <form onSubmit={fundsForm.handleSubmit(handleFundsTransfer)} className="space-y-4">
                     <div className="space-y-2">
-                      <Label>Payout Reference *</Label>
+                      <Label>{t('prDetails.payoutReference')}</Label>
                       <input
                         type="text"
-                        placeholder="Enter transaction reference"
+                        placeholder={t('prDetails.payoutReferencePlaceholder')}
                         {...fundsForm.register("payoutReference")}
                         className="w-full px-3 py-2 border rounded-md"
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label>Transfer Date *</Label>
+                      <Label>{t('prDetails.transferDate')}</Label>
                       <input
                         type="date"
                         {...fundsForm.register("transferredAt", { valueAsDate: true })}
@@ -303,10 +369,10 @@ export default function PRDetails() {
 
                     <div className="flex justify-end gap-2">
                       <Button type="button" variant="outline" onClick={() => setShowFundsDialog(false)}>
-                        Cancel
+                        {t('common.cancel')}
                       </Button>
                       <Button type="submit">
-                        Mark as Transferred
+                        {t('prDetails.markAsTransferred')}
                       </Button>
                     </div>
                   </form>
@@ -321,7 +387,7 @@ export default function PRDetails() {
       <Card>
         <CardContent className="pt-6">
           <Stepper 
-            steps={stateSteps} 
+            steps={stateSteps.map((k) => t(k as any))} 
             currentStep={getCurrentStepIndex(mockPR.state)} 
           />
         </CardContent>
@@ -333,42 +399,42 @@ export default function PRDetails() {
         <div className="lg:col-span-2">
           <Tabs defaultValue="overview" className="space-y-4">
             <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="items">Items</TabsTrigger>
-              <TabsTrigger value="quotes">Quotes</TabsTrigger>
-              <TabsTrigger value="approvals">Approvals</TabsTrigger>
+              <TabsTrigger value="overview">{t('prDetails.tabOverview')}</TabsTrigger>
+              <TabsTrigger value="items">{t('prDetails.tabItems')}</TabsTrigger>
+              <TabsTrigger value="quotes">{t('prDetails.tabQuotes')}</TabsTrigger>
+              <TabsTrigger value="approvals">{t('prDetails.tabApprovals')}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="overview" className="space-y-4">
               <Card>
                 <CardHeader>
-                  <CardTitle>Request Details</CardTitle>
+                  <CardTitle>{t('prDetails.requestDetails')}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid gap-4 md:grid-cols-2">
                     <div>
-                      <h4 className="font-medium text-sm text-gray-500">Category</h4>
+                      <h4 className="font-medium text-sm text-gray-500">{t('prDetails.category')}</h4>
                       <p>{mockPR.category}</p>
                     </div>
                     <div>
-                      <h4 className="font-medium text-sm text-gray-500">Estimated Cost</h4>
+                      <h4 className="font-medium text-sm text-gray-500">{t('prDetails.estimatedCost')}</h4>
                       <p className="text-lg font-semibold">
                         {formatCurrency(mockPR.desiredCost, mockPR.currency)}
                       </p>
                     </div>
                     <div>
-                      <h4 className="font-medium text-sm text-gray-500">Needed By</h4>
-                      <p>{format(mockPR.neededByDate, "PPP")}</p>
+                      <h4 className="font-medium text-sm text-gray-500">{t('prDetails.neededBy')}</h4>
+                      <p>{format(mockPR.neededByDate, "PPP", { locale: language === 'ar' ? arSA : undefined })}</p>
                     </div>
                     <div>
-                      <h4 className="font-medium text-sm text-gray-500">Created</h4>
-                      <p>{formatDistanceToNow(mockPR.createdAt, { addSuffix: true })}</p>
+                      <h4 className="font-medium text-sm text-gray-500">{t('prDetails.created')}</h4>
+                      <p>{formatDistanceToNow(mockPR.createdAt, { addSuffix: true, locale: language === 'ar' ? arSA : undefined })}</p>
                     </div>
                   </div>
 
                   {mockPR.description && (
                     <div>
-                      <h4 className="font-medium text-sm text-gray-500 mb-2">Description</h4>
+                      <h4 className="font-medium text-sm text-gray-500 mb-2">{t('prDetails.description')}</h4>
                       <p className="text-gray-700">{mockPR.description}</p>
                     </div>
                   )}
@@ -379,7 +445,7 @@ export default function PRDetails() {
             <TabsContent value="items" className="space-y-4">
               <Card>
                 <CardHeader>
-                  <CardTitle>Items ({mockPR.items.length})</CardTitle>
+                  <CardTitle>{t('prDetails.itemsCount').replace('{count}', String(mockPR.items.length))}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
@@ -392,15 +458,15 @@ export default function PRDetails() {
                           </span>
                         </div>
                         <div className="grid gap-2 md:grid-cols-3 text-sm text-gray-600">
-                          <div>Quantity: {item.quantity}</div>
-                          <div>Unit Price: {formatCurrency(item.unitPrice, mockPR.currency)}</div>
-                          {item.vendorHint && <div>Vendor Hint: {item.vendorHint}</div>}
+                          <div>{t('prDetails.quantity')}: {item.quantity}</div>
+                          <div>{t('prDetails.unitPrice')}: {formatCurrency(item.unitPrice, mockPR.currency)}</div>
+                          {item.vendorHint && <div>{t('prDetails.vendorHint')}: {item.vendorHint}</div>}
                         </div>
                       </div>
                     ))}
                     <div className="border-t pt-4">
                       <div className="flex justify-between items-center font-bold">
-                        <span>Total</span>
+                        <span>{t('prDetails.total')}</span>
                         <span>{formatCurrency(mockPR.items.reduce((sum, item) => sum + item.total, 0), mockPR.currency)}</span>
                       </div>
                     </div>
@@ -411,8 +477,14 @@ export default function PRDetails() {
 
             <TabsContent value="quotes" className="space-y-4">
               <Card>
-                <CardHeader>
-                  <CardTitle>Vendor Quotes ({mockPR.quotes.length})</CardTitle>
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <CardTitle>{t('prDetails.quotesCount').replace('{count}', String(mockPR.quotes.length))}</CardTitle>
+                  <RoleGuard allowedRoles={['ACCOUNTANT', 'ADMIN']}>
+                    <Button size="sm" onClick={() => setShowQuoteDialog(true)}>
+                      <Plus className="h-4 w-4 mr-1" />
+                      {t('prDetails.uploadQuote')}
+                    </Button>
+                  </RoleGuard>
                 </CardHeader>
                 <CardContent>
                   {mockPR.quotes.length > 0 ? (
@@ -422,27 +494,37 @@ export default function PRDetails() {
                           <div>
                             <h4 className="font-medium">{quote.vendorName}</h4>
                             <p className="text-sm text-gray-600">
-                              Total: {formatCurrency(quote.quoteTotal, mockPR.currency)}
+                              {t('prDetails.total')}: {formatCurrency(quote.quoteTotal, mockPR.currency)}
                             </p>
                             <p className="text-xs text-gray-500">
-                              Uploaded {formatDistanceToNow(quote.uploadedAt, { addSuffix: true })}
+                              {t('prDetails.uploaded')} {formatDistanceToNow(quote.uploadedAt, { addSuffix: true, locale: language === 'ar' ? arSA : undefined })}
                             </p>
                           </div>
                           <div className="flex gap-2">
                             <Button variant="outline" size="sm" onClick={() => downloadQuote(quote)}>
                               <Eye className="h-4 w-4 mr-1" />
-                              View
+                              {t('prDetails.view')}
                             </Button>
                             <Button variant="outline" size="sm" onClick={() => downloadQuote(quote)}>
                               <Download className="h-4 w-4 mr-1" />
-                              Download
+                              {t('prDetails.download')}
                             </Button>
                           </div>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <p className="text-gray-500 text-center py-8">No quotes uploaded yet</p>
+                    <div>
+                      <p className="text-gray-500 text-center py-4">{t('prDetails.noQuotes')}</p>
+                      <RoleGuard allowedRoles={['ACCOUNTANT', 'ADMIN']}>
+                        <div className="flex justify-center py-4">
+                          <Button variant="outline" onClick={() => setShowQuoteDialog(true)}>
+                            <Plus className="h-4 w-4 mr-1" />
+                            {t('prDetails.uploadQuote')}
+                          </Button>
+                        </div>
+                      </RoleGuard>
+                    </div>
                   )}
                 </CardContent>
               </Card>
@@ -451,7 +533,7 @@ export default function PRDetails() {
             <TabsContent value="approvals" className="space-y-4">
               <Card>
                 <CardHeader>
-                  <CardTitle>Approval History</CardTitle>
+                  <CardTitle>{t('prDetails.approvalHistory')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
@@ -467,7 +549,7 @@ export default function PRDetails() {
                           <div className="flex items-center gap-2 mb-1">
                             <span className="font-medium">{approval.approver?.name}</span>
                             <Badge variant="outline" className="text-xs">
-                              {approval.stage} Approval
+                              {t('prDetails.stageApproval').replace('{stage}', t((`prDetails.stage.${approval.stage}`) as any))}
                             </Badge>
                             <Badge 
                               className={
@@ -476,7 +558,7 @@ export default function PRDetails() {
                                 'bg-yellow-100 text-yellow-800'
                               }
                             >
-                              {approval.decision}
+                              {t((`status.${approval.decision}`) as any)}
                             </Badge>
                           </div>
                           {approval.comment && (
@@ -485,8 +567,8 @@ export default function PRDetails() {
                           <div className="flex items-center gap-1 text-xs text-gray-500">
                             <Clock className="h-3 w-3" />
                             {approval.decidedAt 
-                              ? `Decided ${formatDistanceToNow(approval.decidedAt, { addSuffix: true })}`
-                              : `Pending since ${formatDistanceToNow(approval.createdAt, { addSuffix: true })}`
+                              ? `${t('prDetails.decided')} ${formatDistanceToNow(approval.decidedAt, { addSuffix: true, locale: language === 'ar' ? arSA : undefined })}`
+                              : `${t('prDetails.pendingSince')} ${formatDistanceToNow(approval.createdAt, { addSuffix: true, locale: language === 'ar' ? arSA : undefined })}`
                             }
                           </div>
                         </div>
@@ -506,7 +588,7 @@ export default function PRDetails() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <User className="h-5 w-5" />
-                Requester
+                {t('prDetails.requester')}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -521,7 +603,7 @@ export default function PRDetails() {
                   <p className="font-medium">{mockPR.requester?.name}</p>
                   <p className="text-sm text-gray-600">{mockPR.requester?.email}</p>
                   <Badge variant="outline" className="text-xs mt-1">
-                    {mockPR.requester?.role}
+                    {t((`roles.${mockPR.requester?.role}`) as any)}
                   </Badge>
                 </div>
               </div>
@@ -534,7 +616,7 @@ export default function PRDetails() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <CheckCircle className="h-5 w-5" />
-                  Current Approver
+                  {t('prDetails.currentApprover')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -549,7 +631,7 @@ export default function PRDetails() {
                     <p className="font-medium">{mockPR.currentApprover.name}</p>
                     <p className="text-sm text-gray-600">{mockPR.currentApprover.email}</p>
                     <Badge variant="outline" className="text-xs mt-1">
-                      {mockPR.currentApprover.role}
+                      {t((`roles.${mockPR.currentApprover.role}`) as any)}
                     </Badge>
                   </div>
                 </div>
@@ -560,23 +642,23 @@ export default function PRDetails() {
           {/* Quick Actions */}
           <Card>
             <CardHeader>
-              <CardTitle>Quick Actions</CardTitle>
+              <CardTitle>{t('prDetails.quickActions')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               <Button variant="outline" className="w-full justify-start">
                 <FileText className="mr-2 h-4 w-4" />
-                Export PDF
+                {t('prDetails.exportPdf')}
               </Button>
               <Button variant="outline" className="w-full justify-start">
                 <MessageSquare className="mr-2 h-4 w-4" />
-                Add Comment
+                {t('prDetails.addComment')}
               </Button>
               <RoleGuard allowedRoles={['USER']}>
                 {mockPR.state === 'DRAFT' && (
                   <Button variant="outline" className="w-full justify-start" asChild>
                     <a href={`/prs/${mockPR.id}/edit`}>
                       <FileText className="mr-2 h-4 w-4" />
-                      Edit Request
+                      {t('prDetails.editRequest')}
                     </a>
                   </Button>
                 )}
@@ -585,6 +667,73 @@ export default function PRDetails() {
           </Card>
         </div>
       </div>
+      
+      {/* Upload Quote Dialog */}
+      <Dialog open={showQuoteDialog} onOpenChange={setShowQuoteDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('prDetails.uploadQuoteDialogTitle')}</DialogTitle>
+            <DialogDescription>
+              {t('prDetails.uploadQuoteDialogDescription')}
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={quoteForm.handleSubmit(handleQuoteUpload)} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="vendorName">{t('prDetails.vendorName')}</Label>
+              <Input
+                id="vendorName"
+                placeholder={t('prDetails.vendorNamePlaceholder')}
+                {...quoteForm.register("vendorName")}
+              />
+              {quoteForm.formState.errors.vendorName && (
+                <p className="text-sm text-red-500">{quoteForm.formState.errors.vendorName.message}</p>
+              )}
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="quoteTotal">{t('prDetails.quoteTotal')}</Label>
+              <Input
+                id="quoteTotal"
+                type="number"
+                step="0.01"
+                {...quoteForm.register("quoteTotal", { valueAsNumber: true })}
+              />
+              {quoteForm.formState.errors.quoteTotal && (
+                <p className="text-sm text-red-500">{quoteForm.formState.errors.quoteTotal.message}</p>
+              )}
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="quoteFile">{t('prCreate.uploadQuotesTitle')}</Label>
+              <Input 
+                id="quoteFile"
+                type="file" 
+                accept="application/pdf,image/jpeg,image/png"
+                onChange={(e) => {
+                  const files = e.target.files;
+                  if (files && files.length > 0) {
+                    setQuoteFiles(Array.from(files));
+                  } else {
+                    setQuoteFiles([]);
+                  }
+                }}
+              />
+              <p className="text-xs text-muted-foreground">
+                {t('prCreate.supportedFormats')}: PDF, JPEG, PNG (5MB max)
+              </p>
+            </div>
+            
+            <div className="flex justify-end gap-2 pt-2">
+              <Button type="button" variant="outline" onClick={() => setShowQuoteDialog(false)}>
+                {t('common.cancel')}
+              </Button>
+              <Button type="submit">
+                {t('prDetails.submitQuote')}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

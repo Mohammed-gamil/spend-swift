@@ -19,7 +19,9 @@ import {
   DollarSign
 } from "lucide-react";
 import { formatDistanceToNow, format } from "date-fns";
+import { ar as arSA } from "date-fns/locale";
 import { PurchaseRequest, UserRole } from "@/types";
+import { useTranslation } from "@/hooks/use-translation";
 
 // Mock data for pending approvals
 const mockPendingPRs: PurchaseRequest[] = [
@@ -83,6 +85,7 @@ const mockPendingPRs: PurchaseRequest[] = [
 ];
 
 export default function Approvals() {
+  const { t, language } = useTranslation();
   const { user } = useAuthStore();
   const [searchQuery, setSearchQuery] = useState("");
   const [stateFilter, setStateFilter] = useState<string>("all");
@@ -99,7 +102,7 @@ export default function Approvals() {
   };
 
   const formatCurrency = (amount: number, currency: string) => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat(language === 'ar' ? 'ar-EG' : 'en-US', {
       style: 'currency',
       currency: currency,
     }).format(amount);
@@ -164,26 +167,26 @@ export default function Approvals() {
   const getPageTitle = () => {
     switch (user?.role) {
       case 'DIRECT_MANAGER':
-        return 'Manager Approvals';
+        return t('nav.approvals');
       case 'ACCOUNTANT':
-        return 'Accounting Approvals';
+        return t('nav.approvals');
       case 'FINAL_MANAGER':
-        return 'Final Approvals';
+        return t('nav.approvals');
       default:
-        return 'Approvals';
+        return t('nav.approvals');
     }
   };
 
   const getPageDescription = () => {
     switch (user?.role) {
       case 'DIRECT_MANAGER':
-        return 'Review and approve purchase requests from your team members';
+        return t('dashboard.reviewPending');
       case 'ACCOUNTANT':
-        return 'Review manager-approved requests and provide financial approval';
+        return t('dashboard.reviewPending');
       case 'FINAL_MANAGER':
-        return 'Provide final approval for purchase requests';
+        return t('dashboard.reviewPending');
       default:
-        return 'Review pending purchase requests';
+        return t('dashboard.reviewPending');
     }
   };
 
@@ -199,20 +202,20 @@ export default function Approvals() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending Reviews</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('common.pending')}</CardTitle>
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{filteredPRs.length}</div>
             <p className="text-xs text-muted-foreground">
-              Requires your attention
+              {t('dashboard.requiresAttention')}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Urgent Requests</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('common.priority.high')}</CardTitle>
             <AlertTriangle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -220,22 +223,22 @@ export default function Approvals() {
               {filteredPRs.filter(pr => getUrgencyLevel(pr.neededByDate).level === 'urgent').length}
             </div>
             <p className="text-xs text-muted-foreground">
-              Due within 3 days
+              {t('approvals.stats.urgentWithin3Days')}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Value</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('reports.totalSpend')}</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              ${filteredPRs.reduce((sum, pr) => sum + pr.desiredCost, 0).toLocaleString()}
+              {new Intl.NumberFormat(language === 'ar' ? 'ar-EG' : 'en-US').format(filteredPRs.reduce((sum, pr) => sum + pr.desiredCost, 0))}
             </div>
             <p className="text-xs text-muted-foreground">
-              Pending approval value
+              {t('dashboard.pendingApprovals')}
             </p>
           </CardContent>
         </Card>
@@ -246,7 +249,7 @@ export default function Approvals() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Filter className="h-5 w-5" />
-            Filters
+            {t('reports.filters')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -255,7 +258,7 @@ export default function Approvals() {
               <div className="relative">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <Input
-                  placeholder="Search by title, PR ID, or requester..."
+                  placeholder={t('common.searchPlaceholder')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10"
@@ -265,24 +268,24 @@ export default function Approvals() {
             
             <Select value={stateFilter} onValueChange={setStateFilter}>
               <SelectTrigger className="w-full md:w-48">
-                <SelectValue placeholder="Filter by state" />
+                <SelectValue placeholder={t('reports.status')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All States</SelectItem>
-                <SelectItem value="SUBMITTED">Submitted</SelectItem>
-                <SelectItem value="DM_APPROVED">Manager Approved</SelectItem>
-                <SelectItem value="ACCT_APPROVED">Accountant Approved</SelectItem>
+                <SelectItem value="all">{t('common.all')}</SelectItem>
+                <SelectItem value="SUBMITTED">{t('status.SUBMITTED')}</SelectItem>
+                <SelectItem value="DM_APPROVED">{t('status.DM_APPROVED')}</SelectItem>
+                <SelectItem value="ACCT_APPROVED">{t('status.ACCT_APPROVED')}</SelectItem>
               </SelectContent>
             </Select>
 
             <Select value={sortBy} onValueChange={setSortBy}>
               <SelectTrigger className="w-full md:w-48">
-                <SelectValue placeholder="Sort by" />
+                <SelectValue placeholder={t('common.filter')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="created">Date Created</SelectItem>
-                <SelectItem value="amount">Amount</SelectItem>
-                <SelectItem value="urgency">Urgency</SelectItem>
+                <SelectItem value="created">{t('prDetails.created')}</SelectItem>
+                <SelectItem value="amount">{t('reports.totalSpend')}</SelectItem>
+                <SelectItem value="urgency">{t('common.priority.high')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -293,10 +296,10 @@ export default function Approvals() {
       <Card>
         <CardHeader>
           <CardTitle>
-            Pending Approvals ({filteredPRs.length})
+            {t('nav.approvals')} ({filteredPRs.length})
           </CardTitle>
           <CardDescription>
-            Purchase requests waiting for your review and approval
+            {t('dashboard.reviewPending')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -313,11 +316,11 @@ export default function Approvals() {
                         <div className="flex items-center gap-3 mb-2">
                           <h3 className="font-semibold text-lg">{pr.title}</h3>
                           <Badge className={getStateColor(pr.state)}>
-                            {pr.state.replace('_', ' ')}
+                            {t((`status.${pr.state}`) as any)}
                           </Badge>
                           <div className={`flex items-center gap-1 ${urgency.color}`}>
                             <UrgencyIcon className="h-4 w-4" />
-                            <span className="text-xs font-medium capitalize">{urgency.level}</span>
+                            <span className="text-xs font-medium capitalize">{urgency.level === 'urgent' ? t('common.priority.high') : urgency.level === 'medium' ? t('common.priority.medium') : t('common.priority.low')}</span>
                           </div>
                         </div>
                         
@@ -346,21 +349,21 @@ export default function Approvals() {
                           <div className="flex items-center gap-1">
                             <Calendar className="h-4 w-4 text-gray-400" />
                             <span>
-                              Due {format(pr.neededByDate, "MMM d")}
+                              {t('approvals.labels.due')} {format(pr.neededByDate, "MMM d", { locale: language === 'ar' ? arSA : undefined })}
                             </span>
                           </div>
                           
                           <div className="flex items-center gap-1">
                             <Clock className="h-4 w-4 text-gray-400" />
                             <span>
-                              {formatDistanceToNow(pr.createdAt, { addSuffix: true })}
+                              {formatDistanceToNow(pr.createdAt, { addSuffix: true, locale: language === 'ar' ? arSA : undefined })}
                             </span>
                           </div>
                         </div>
                         
                         <div className="mt-3 flex items-center gap-2">
                           <span className="text-sm text-gray-500">
-                            {pr.items.length} item{pr.items.length !== 1 ? 's' : ''}
+                            {language === 'ar' ? `${pr.items.length} بند` : `${pr.items.length} item${pr.items.length !== 1 ? 's' : ''}`}
                           </span>
                           <span className="text-gray-300">•</span>
                           <span className="text-sm text-gray-500">
@@ -368,7 +371,7 @@ export default function Approvals() {
                           </span>
                           <span className="text-gray-300">•</span>
                           <span className="text-sm text-gray-500">
-                            ID: {pr.id}
+                            {t('approvals.labels.id')}: {pr.id}
                           </span>
                         </div>
                       </div>
@@ -377,12 +380,12 @@ export default function Approvals() {
                         <Button asChild>
                           <Link to={`/prs/${pr.id}`}>
                             <Eye className="h-4 w-4 mr-2" />
-                            Review
+                            {t('prDetails.review')}
                           </Link>
                         </Button>
                         
                         <div className="text-xs text-center text-gray-500">
-                          SLA: {Math.ceil((pr.neededByDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24))} days
+                          {t('approvals.labels.sla')}: {Math.ceil((pr.neededByDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24))} {language === 'ar' ? 'يوم' : 'days'}
                         </div>
                       </div>
                     </div>
@@ -394,12 +397,12 @@ export default function Approvals() {
             <div className="text-center py-12">
               <CheckCircle className="mx-auto h-12 w-12 text-gray-400 mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">
-                No pending approvals
+                {t('approvals.empty.title')}
               </h3>
               <p className="text-gray-600">
                 {searchQuery || stateFilter !== 'all' 
-                  ? 'No requests match your current filters.' 
-                  : 'All caught up! No purchase requests require your approval at this time.'
+                  ? t('approvals.empty.filtered')
+                  : t('approvals.empty.allCaughtUp')
                 }
               </p>
               {(searchQuery || stateFilter !== 'all') && (
@@ -411,7 +414,7 @@ export default function Approvals() {
                     setStateFilter('all');
                   }}
                 >
-                  Clear Filters
+                  {t('common.reset')}
                 </Button>
               )}
             </div>

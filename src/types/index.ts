@@ -1,4 +1,4 @@
-// Purchase Request Management System Types
+// Purchase and Project Request Management System Types
 
 export type UserRole = 'USER' | 'DIRECT_MANAGER' | 'ACCOUNTANT' | 'FINAL_MANAGER' | 'ADMIN';
 
@@ -20,6 +20,8 @@ export type Currency = 'EGP' | 'SAR' | 'USD' | 'EUR' | 'GBP' | 'AED';
 export type ApprovalStage = 'DM' | 'ACCT' | 'FINAL';
 
 export type Decision = 'PENDING' | 'APPROVED' | 'REJECTED';
+
+export type RequestType = 'purchase' | 'project';
 
 export interface User {
   id: string;
@@ -80,12 +82,14 @@ export interface Approval {
   createdAt: Date;
 }
 
-export interface PurchaseRequest {
+// Base interface for both purchase and project requests
+export interface BaseRequest {
   id: string;
   requesterId: string;
   requester?: User;
   title: string;
   description: string;
+  type: RequestType;
   category: string;
   desiredCost: number;
   currency: Currency;
@@ -96,12 +100,29 @@ export interface PurchaseRequest {
   payoutChannel?: PayoutChannel;
   payoutReference?: string;
   fundsTransferredAt?: Date;
-  items: PRItem[];
   quotes: PRQuote[];
   approvals: Approval[];
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface PurchaseRequest extends BaseRequest {
+  type: 'purchase';
+  items: PRItem[];
+}
+
+export interface ProjectRequest extends BaseRequest {
+  type: 'project';
+  clientName: string;
+  projectDescription: string;
+  totalCost: number;
+  totalBenefit: number;
+  totalPrice: number;
+  items?: PRItem[]; // Make items optional for project requests
+}
+
+// Union type for handling both request types
+export type Request = PurchaseRequest | ProjectRequest;
 
 export interface Notification {
   id: string;
@@ -145,6 +166,11 @@ export interface DashboardStats {
   averageApprovalTime: number;
   budgetUtilization: number;
   recentActivity: AuditLog[];
+  // Project-specific stats
+  totalProjects?: number;
+  totalProjectValue?: number;
+  totalProjectBenefit?: number;
+  projectsCompletionRate?: number;
 }
 
 // API Response Types
@@ -167,15 +193,36 @@ export interface ApiResponse<T> {
 }
 
 // Form Types
-export interface CreatePRForm {
+export interface BaseCreateRequestForm {
+  type: RequestType;
   title: string;
   description: string;
   category: string;
   desiredCost: number;
   currency: Currency;
   neededByDate: Date;
+}
+
+export interface CreatePurchaseRequestForm extends BaseCreateRequestForm {
+  type: 'purchase';
   items: Omit<PRItem, 'id' | 'total'>[];
 }
+
+export interface CreateProjectRequestForm extends BaseCreateRequestForm {
+  type: 'project';
+  clientName: string;
+  projectDescription: string;
+  totalCost: number;
+  totalBenefit: number;
+  totalPrice: number;
+  items?: Omit<PRItem, 'id' | 'total'>[];
+}
+
+// Union type for handling form data
+export type CreateRequestForm = CreatePurchaseRequestForm | CreateProjectRequestForm;
+
+// For backward compatibility
+export type CreatePRForm = CreatePurchaseRequestForm;
 
 export interface ApprovalForm {
   decision: 'APPROVED' | 'REJECTED';
@@ -190,6 +237,7 @@ export interface FundsTransferForm {
 
 // Filter and Search Types
 export interface PRFilters {
+  type?: RequestType[];
   state?: PRState[];
   requesterId?: string;
   teamId?: string;
@@ -208,7 +256,7 @@ export interface PRSearchParams {
   search?: string;
   filters?: PRFilters;
   sort?: {
-    field: keyof PurchaseRequest;
+    field: keyof BaseRequest;
     direction: 'asc' | 'desc';
   };
   page?: number;

@@ -1,0 +1,1291 @@
+/* Google Fonts for Arabic Support */
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Purchase Request Management System Design System */
+
+@layer base {
+  :root {
+    /* Custom Fixed Color Theme */
+    /* Main background: #1b1b1b */
+    /* Strokes, icons, edges: #f2aa38 */
+    /* Main text: #fefefe */
+    /* Sub text: #bcbcbd */
+
+    /* Core Colors */
+    --background: #1b1b1b;
+    --foreground: #fefefe;
+
+    --card: #1b1b1b;
+    --card-foreground: #fefefe;
+
+    --popover: #1b1b1b;
+    --popover-foreground: #fefefe;
+
+    /* Primary - Gold Accent Color */
+    --primary: #f2aa38;
+    --primary-foreground: #1b1b1b;
+    --primary-light: #f5bb5a;
+    --primary-dark: #d99425;
+
+    /* Secondary - Darkened Background */
+    --secondary: #2b2b2b;
+    --secondary-foreground: #fefefe;
+
+    /* Success - PR Approved */
+    --success: #f2aa38;
+    --success-foreground: #1b1b1b;
+    --success-light: #f5bb5a;
+
+    /* Warning - Pending Actions */
+    --warning: #f2aa38;
+    --warning-foreground: #1b1b1b;
+    --warning-light: #f5bb5a;
+
+    /* Muted Elements */
+    --muted: #2b2b2b;
+    --muted-foreground: #bcbcbd;
+
+    /* Accent - Interactive Elements */
+    --accent: #f2aa38;
+    --accent-foreground: #1b1b1b;
+
+    /* Destructive - Rejections/Errors */
+    --destructive: #f2aa38;
+    --destructive-foreground: #1b1b1b;
+
+    /* UI Elements */
+    --border: #f2aa38;
+    --input: #2b2b2b;
+    --ring: #f2aa38;
+
+    /* Status Specific Colors */
+    --status-draft: #bcbcbd;
+    --status-submitted: #f2aa38;
+    --status-approved: #f2aa38;
+    --status-rejected: #f2aa38;
+    --status-transferred: #f2aa38;
+
+    /* Gradients */
+    /* Gradients - Enhanced with smooth transitions */
+    --gradient-primary: linear-gradient(135deg, #f2aa38, #f5bb5a);
+    --gradient-success: linear-gradient(135deg, #f2aa38, #f5bb5a);
+    --gradient-hero: linear-gradient(135deg, #f2aa38 0%, #f5bb5a 50%, #d99425 100%);
+    --gradient-card: linear-gradient(135deg, #1b1b1b 0%, #2b2b2b 100%);
+    --gradient-primary-soft: linear-gradient(135deg, rgba(242, 170, 56, 0.1), rgba(245, 187, 90, 0.1));
+    --gradient-success-soft: linear-gradient(135deg, rgba(242, 170, 56, 0.1), rgba(245, 187, 90, 0.1));
+    
+    /* Luxury gradients with subtle opacity */
+    --gradient-luxury-bg: linear-gradient(135deg, rgba(242, 170, 56, 0.03), rgba(217, 148, 37, 0.02), rgba(245, 187, 90, 0.03));
+    --gradient-luxury-card: linear-gradient(135deg, rgba(27, 27, 27, 0.8), rgba(43, 43, 43, 0.9), rgba(27, 27, 27, 0.7));
+    --gradient-luxury-header: linear-gradient(90deg, rgba(242, 170, 56, 0.05), rgba(245, 187, 90, 0.03));
+    --gradient-luxury-accent: radial-gradient(ellipse at top, rgba(242, 170, 56, 0.1), transparent 50%);
+    --gradient-luxury-glass: linear-gradient(135deg, rgba(43, 43, 43, 0.1), rgba(27, 27, 27, 0.05));
+
+    /* Enhanced Shadows with color tints */
+    --shadow-sm: 0 1px 2px 0 rgba(242, 170, 56, 0.04);
+    --shadow-md: 0 4px 6px -1px rgba(242, 170, 56, 0.1), 0 2px 4px -2px rgba(242, 170, 56, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(242, 170, 56, 0.1), 0 4px 6px -4px rgba(242, 170, 56, 0.1);
+    --shadow-primary: 0 10px 25px -3px rgba(242, 170, 56, 0.3);
+    --shadow-success: 0 10px 25px -3px rgba(242, 170, 56, 0.25);
+    --shadow-glow: 0 0 40px rgba(242, 170, 56, 0.15);
+
+    /* Backdrop blur effects */
+    --backdrop-blur: blur(20px);
+    --backdrop-blur-sm: blur(8px);
+
+    /* Enhanced Animations */
+    --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-normal: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    --radius: 0.75rem;
+  }
+
+  /* We're using a fixed theme, so no dark mode variables needed */
+  :root {
+    /* Sidebar specific colors */
+    --sidebar-background: #1b1b1b;
+    --sidebar-foreground: #fefefe;
+    --sidebar-primary: #f2aa38;
+    --sidebar-primary-foreground: #1b1b1b;
+    --sidebar-accent: #2b2b2b;
+    --sidebar-accent-foreground: #fefefe;
+    --sidebar-border: #f2aa38;
+    --sidebar-ring: #f2aa38;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  /* Form elements styling for our fixed theme */
+  input,
+  textarea,
+  select {
+    background-color: #2b2b2b;
+    border: 1px solid rgba(242, 170, 56, 0.3);
+    color: #fefefe;
+    transition: all 0.2s ease;
+    border-radius: 0.375rem;
+  }
+  
+  input:hover,
+  textarea:hover,
+  select:hover {
+    background-color: #333333;
+    border-color: rgba(242, 170, 56, 0.6);
+  }
+  
+  input:focus,
+  textarea:focus,
+  select:focus {
+    border-color: #f2aa38;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(242, 170, 56, 0.25);
+  }
+  
+  input::placeholder,
+  textarea::placeholder,
+  select::placeholder {
+    color: rgba(188, 188, 189, 0.8);
+  }
+  
+  input:disabled,
+  textarea:disabled,
+  select:disabled {
+    background-color: #151515;
+    border-color: rgba(242, 170, 56, 0.15);
+    color: rgba(188, 188, 189, 0.6);
+    cursor: not-allowed;
+  }
+  
+  /* Button styling for fixed theme */
+  button, 
+  .btn {
+    background-color: transparent;
+    border: 1px solid #f2aa38;
+    color: #f2aa38;
+    transition: all 0.2s ease;
+    border-radius: 0.375rem;
+  }
+  
+  button:hover,
+  .btn:hover {
+    background-color: #f2aa38;
+    color: #1b1b1b;
+  }
+  
+  button:active,
+  .btn:active {
+    background-color: #d99425;
+    border-color: #d99425;
+  }
+  
+  button:disabled,
+  .btn:disabled {
+    background-color: transparent;
+    border-color: rgba(242, 170, 56, 0.3);
+    color: rgba(242, 170, 56, 0.5);
+    cursor: not-allowed;
+  }
+  
+  /* Primary button styling */
+  button.btn-primary,
+  .btn-primary {
+    background-color: #f2aa38;
+    color: #1b1b1b;
+  }
+  
+  button.btn-primary:hover,
+  .btn-primary:hover {
+    background-color: #f5bb5a;
+  }
+  
+  button.btn-primary:active,
+  .btn-primary:active {
+    background-color: #d99425;
+  }
+}
+
+@layer components {
+  /* Custom component styles */
+  .glass-effect {
+    backdrop-filter: blur(8px);
+    background-color: rgba(43, 43, 43, 0.5);
+    border: 1px solid rgba(242, 170, 56, 0.2);
+  }
+  
+  .floating-card {
+    transform: translateY(0);
+    transition: all 0.3s ease;
+  }
+  
+  .floating-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px -3px rgba(242, 170, 56, 0.2);
+  }
+  
+  .gradient-text {
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    background-image: linear-gradient(to right, #f2aa38, #f5bb5a);
+  }
+  
+  .shimmer-effect {
+    background: linear-gradient(90deg, transparent, rgba(242, 170, 56, 0.2), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+  }
+
+  /* Luxury gradient utilities */
+  .luxury-bg {
+    background: var(--gradient-luxury-bg);
+  }
+  
+  .luxury-card {
+    background: var(--gradient-luxury-card);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(242, 170, 56, 0.1);
+  }
+  
+  .luxury-header {
+    background: var(--gradient-luxury-header);
+  }
+  
+  .luxury-accent {
+    background: var(--gradient-luxury-accent);
+  }
+  
+  .luxury-glass {
+    background: var(--gradient-luxury-glass);
+    backdrop-filter: blur(20px);
+  }
+  
+  /* Card styling for the fixed theme */
+  .card {
+    background-color: #1b1b1b;
+    border: 1px solid rgba(242, 170, 56, 0.2);
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+  
+  .card:hover {
+    border-color: rgba(242, 170, 56, 0.4);
+    box-shadow: 0 10px 15px -3px rgba(242, 170, 56, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Sidebar styling for fixed theme */
+  .sidebar {
+    background-color: #1b1b1b;
+    border-right: 1px solid rgba(242, 170, 56, 0.2);
+  }
+  
+  .sidebar-item {
+    color: #fefefe;
+    transition: all 0.2s ease;
+  }
+  
+  .sidebar-item:hover {
+    background-color: rgba(242, 170, 56, 0.1);
+  }
+  
+  .sidebar-item.active {
+    background-color: rgba(242, 170, 56, 0.15);
+    border-left: 3px solid #f2aa38;
+  }
+  
+  .sidebar-item svg {
+    color: #f2aa38;
+  }
+}
+
+/* RTL Support and Arabic Typography */
+@layer base {
+  /* Arabic font family with proper weights for better readability */
+  [dir="rtl"] {
+    font-family: 'Cairo', 'Tajawal', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  /* Optimize Arabic font rendering */
+  [dir="rtl"] {
+    font-feature-settings: "kern", "liga", "clig", "calt", "rlig";
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* Ensure proper text direction */
+  [dir="rtl"] {
+    direction: rtl;
+    text-align: right;
+  }
+  
+  [dir="ltr"] {
+    direction: ltr;
+    text-align: left;
+  }
+  
+  /* Fix input text alignment and padding */
+  [dir="rtl"] input,
+  [dir="rtl"] textarea,
+  [dir="rtl"] select {
+    text-align: right;
+  }
+  
+  [dir="ltr"] input,
+  [dir="ltr"] textarea,
+  [dir="ltr"] select {
+    text-align: left;
+  }
+  
+  /* Fix placeholder text alignment */
+  [dir="rtl"] input::placeholder,
+  [dir="rtl"] textarea::placeholder {
+    text-align: right;
+  }
+  
+  /* Adjust Arabic letter spacing for better readability */
+  [dir="rtl"] {
+    letter-spacing: -0.01em;
+  }
+}
+
+@layer components {
+  /* RTL Text Direction Overrides */
+  [dir="rtl"] .text-left {
+    text-align: right !important;
+  }
+
+  [dir="rtl"] .text-right {
+    text-align: left !important;
+  }
+
+  [dir="rtl"] .text-start {
+    text-align: right !important;
+  }
+
+  [dir="rtl"] .text-end {
+    text-align: left !important;
+  }
+
+  [dir="rtl"] h1, 
+  [dir="rtl"] h2, 
+  [dir="rtl"] h3, 
+  [dir="rtl"] h4, 
+  [dir="rtl"] h5, 
+  [dir="rtl"] h6, 
+  [dir="rtl"] p, 
+  [dir="rtl"] span, 
+  [dir="rtl"] div {
+    text-align: inherit;
+  }
+  
+  /* Accessibility Improvements */
+  a {
+    color: #f2aa38;
+    text-decoration-color: rgba(242, 170, 56, 0.5);
+    text-underline-offset: 2px;
+  }
+  
+  a:hover {
+    color: #f5bb5a;
+    text-decoration-color: #f5bb5a;
+  }
+  
+  code {
+    background-color: #2b2b2b;
+    border: 1px solid rgba(242, 170, 56, 0.3);
+    padding: 0.1rem 0.3rem;
+    border-radius: 0.25rem;
+  }
+  
+  /* Add a subtle outline to interactive elements for better visibility */
+  button:focus-visible,
+  [role="button"]:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 2px solid #f2aa38;
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  /* RTL Navigation adjustments - enhanced for all navigation components */
+  [dir="rtl"] .nav-items,
+  [dir="rtl"] .tabs,
+  [dir="rtl"] .breadcrumbs,
+  [dir="rtl"] .pagination {
+    flex-direction: row-reverse;
+  }
+  
+  /* RTL Flexbox layouts with more comprehensive selectors */
+  [dir="rtl"] .flex-row,
+  [dir="rtl"] .inline-flex {
+    flex-direction: row-reverse;
+  }
+  
+  /* Prevent double-reversing for explicitly reversed flexbox */
+  [dir="rtl"] .flex-row-reverse {
+    flex-direction: row;
+  }
+  
+  /* Enhanced RTL flex classes for cards and content containers */
+  [dir="rtl"] .flex.items-center.justify-between,
+  [dir="rtl"] .flex.items-start.justify-between {
+    flex-direction: row-reverse;
+  }
+  
+  [dir="rtl"] .card-header,
+  [dir="rtl"] .card-content,
+  [dir="rtl"] .card-footer {
+    text-align: right;
+  }
+  
+  [dir="rtl"] .flex.gap-1,
+  [dir="rtl"] .flex.gap-2,
+  [dir="rtl"] .flex.gap-3,
+  [dir="rtl"] .flex.gap-4 {
+    flex-direction: row-reverse;
+  }
+  
+  [dir="rtl"] .space-x-1,
+  [dir="rtl"] .space-x-2,
+  [dir="rtl"] .space-x-3,
+  [dir="rtl"] .space-x-4 {
+    --tw-space-x-reverse: 1;
+  }
+  
+  /* RTL margins and padding adjustments with !important to override Tailwind utilities */
+  [dir="rtl"] .ml-auto {
+    margin-left: 0 !important;
+    margin-right: auto !important;
+  }
+  
+  [dir="rtl"] .mr-auto {
+    margin-right: 0 !important;
+    margin-left: auto !important;
+  }
+  
+  /* RTL margin sides swap */
+  [dir="rtl"] .mr-1, [dir="rtl"] .mr-2, [dir="rtl"] .mr-3, 
+  [dir="rtl"] .mr-4, [dir="rtl"] .mr-5, [dir="rtl"] .mr-6 {
+    margin-right: 0 !important;
+    margin-left: 0.25rem !important; /* Apply equivalent margin to the other side */
+  }
+  
+  [dir="rtl"] .mr-1 { margin-left: 0.25rem !important; }
+  [dir="rtl"] .mr-2 { margin-left: 0.5rem !important; }
+  [dir="rtl"] .mr-3 { margin-left: 0.75rem !important; }
+  [dir="rtl"] .mr-4 { margin-left: 1rem !important; }
+  [dir="rtl"] .mr-5 { margin-left: 1.25rem !important; }
+  [dir="rtl"] .mr-6 { margin-left: 1.5rem !important; }
+  
+  [dir="rtl"] .ml-1, [dir="rtl"] .ml-2, [dir="rtl"] .ml-3,
+  [dir="rtl"] .ml-4, [dir="rtl"] .ml-5, [dir="rtl"] .ml-6 {
+    margin-left: 0 !important;
+  }
+  
+  [dir="rtl"] .ml-1 { margin-right: 0.25rem !important; }
+  [dir="rtl"] .ml-2 { margin-right: 0.5rem !important; }
+  [dir="rtl"] .ml-3 { margin-right: 0.75rem !important; }
+  [dir="rtl"] .ml-4 { margin-right: 1rem !important; }
+  [dir="rtl"] .ml-5 { margin-right: 1.25rem !important; }
+  [dir="rtl"] .ml-6 { margin-right: 1.5rem !important; }
+  
+  /* RTL positioning with !important to ensure override */
+  [dir="rtl"] .left-0 {
+    left: auto !important;
+    right: 0 !important;
+  }
+  
+  [dir="rtl"] .right-0 {
+    right: auto !important;
+    left: 0 !important;
+  }
+  
+  [dir="rtl"] .-left-1 {
+    left: auto !important;
+    right: -0.25rem !important;
+  }
+  
+  [dir="rtl"] .-right-1 {
+    right: auto !important;
+    left: -0.25rem !important;
+  }
+  
+  /* RTL padding sides swap */
+  [dir="rtl"] .pl-1, [dir="rtl"] .pl-2, [dir="rtl"] .pl-3, 
+  [dir="rtl"] .pl-4, [dir="rtl"] .pl-5, [dir="rtl"] .pl-6 {
+    padding-left: 0 !important;
+  }
+  
+  [dir="rtl"] .pl-1 { padding-right: 0.25rem !important; }
+  [dir="rtl"] .pl-2 { padding-right: 0.5rem !important; }
+  [dir="rtl"] .pl-3 { padding-right: 0.75rem !important; }
+  [dir="rtl"] .pl-4 { padding-right: 1rem !important; }
+  [dir="rtl"] .pl-5 { padding-right: 1.25rem !important; }
+  [dir="rtl"] .pl-6 { padding-right: 1.5rem !important; }
+  [dir="rtl"] .pl-10 { padding-right: 2.5rem !important; padding-left: 0 !important; }
+  
+  [dir="rtl"] .pr-1, [dir="rtl"] .pr-2, [dir="rtl"] .pr-3,
+  [dir="rtl"] .pr-4, [dir="rtl"] .pr-5, [dir="rtl"] .pr-6 {
+    padding-right: 0 !important;
+  }
+  
+  [dir="rtl"] .pr-1 { padding-left: 0.25rem !important; }
+  [dir="rtl"] .pr-2 { padding-left: 0.5rem !important; }
+  [dir="rtl"] .pr-3 { padding-left: 0.75rem !important; }
+  [dir="rtl"] .pr-4 { padding-left: 1rem !important; }
+  [dir="rtl"] .pr-5 { padding-left: 1.25rem !important; }
+  [dir="rtl"] .pr-6 { padding-left: 1.5rem !important; }
+  [dir="rtl"] .pr-10 { padding-left: 2.5rem !important; padding-right: 0 !important; }
+  
+  /* RTL transforms for icons that need flipping */
+  [dir="rtl"] .rtl-flip {
+    transform: scaleX(-1);
+  }
+  
+  /* Auto-flip directional icons in RTL */
+  [dir="rtl"] .lucide-chevron-right,
+  [dir="rtl"] .lucide-chevron-left,
+  [dir="rtl"] .lucide-arrow-right,
+  [dir="rtl"] .lucide-arrow-left,
+  [dir="rtl"] .lucide-external-link {
+    transform: scaleX(-1);
+  }
+  
+  /* RTL specific spacing */
+  [dir="rtl"] .space-x-reverse > :not([hidden]) ~ :not([hidden]) {
+    --tw-space-x-reverse: 1;
+  }
+  
+  /* RTL grid adjustments */
+  [dir="rtl"] .grid-flow-col {
+    grid-auto-flow: column reverse;
+  }
+  
+  /* RTL border radius adjustments - properly swapping left/right radius */
+  [dir="rtl"] .rounded-l-none {
+    border-top-left-radius: initial;
+    border-bottom-left-radius: initial;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  
+  [dir="rtl"] .rounded-r-none {
+    border-top-right-radius: initial;
+    border-bottom-right-radius: initial;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+  
+  [dir="rtl"] .rounded-l-md, 
+  [dir="rtl"] .rounded-l-lg,
+  [dir="rtl"] .rounded-l-xl {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-top-right-radius: 0.375rem;
+    border-bottom-right-radius: 0.375rem;
+  }
+  
+  [dir="rtl"] .rounded-r-md,
+  [dir="rtl"] .rounded-r-lg,
+  [dir="rtl"] .rounded-r-xl {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-top-left-radius: 0.375rem;
+    border-bottom-left-radius: 0.375rem;
+  }
+  
+  /* RTL dropdown and popover positioning */
+  [dir="rtl"] .dropdown-content {
+    left: auto;
+    right: 0;
+  }
+  
+  /* RTL text truncation */
+  [dir="rtl"] .truncate {
+    direction: rtl;
+    text-align: right;
+  }
+  
+  /* RTL form elements */
+  [dir="rtl"] .form-input {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    text-align: right;
+  }
+  
+  /* RTL input groups */
+  [dir="rtl"] .input-group {
+    flex-direction: row-reverse;
+  }
+  
+  /* RTL form controls with icons */
+  [dir="rtl"] .form-control,
+  [dir="rtl"] .input-with-icon {
+    direction: rtl;
+  }
+  
+  /* RTL input with leading icon */
+  [dir="rtl"] .input-with-leading-icon input {
+    padding-left: 0.75rem;
+    padding-right: 2.5rem;
+  }
+  
+  /* RTL input with trailing icon */
+  [dir="rtl"] .input-with-trailing-icon input {
+    padding-right: 0.75rem;
+    padding-left: 2.5rem;
+  }
+  
+  /* RTL selects with icons */
+  [dir="rtl"] select {
+    background-position: left 0.5rem center;
+    padding-right: 0.75rem;
+    padding-left: 2rem;
+  }
+  
+  /* RTL search inputs */
+  [dir="rtl"] input[type="search"] {
+    direction: rtl;
+    text-align: right;
+  }
+  
+  /* RTL button icon spacing */
+  [dir="rtl"] .btn-icon-left {
+    margin-right: 0;
+    margin-left: 0.5rem;
+  }
+  
+  [dir="rtl"] .btn-icon-right {
+    margin-left: 0;
+    margin-right: 0.5rem;
+  }
+  
+  /* Improved RTL icon placement in buttons and interactive elements */
+  [dir="rtl"] button > svg:first-child:not(:last-child),
+  [dir="rtl"] .btn > svg:first-child:not(:last-child),
+  [dir="rtl"] a > svg:first-child:not(:last-child),
+  [dir="rtl"] [role="button"] > svg:first-child:not(:last-child),
+  [dir="rtl"] .flex > svg:first-child:not(:last-child) {
+    margin-right: 0;
+    margin-left: 0.5rem;
+  }
+  
+  [dir="rtl"] button > svg:last-child:not(:first-child),
+  [dir="rtl"] .btn > svg:last-child:not(:first-child),
+  [dir="rtl"] a > svg:last-child:not(:first-child),
+  [dir="rtl"] [role="button"] > svg:last-child:not(:first-child),
+  [dir="rtl"] .flex > svg:last-child:not(:first-child) {
+    margin-left: 0;
+    margin-right: 0.5rem;
+  }
+
+  /* Enhanced RTL utilities to match الموافقات (Approvals) positioning pattern */
+  [dir="rtl"] .flex-row,
+  [dir="rtl"] .flex.items-center,
+  [dir="rtl"] .flex.justify-between,
+  [dir="rtl"] .flex.gap-2,
+  [dir="rtl"] .flex.gap-3,
+  [dir="rtl"] .flex.gap-4,
+  [dir="rtl"] nav .flex,
+  [dir="rtl"] .card-header .flex,
+  [dir="rtl"] .card-content .flex,
+  [dir="rtl"] .card-footer .flex {
+    flex-direction: row-reverse !important;
+  }
+
+  /* Ensure icons in RTL have consistent spacing */
+  [dir="rtl"] button svg,
+  [dir="rtl"] .btn svg,
+  [dir="rtl"] .nav-item svg,
+  [dir="rtl"] .metadata-item svg {
+    margin-right: 0 !important;
+    margin-left: 0.5rem !important;
+  }
+
+  /* Ensure auto margins are properly flipped in RTL */
+  [dir="rtl"] .ml-auto {
+    margin-left: 0 !important;
+    margin-right: auto !important;
+  }
+
+  [dir="rtl"] .mr-auto {
+    margin-right: 0 !important;
+    margin-left: auto !important;
+  }
+
+  /* Badge positioning in RTL mode to match الموافقات element */
+  [dir="rtl"] .badge.ml-auto {
+    margin-left: 0 !important;
+    margin-right: auto !important;
+  }
+  
+  /* Fix specific icon spacing in RTL for common patterns */
+  [dir="rtl"] .icon-text-group {
+    flex-direction: row-reverse !important;
+  }
+  
+  [dir="rtl"] .icon-text-group > svg {
+    margin-right: 0 !important;
+    margin-left: 0.5rem !important;
+  }
+  
+  /* Specific RTL icon spacing for components like badges and cards */
+  [dir="rtl"] .badge > svg,
+  [dir="rtl"] .card-header > svg,
+  [dir="rtl"] .card-content > svg,
+  [dir="rtl"] .card-footer > svg {
+    margin-right: 0;
+    margin-left: 0.375rem;
+  }
+  
+  /* Fix RTL spacing in specific layout components */
+  [dir="rtl"] .metadata-item > svg,
+  [dir="rtl"] .status-item > svg {
+    margin-right: 0;
+    margin-left: 0.25rem;
+  }
+  
+  /* RTL table adjustments */
+  [dir="rtl"] table {
+    direction: rtl;
+  }
+  
+  [dir="rtl"] th,
+  [dir="rtl"] td {
+    text-align: right;
+  }
+  
+  [dir="rtl"] th:first-child,
+  [dir="rtl"] td:first-child {
+    text-align: right;
+  }
+  
+  [dir="rtl"] th:last-child,
+  [dir="rtl"] td:last-child {
+    text-align: left;
+  }
+  
+  /* RTL chart and visualization adjustments */
+  [dir="rtl"] .recharts-wrapper {
+    direction: ltr; /* Keep charts LTR for proper data visualization */
+  }
+  
+  [dir="rtl"] .chart-legend {
+    direction: rtl;
+  }
+  
+  /* RTL toast notifications */
+  [dir="rtl"] .toast-container {
+    left: 1rem;
+    right: auto;
+  }
+  
+  /* RTL modal and dialog adjustments */
+  [dir="rtl"] .modal-content {
+    text-align: right;
+  }
+  
+  /* RTL animation adjustments */
+  [dir="rtl"] .slide-in-right {
+    transform: translateX(-100%);
+  }
+  
+  [dir="rtl"] .slide-in-left {
+    transform: translateX(100%);
+  }
+  
+  /* RTL hover and group hover transform adjustments */
+  [dir="rtl"] .group-hover\:translate-x-1 {
+    --tw-translate-x: 0.25rem;
+  }
+  
+  [dir="rtl"] .group-hover\:-translate-x-1 {
+    --tw-translate-x: -0.25rem;
+  }
+  
+  /* RTL breadcrumb adjustments */
+  [dir="rtl"] .breadcrumb-separator {
+    transform: scaleX(-1);
+  }
+  
+  /* RTL progress bar */
+  [dir="rtl"] .progress-bar {
+    direction: ltr; /* Keep progress direction consistent */
+  }
+  
+  /* RTL specific utility classes */
+  .rtl\:text-right[dir="rtl"] {
+    text-align: right;
+  }
+  
+  .rtl\:text-left[dir="rtl"] {
+    text-align: left;
+  }
+  
+  .rtl\:flex-row-reverse[dir="rtl"] {
+    flex-direction: row-reverse;
+  }
+  
+  .rtl\:ml-auto[dir="rtl"] {
+    margin-left: auto;
+    margin-right: 0;
+  }
+  
+  .rtl\:mr-auto[dir="rtl"] {
+    margin-right: auto;
+    margin-left: 0;
+  }
+  
+  /* Fix menu popover positions in RTL */
+  [dir="rtl"] [data-side="top"] {
+    margin-bottom: var(--radix-dropdown-menu-content-transform-origin-y);
+  }
+  
+  [dir="rtl"] [data-side="bottom"] {
+    margin-top: var(--radix-dropdown-menu-content-transform-origin-y);
+  }
+  
+  [dir="rtl"] [data-side="left"] {
+    margin-right: var(--radix-dropdown-menu-content-transform-origin-x);
+  }
+  
+  [dir="rtl"] [data-side="right"] {
+    margin-left: var(--radix-dropdown-menu-content-transform-origin-x);
+  }
+}
+
+/* Targeted RTL tweaks for spacing in navigation and icons */
+@layer components {
+  /* RTL Override for the Top Header and Page Header */
+  [dir="rtl"] .top-header,
+  [dir="rtl"] .page-header {
+    flex-direction: row-reverse;
+  }
+  /* Also flip the inner flex wrapper of the top header so the spacer and actions swap */
+  [dir="rtl"] .top-header > .flex.flex-1,
+  [dir="rtl"] .top-header > .flex-1 {
+    flex-direction: row-reverse;
+  }
+
+  /* RTL Override for attribute-identified headers in main content */
+  [dir="rtl"] .main-content [data-component-name="nav"][class*="justify-Right"] {
+    flex-direction: row-reverse;
+  }
+  
+  [dir="rtl"] .main-content [data-component-name="div"][class*="justify-Right"] {
+    flex-direction: row-reverse;
+  }
+
+  /* Generic RTL flip for flex headers with justify-between inside main content */
+  [dir="rtl"] .main-content .flex[class*="justify-between"] {
+    flex-direction: row-reverse;
+  }
+
+  /* Ensure auto margins play nice in RTL: swap ml-auto/mr-auto */
+  [dir="rtl"] .ml-auto { margin-left: 0; margin-right: auto; }
+  [dir="rtl"] .mr-auto { margin-right: 0; margin-left: auto; }
+
+  /* Sidebar navigation icon margin in RTL */
+  [dir="rtl"] nav a > .mr-3 {
+    margin-right: 0;
+    margin-left: 0.75rem; /* 3 * 0.25rem = 0.75rem */
+  }
+
+  /* Generic small icon margin flip (e.g., logout) */
+  [dir="rtl"] .mr-2 {
+    margin-right: 0;
+    margin-left: 0.5rem; /* 2 * 0.25rem = 0.5rem */
+  }
+}
+
+/* High-specificity RTL header overrides placed in utilities layer to win over Tailwind utilities */
+@layer utilities {
+  /* Flip known header containers */
+  [dir="rtl"] .top-header,
+  [dir="rtl"] .page-header {
+    flex-direction: row-reverse !important;
+  }
+
+  /* Flip inner wrapper in top header (spacer and actions) */
+  [dir="rtl"] .top-header > .flex.flex-1,
+  [dir="rtl"] .top-header > .flex-1 {
+    flex-direction: row-reverse !important;
+  }
+
+  /* Flip attribute-identified flex headers inside main content */
+  [dir="rtl"] .main-content [data-component-name="nav"][class*="justify-between"],
+  [dir="rtl"] .main-content [data-component-name="div"][class*="justify-between"] {
+    flex-direction: row-reverse !important;
+  }
+
+  /* Global flip for attribute-identified containers even outside main content */
+  [dir="rtl"] [data-component-name="nav"][class*="justify-between"],
+  [dir="rtl"] [data-component-name="div"][class*="justify-between"] {
+    flex-direction: row-reverse !important;
+  }
+
+  /* Flip the reusable header component container */
+  [dir="rtl"] header .container.flex[class*="justify-between"] {
+    flex-direction: row-reverse !important;
+  }
+  
+  /* Adjust horizontal spacing utilities inside header in RTL */
+  [dir="rtl"] header .container .space-x-4 > :not([hidden]) ~ :not([hidden]) {
+    --tw-space-x-reverse: 1;
+  }
+
+  /* Generic flip for flex headers with justify-between inside main content */
+  [dir="rtl"] .main-content .flex-row[class*="justify-between"],
+  [dir="rtl"] .main-content .flex[class*="justify-between"] {
+    flex-direction: row-reverse !important;
+  }
+
+  /* الموافقات (Approvals) style positioning for all components */
+  /* Navigation item pattern - matches الموافقات positioning */
+  [dir="rtl"] .nav-item,
+  [dir="rtl"] .sidebar-item,
+  [dir="rtl"] .menu-item {
+    flex-direction: row-reverse !important;
+  }
+
+  /* Ensure text alignment follows direction */
+  [dir="rtl"] .text-left {
+    text-align: right !important;
+  }
+
+  /* Badge positioning pattern to match الموافقات */
+  [dir="rtl"] .badge-container {
+    flex-direction: row-reverse !important;
+  }
+  
+  /* Button with icon positioning to match الموافقات */
+  [dir="rtl"] button.icon-left > svg:first-child,
+  [dir="rtl"] .btn.icon-left > svg:first-child {
+    margin-right: 0 !important;
+    margin-left: 0.5rem !important;
+  }
+  
+  /* Navigation chevrons to match الموافقات */
+  [dir="rtl"] .nav-chevron,
+  [dir="rtl"] .chevron-right,
+  [dir="rtl"] .chevron-icon {
+    transform: rotate(180deg);
+    margin-right: auto !important;
+    margin-left: 0 !important;
+  }
+  
+  /* Custom utility classes for quick RTL fixes */
+  .rtl-flip-icon[dir="rtl"] {
+    transform: scaleX(-1);
+  }
+  
+  .rtl-row-reverse[dir="rtl"] {
+    flex-direction: row-reverse !important;
+  }
+  
+  .rtl-swap-margins[dir="rtl"] {
+    margin-left: var(--margin-right, 0) !important;
+    margin-right: var(--margin-left, 0) !important;
+  }
+  
+  /* Common component patterns like الموافقات */
+  [dir="rtl"] .action-button-row {
+    flex-direction: row-reverse !important;
+  }
+  
+  [dir="rtl"] .metadata-row {
+    flex-direction: row-reverse !important;
+  }
+  
+  [dir="rtl"] .icon-with-label {
+    flex-direction: row-reverse !important;
+  }
+}
+
+@layer components {
+  /* App Layout - CSS Grid Implementation (responsive) */
+  .app-layout {
+    display: grid;
+    grid-template-columns: 1fr; /* Mobile: single column */
+    min-height: 100vh;
+  }
+  
+  /* Alternative Flexbox Implementation */
+  .app-layout.flex {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .sidebar {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+  }
+
+  .main-content {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+    overflow-y: auto; /* Allow content to scroll */
+  }
+
+  /* Desktop and up */
+  @media (min-width: 1024px) {
+    .app-layout {
+      grid-template-columns: 250px 1fr; /* Sidebar width and main content */
+    }
+
+    .sidebar {
+      grid-column: 1 / 2;
+    }
+
+    .main-content {
+      grid-column: 2 / 3;
+    }
+
+  /* RTL Override for Grid Layout: flip columns so sidebar appears on the right when [dir="rtl"] */
+    [dir="rtl"] .app-layout {
+      grid-template-columns: 1fr 250px; /* Main content and sidebar */
+    }
+
+    [dir="rtl"] .sidebar {
+      grid-column: 2 / 3;
+    }
+
+    [dir="rtl"] .main-content {
+      grid-column: 1 / 2;
+    }
+  }
+}
+
+/* ==========================================================================
+   Purchase Request (PR) Page - Modern UI Overhaul
+   ========================================================================== */
+
+/* 1. Global Layout & Spacing
+   -------------------------------------------------------------------------- */
+.pr-page-container {
+  padding: 2rem; /* Increased padding for more breathing room */
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* Consistent vertical gap */
+}
+
+/* 2. Typography & Visual Hierarchy
+   -------------------------------------------------------------------------- */
+.pr-page-title {
+  font-size: 1.75rem; /* 28px */
+  font-weight: 700;
+  color: #fefefe;
+}
+
+.pr-page-subtitle {
+  font-size: 1rem;
+  color: #bcbcbd;
+  margin-top: 0.25rem;
+}
+
+/* 3. Filter & Search Controls
+   -------------------------------------------------------------------------- */
+.pr-filters-card {
+  background-color: #1b1b1b;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(242, 170, 56, 0.3);
+}
+
+.search-input-wrapper {
+  position: relative;
+}
+
+.search-input-icon {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  inset-inline-start: 0.75rem;
+  color: #bcbcbd;
+}
+
+.search-input {
+  padding-inline-start: 2.5rem; /* Space for the icon */
+  background-color: #2b2b2b;
+  border-color: rgba(242, 170, 56, 0.3);
+}
+
+.search-input:focus {
+  border-color: #f2aa38;
+  box-shadow: 0 0 0 1px rgba(242, 170, 56, 0.25);
+}
+
+/* 4. Request Card Grid
+   -------------------------------------------------------------------------- */
+.pr-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+}
+
+/* 5. The Request Card Component (`.pr-card`)
+   -------------------------------------------------------------------------- */
+.pr-card {
+  background-color: #1b1b1b;
+  border-radius: 0.75rem; /* 12px */
+  border: 1px solid rgba(242, 170, 56, 0.3);
+  box-shadow: 0 4px 6px -1px rgba(242, 170, 56, 0.05);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.pr-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(242, 170, 56, 0.1);
+  border-color: rgba(242, 170, 56, 0.5);
+}
+
+/* Card Header: Title and Status */
+.pr-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.pr-card-title {
+  font-size: 1.125rem; /* 18px */
+  font-weight: 600;
+  color: #fefefe;
+  line-height: 1.4;
+}
+
+/* Card Body: Description */
+.pr-card-body {
+  flex-grow: 1;
+}
+
+.pr-card-description {
+  font-size: 0.875rem; /* 14px */
+  color: #bcbcbd;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Card Footer: Metadata and Actions */
+.pr-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid rgba(242, 170, 56, 0.2);
+  padding-top: 1rem;
+  margin-top: auto;
+}
+
+.pr-card-metadata {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.8125rem; /* 13px */
+  color: #bcbcbd;
+}
+
+.metadata-item {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.metadata-icon {
+  width: 0.875rem; /* 14px */
+  height: 0.875rem;
+  color: #f2aa38;
+}
+
+.pr-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* 6. Status Badges
+   -------------------------------------------------------------------------- */
+.status-badge {
+  padding: 0.25rem 0.625rem;
+  border-radius: 9999px;
+  font-size: 0.75rem; /* 12px */
+  font-weight: 500;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.status-submitted {
+  background-color: rgba(242, 170, 56, 0.1);
+  color: #f2aa38;
+  border: 1px solid rgba(242, 170, 56, 0.3);
+}
+.status-dm_approved {
+  background-color: rgba(242, 170, 56, 0.1);
+  color: #f2aa38;
+  border: 1px solid rgba(242, 170, 56, 0.3);
+}
+.status-rejected {
+  background-color: rgba(242, 170, 56, 0.1);
+  color: #f2aa38;
+  border: 1px solid rgba(242, 170, 56, 0.3);
+}
+/* Add other status colors as needed */
+
+/* 7. Avatars
+   -------------------------------------------------------------------------- */
+.avatar-group {
+  display: flex;
+  padding-inline-end: 0.5rem;
+}
+
+.avatar-circle {
+  width: 2rem; /* 32px */
+  height: 2rem;
+  border: 2px solid #1b1b1b;
+  background-color: #2b2b2b;
+  color: #fefefe;
+}
+
+.avatar-circle:not(:first-child) {
+  margin-inline-start: -0.75rem;
+}
+
+.avatar-fallback {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+/* End of avatar styles */
+
+/* Animation for shimmer effect */
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
