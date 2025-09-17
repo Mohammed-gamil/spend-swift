@@ -109,7 +109,7 @@ export function Sidebar({ currentUser, activeRoute, onNavigate, pendingApprovals
           onClick={() => onNavigate('create-pr')}
         >
           <Plus className="mr-2 h-4 w-4 rtl:mr-0 rtl:ml-2" />
-          {isRTL ? t("nav.newRequest") : "New Request"}
+          {t("nav.newRequest")}
         </Button>
       </div>
 
