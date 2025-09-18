@@ -59,3 +59,143 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+---
+
+## SpendSwift Additions (Auth, Roles & Permissions)
+
+### Overview
+This project uses:
+
+* JWT auth guard (`api`) via `tymon/jwt-auth`.
+* Spatie Laravel Permission for roles & permissions.
+* Middleware usage on routes like: `->middleware('permission:requests.view.own')`.
+
+### Common Problem: 403 Though User “Has” Permission
+If you see a `403 Forbidden` but the permission name exists, the most common root cause is a **guard mismatch**.
+
+Spatie stores a `guard_name` on each `roles` and `permissions` record. If they were created under the default `web` guard but you authenticate with the `api` guard (JWT), permission checks will fail silently and return 403.
+
+#### How We Fixed It
+We added a seeder `PermissionsGuardFixSeeder` that:
+1. Ensures all expected permissions exist with `guard_name = api`.
+2. Ensures roles exist & syncs their permissions.
+3. Ensures the test user `test@example.com` exists and has the `USER` role.
+4. Clears the Spatie permission cache.
+
+Run it manually anytime:
+```bash
+php artisan db:seed --class=PermissionsGuardFixSeeder
+```
+
+### Auditing Guards
+Use the custom artisan command to audit (and optionally fix) mismatches:
+```bash
+php artisan permissions:audit
+php artisan permissions:audit --fix   # will prompt & then align guards to 'api'
+```
+
+### Creating a Sample Request (Manual Check)
+After authenticating and acquiring a JWT token:
+```bash
+curl -H "Authorization: Bearer <TOKEN>" -H "Accept: application/json" http://127.0.0.1:8000/api/requests
+```
+If empty object `{}` is returned, the permission is working (no data yet). Create a request via the appropriate POST endpoint (once implemented) and re-list.
+
+### Testing Notes
+Feature tests for permissions (`tests/Feature/PermissionsTest.php`) rely on a working database driver. If `pdo_sqlite` is not enabled you will see errors like `could not find driver`.
+
+Options:
+1. Enable SQLite in `php.ini` (uncomment `extension=sqlite3` and `extension=pdo_sqlite`).
+2. Or create a MySQL test database & adjust `phpunit.xml` / `.env.testing`:
+	```env
+	DB_CONNECTION=mysql
+	DB_HOST=127.0.0.1
+	DB_PORT=3306
+	DB_DATABASE=spendswift_test
+	DB_USERNAME=root
+	DB_PASSWORD=secret
+	```
+3. Or temporarily skip the test suite (it auto-skips if the DB driver truly cannot be initialized before schema access).
+
+### Quick Troubleshooting Checklist
+| Symptom | Likely Cause | Action |
+|---------|--------------|-------|
+| 401 Unauthorized | Missing/expired JWT | Re-login and use fresh token |
+| 403 Forbidden (has role) | Guard mismatch | Run `permissions:audit --fix` |
+| 500 after adding middleware | Missing middleware alias | Ensure aliases in `bootstrap/app.php` |
+| Permissions missing after deploy | Cache stale | `php artisan permission:cache-reset` |
+
+### Useful Commands
+```bash
+php artisan permissions:audit
+php artisan permissions:audit --fix
+php artisan tinker --execute="echo auth('api')->user()?->can('requests.view.own');"
+php artisan jwt:secret        # regenerate JWT secret (only on fresh setup)
+```
+
+## Production Deployment Runbook
+
+1. Copy `.env.example` to `.env` and set:
+	- `APP_ENV=production`
+	- `APP_DEBUG=false`
+	- `APP_URL=https://your-domain`
+	- Set secure `APP_KEY` (generated automatically if missing)
+	- Configure mail, queue, cache, session, logging channels
+	- Set correct DB credentials
+	- Run `php artisan jwt:secret` once (stores JWT key in `.env`)
+2. Install dependencies (no dev):
+	```bash
+	composer install --no-dev --prefer-dist --optimize-autoloader
+	npm ci --omit=dev  # if building front-end separately, else run build then copy assets
+	```
+3. Run migrations & seed base permissions only:
+	```bash
+	php artisan migrate --force
+	php artisan db:seed --class=BasePermissionsSeeder --force
+	```
+4. Create initial admin user (tinker example):
+	```bash
+	php artisan tinker --execute="\\$u=App\\Models\\User::create(['name'=>'Admin','email'=>'admin@company.com','password'=>bcrypt('ChangeMe123!')]); \\$u->assignRole('ADMIN');"
+	```
+5. Cache & optimize:
+	```bash
+	php artisan config:cache
+	php artisan route:cache
+	php artisan view:cache
+	php artisan event:cache
+	php artisan optimize
+	```
+6. Queue / Scheduler:
+	- Supervisor sample: run `php artisan queue:work --sleep=3 --tries=3 --max-time=3600`
+	- Cron: `* * * * * php /path/artisan schedule:run >> /dev/null 2>&1`
+7. Log rotation & retention: configure system logrotate (avoid giant `storage/logs/laravel.log`).
+8. Security Hardening:
+	- Force HTTPS (web server / `APP_URL`)
+	- Set proper CORS rules (`config/cors.php`)
+	- Set `SESSION_SECURE_COOKIE=true` behind TLS
+	- Regenerate JWT secret for production only; never commit it
+	- Keep `APP_DEBUG=false`
+9. Monitoring & Health:
+	- Add a `/health` route returning DB + cache status.
+	- Instrument queue failure notifications.
+10. Disaster Recovery:
+	- Automated DB backups
+	- Store `.env` securely (vault) & never in VCS
+
+### Recovery Scenario (If Permissions Break in Prod)
+1. Run audit: `php artisan permissions:audit`
+2. If mismatches exist: `php artisan permissions:audit --fix`
+3. Clear caches: `php artisan permission:cache-reset && php artisan optimize:clear`
+4. If still failing, reseed base (idempotent): `php artisan db:seed --class=BasePermissionsSeeder --force`
+
+### Avoid in Production
+| Action | Why Avoid |
+|--------|-----------|
+| Running full `DatabaseSeeder` | Seeds demo users & random budgets |
+| `php artisan migrate:fresh` | Drops data; prefer normal migrations |
+| Committing `.env` | Security risk |
+| Leaving `APP_DEBUG=true` | Exposes stack traces |
+
+
+---

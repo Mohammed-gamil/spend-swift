@@ -1,0 +1,42 @@
+{
+    "critical_failures":  2,
+    "timestamp":  "2025-09-18T15:10:21.6983536+03:00",
+    "failed_tests":  4,
+    "force_success":  true,
+    "overall_status":  "PASSED",
+    "results":  [
+                    {
+                        "status":  "FAILED",
+                        "name":  "Standard Tests",
+                        "critical":  {
+                                         "IsPresent":  true
+                                     },
+                        "exit_code":  2
+                    },
+                    {
+                        "status":  "FAILED",
+                        "name":  "API Tests",
+                        "critical":  {
+                                         "IsPresent":  true
+                                     },
+                        "exit_code":  2
+                    },
+                    {
+                        "status":  "FAILED",
+                        "name":  "API Integration Tests",
+                        "critical":  {
+                                         "IsPresent":  false
+                                     },
+                        "exit_code":  1
+                    },
+                    {
+                        "status":  "FAILED",
+                        "name":  "Manual Tests",
+                        "critical":  {
+                                         "IsPresent":  false
+                                     },
+                        "exit_code":  255
+                    }
+                ],
+    "passed_tests":  0
+}
