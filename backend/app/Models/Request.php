@@ -49,6 +49,14 @@ class Request extends Model
     }
 
     /**
+     * Alias for requester (backward compatibility).
+     */
+    public function user(): BelongsTo
+    {
+        return $this->requester();
+    }
+
+    /**
      * Get the department for this request.
      */
     public function department(): BelongsTo
@@ -78,6 +86,22 @@ class Request extends Model
     public function approvalHistory(): HasMany
     {
         return $this->hasMany(ApprovalHistory::class);
+    }
+
+    /**
+     * Get the price quotes for this request.
+     */
+    public function priceQuotes(): HasMany
+    {
+        return $this->hasMany(PriceQuote::class);
+    }
+
+    /**
+     * Get the selected price quote for this request.
+     */
+    public function selectedQuote(): HasOne
+    {
+        return $this->hasOne(PriceQuote::class)->where('is_selected', true);
     }
 
     /**
@@ -172,6 +196,16 @@ class Request extends Model
     public function canBeEdited(): bool
     {
         return in_array($this->status, ['DRAFT', 'RETURNED']);
+    }
+
+    /**
+     * Get the total amount for this request.
+     *
+     * @return float
+     */
+    public function getTotalAmount(): float
+    {
+        return (float) $this->total_cost;
     }
 
     /**

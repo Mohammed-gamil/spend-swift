@@ -1,6 +1,6 @@
-# Testing the SpendSwift Backend API
+# Testing the Action-g Backend API
 
-This guide provides instructions for testing the SpendSwift backend API implementation. There are several ways to test the API to ensure it's functioning correctly.
+This guide provides instructions for testing the Action-g backend API implementation. There are several ways to test the API to ensure it's functioning correctly.
 
 ## Prerequisites
 

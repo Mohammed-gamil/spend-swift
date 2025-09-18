@@ -301,4 +301,118 @@ class RequestController extends Controller
             'request' => new RequestResource($cancelledRequest)
         ]);
     }
+
+    /**
+     * Process request by accountant (request quotes).
+     *
+     * @param HttpRequest $httpRequest
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function processRequestByAccountant(HttpRequest $httpRequest, Request $request): JsonResponse
+    {
+        $user = $httpRequest->user();
+        
+        if (!$user->hasRole('ACCOUNTANT')) {
+            return response()->json([
+                'message' => 'Only accountants can process requests for quotes.'
+            ], 403);
+        }
+        
+        $httpRequest->validate([
+            'comments' => 'nullable|string|max:1000',
+        ]);
+        
+        try {
+            $processedRequest = $this->requestService->processRequestByAccountant(
+                $request,
+                $httpRequest->input('comments')
+            );
+            
+            return response()->json([
+                'message' => 'Request processed and quotes requested successfully',
+                'request' => new RequestResource($processedRequest)
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 400);
+        }
+    }
+
+    /**
+     * Second approval by direct manager after quote selection.
+     *
+     * @param HttpRequest $httpRequest
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function secondApprovalByManager(HttpRequest $httpRequest, Request $request): JsonResponse
+    {
+        $user = $httpRequest->user();
+        
+        if (!$user->hasRole('DIRECT_MANAGER')) {
+            return response()->json([
+                'message' => 'Only direct managers can provide second approval.'
+            ], 403);
+        }
+        
+        $httpRequest->validate([
+            'comments' => 'nullable|string|max:1000',
+        ]);
+        
+        try {
+            $approvedRequest = $this->requestService->secondApprovalByDirectManager(
+                $request,
+                $httpRequest->input('comments')
+            );
+            
+            return response()->json([
+                'message' => 'Request approved for final processing',
+                'request' => new RequestResource($approvedRequest)
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 400);
+        }
+    }
+
+    /**
+     * Final approval by accountant (for funds transfer).
+     *
+     * @param HttpRequest $httpRequest
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function finalApprovalByAccountant(HttpRequest $httpRequest, Request $request): JsonResponse
+    {
+        $user = $httpRequest->user();
+        
+        if (!$user->hasRole('ACCOUNTANT')) {
+            return response()->json([
+                'message' => 'Only accountants can provide final approval.'
+            ], 403);
+        }
+        
+        $httpRequest->validate([
+            'comments' => 'nullable|string|max:1000',
+        ]);
+        
+        try {
+            $approvedRequest = $this->requestService->approveByAccountant(
+                $request,
+                $httpRequest->input('comments')
+            );
+            
+            return response()->json([
+                'message' => 'Request approved for funds transfer',
+                'request' => new RequestResource($approvedRequest)
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 400);
+        }
+    }
 }

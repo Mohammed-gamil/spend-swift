@@ -81,7 +81,24 @@ class AuthController extends Controller
      */
     public function profile()
     {
-        return response()->json(Auth::guard('api')->user());
+        $user = Auth::guard('api')->user();
+        
+        // Load relationships that might be needed
+        $user->load(['department', 'directManager', 'roles']);
+        
+        // Add avatar URL if avatar exists
+        if ($user->avatar) {
+            $user->avatar_url = asset('storage/' . $user->avatar);
+        }
+        
+        // Add user roles for frontend
+        $roleNames = $user->roles->pluck('name')->toArray();
+        $user->role_names = $roleNames;
+        
+        // Also add a simplified role field for easy access
+        $user->role = $roleNames[0] ?? null;
+        
+        return response()->json($user);
     }
 
     /**
@@ -115,11 +132,28 @@ class AuthController extends Controller
      */
     protected function respondWithToken($token)
     {
+        $user = Auth::guard('api')->user();
+        
+        // Load relationships
+        $user->load(['department', 'directManager', 'roles']);
+        
+        // Add avatar URL if avatar exists
+        if ($user->avatar) {
+            $user->avatar_url = asset('storage/' . $user->avatar);
+        }
+        
+        // Add user roles
+        $roleNames = $user->roles->pluck('name')->toArray();
+        $user->role_names = $roleNames;
+        
+        // Also add a simplified role field for easy access
+        $user->role = $roleNames[0] ?? null;
+        
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => Auth::guard('api')->factory()->getTTL() * 60, // TTL in seconds (43200 minutes = 30 days)
-            'user' => Auth::guard('api')->user()
+            'user' => $user
         ]);
     }
 }

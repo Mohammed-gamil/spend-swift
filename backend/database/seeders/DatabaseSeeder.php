@@ -80,10 +80,11 @@ class DatabaseSeeder extends Seeder
             'department_id' => Department::where('name', 'Marketing')->first()->id,
             'position' => 'Marketing Director',
             'phone' => '555-345-6789',
-            'reports_to' => null,
         ]);
-    $directManager->assignRole('DIRECT_MANAGER');
-        $user->reports_to = $directManager->id;
+        $directManager->assignRole('DIRECT_MANAGER');
+        
+        // Update user to have this direct manager
+        $user->direct_manager_id = $directManager->id;
         $user->save();
         
         // Accountant

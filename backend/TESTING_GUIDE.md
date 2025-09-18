@@ -1,4 +1,4 @@
-# SpendSwift API Testing Guide
+# Action-g API Testing Guide
 
 This document outlines how to test the SpendSwift backend API implementation.
 

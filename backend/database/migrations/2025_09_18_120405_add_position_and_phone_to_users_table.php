@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint \) {
+        Schema::table('users', function (Blueprint $table) {
             if (!Schema::hasColumn('users', 'position')) {
-                \->string('position')->nullable()->after('language_preference');
+                $table->string('position')->nullable()->after('language_preference');
             }
             if (!Schema::hasColumn('users', 'phone')) {
-                \->string('phone')->nullable()->after('position');
+                $table->string('phone')->nullable()->after('position');
             }
         });
     }
@@ -26,8 +26,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint \) {
-            \->dropColumn(['position', 'phone']);
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn(['position', 'phone']);
         });
     }
 };

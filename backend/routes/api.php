@@ -9,8 +9,10 @@ use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\Dashboard\StatsController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RequestController;
+use App\Http\Controllers\API\QuoteController;
 use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\HealthController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -44,6 +46,17 @@ Route::prefix('auth')->group(function () {
 
 // Protected API Routes
 Route::middleware('auth:api')->group(function () {
+    // Profile management routes
+    Route::prefix('profile')->group(function () {
+        Route::put('/', [ProfileController::class, 'updateProfile']);
+        Route::put('/password', [ProfileController::class, 'changePassword']);
+        Route::get('/notifications', [ProfileController::class, 'getNotificationPreferences']);
+        Route::put('/notifications', [ProfileController::class, 'updateNotificationPreferences']);
+        Route::put('/preferences', [ProfileController::class, 'updatePreferences']);
+        Route::post('/avatar', [ProfileController::class, 'uploadAvatar']);
+        Route::delete('/avatar', [ProfileController::class, 'deleteAvatar']);
+    });
+    
     // Request Routes
     Route::prefix('requests')->group(function () {
         // Basic CRUD operations
@@ -64,11 +77,47 @@ Route::middleware('auth:api')->group(function () {
             ->middleware('permission:requests.return,api');
         Route::post('/{request}/cancel', [RequestController::class, 'cancel'])->middleware('permission:requests.cancel.own,api');
         
+        // New workflow actions
+        Route::post('/{request}/process-by-accountant', [RequestController::class, 'processRequestByAccountant'])
+            ->middleware('permission:requests.process.accountant,api');
+        Route::post('/{request}/second-approval', [RequestController::class, 'secondApprovalByManager'])
+            ->middleware('permission:requests.approve.second,api');
+        Route::post('/{request}/final-approval', [RequestController::class, 'finalApprovalByAccountant'])
+            ->middleware('permission:requests.approve.final,api');
+        
         // Attachments
         Route::post('/{request}/attachments', [AttachmentController::class, 'store'])
             ->middleware('permission:requests.attachments.add,api');
         Route::delete('/attachments/{attachment}', [AttachmentController::class, 'destroy'])
             ->middleware('permission:requests.attachments.delete,api');
+        
+        // Price Quotes Routes
+        Route::prefix('{request}/quotes')->group(function () {
+            Route::get('/', [QuoteController::class, 'index'])
+                ->middleware('permission:requests.view.own,api');
+            Route::post('/', [QuoteController::class, 'store'])
+                ->middleware('permission:requests.quotes.add,api');
+            Route::get('/{quote}', [QuoteController::class, 'show'])
+                ->middleware('permission:requests.view.own,api');
+            Route::put('/{quote}', [QuoteController::class, 'update'])
+                ->middleware('permission:requests.quotes.edit,api');
+            Route::delete('/{quote}', [QuoteController::class, 'destroy'])
+                ->middleware('permission:requests.quotes.delete,api');
+            Route::post('/{quote}/select', [QuoteController::class, 'selectQuote'])
+                ->middleware('permission:requests.quotes.select,api');
+        });
+        
+        // Quote workflow actions
+        Route::post('/{request}/request-quotes', [QuoteController::class, 'requestQuotes'])
+            ->middleware('permission:requests.quotes.request,api');
+    });
+    
+    // Quote management routes (outside of specific request context)
+    Route::prefix('quotes')->group(function () {
+        Route::get('/requests-needing-quotes', [QuoteController::class, 'getRequestsNeedingQuotes'])
+            ->middleware('permission:requests.quotes.request,api');
+        Route::get('/requests-with-quotes', [QuoteController::class, 'getRequestsWithQuotes'])
+            ->middleware('permission:requests.view.own,api');
     });
     
     // Attachment download

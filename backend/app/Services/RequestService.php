@@ -12,14 +12,17 @@ use App\Exceptions\InsufficientBudgetException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Services\NotificationService;
+use App\Services\QuoteService;
 
 class RequestService
 {
     protected $notificationService;
+    protected $quoteService;
     
-    public function __construct(NotificationService $notificationService)
+    public function __construct(NotificationService $notificationService, QuoteService $quoteService)
     {
         $this->notificationService = $notificationService;
+        $this->quoteService = $quoteService;
     }
     
     /**
@@ -51,15 +54,19 @@ class RequestService
             // Admin and Final Manager can see all requests
         } elseif ($user->hasRole('DIRECT_MANAGER')) {
             // Get requests from users that report to this manager or created by this manager
-            $teamUserIds = User::where('reports_to', $user->id)->pluck('id')->toArray();
+            $teamUserIds = User::where('direct_manager_id', $user->id)->pluck('id')->toArray();
             $teamUserIds[] = $user->id;
             
             $query->where(function($q) use ($teamUserIds) {
                 $q->whereIn('requester_id', $teamUserIds)
-                  ->orWhere('status', 'SUBMITTED'); // Pending direct manager approval
+                  ->orWhere('status', 'SUBMITTED') // Pending first direct manager approval
+                  ->orWhere('status', 'QUOTE_SELECTED'); // Pending second direct manager approval
             });
         } elseif ($user->hasRole('ACCOUNTANT')) {
-            $query->where('status', 'DM_APPROVED'); // Pending accountant approval
+            $query->whereIn('status', [
+                'DM_APPROVED', // Pending quote request
+                'AWAITING_FINAL_APPROVAL' // Pending final approval and funds transfer
+            ]);
         } else {
             // Regular users can only see their own requests
             $query->where('requester_id', $user->id);
@@ -127,10 +134,9 @@ class RequestService
             
             // Add approval history entry
             $request->approvalHistories()->create([
-                'user_id' => Auth::id(),
-                'action' => 'CREATED',
-                'comments' => 'Request created as draft',
-                'status' => 'DRAFT'
+                'approver_id' => Auth::id(),
+                'status' => 'CREATED',
+                'comments' => 'Request created as draft'
             ]);
             
             return $request;
@@ -178,10 +184,9 @@ class RequestService
             
             // Add approval history entry
             $request->approvalHistories()->create([
-                'user_id' => Auth::id(),
-                'action' => 'UPDATED',
-                'comments' => 'Request updated',
-                'status' => 'DRAFT'
+                'approver_id' => Auth::id(),
+                'status' => 'UPDATED',
+                'comments' => 'Request updated'
             ]);
             
             return $request;
@@ -209,10 +214,9 @@ class RequestService
             
             // Add approval history entry
             $request->approvalHistories()->create([
-                'user_id' => Auth::id(),
-                'action' => 'SUBMITTED',
-                'comments' => $comments ?? 'Request submitted for approval',
-                'status' => 'SUBMITTED'
+                'approver_id' => Auth::id(),
+                'status' => 'SUBMITTED',
+                'comments' => $comments ?? 'Request submitted for approval'
             ]);
             
             // Notify direct manager
@@ -250,10 +254,9 @@ class RequestService
             
             // Add approval history entry
             $request->approvalHistories()->create([
-                'user_id' => Auth::id(),
-                'action' => 'DM_APPROVED',
-                'comments' => $comments ?? 'Request approved by direct manager',
-                'status' => 'DM_APPROVED'
+                'approver_id' => Auth::id(),
+                'status' => 'DM_APPROVED',
+                'comments' => $comments ?? 'Request approved by direct manager'
             ]);
             
             // Notify accountants
@@ -278,18 +281,71 @@ class RequestService
     }
     
     /**
-     * Approve request by accountant.
+     * Second approval by direct manager after quote selection.
      *
      * @param Request $request
      * @param string|null $comments
      * @return Request
      */
-    public function approveByAccountant(Request $request, ?string $comments = null)
+    public function secondApprovalByDirectManager(Request $request, ?string $comments = null)
     {
         return DB::transaction(function () use ($request, $comments) {
-            // Can only approve requests that were approved by direct manager
+            // Can only approve requests that have selected quotes
+            if ($request->status !== 'QUOTE_SELECTED') {
+                throw new InvalidRequestStateException('Only requests with selected quotes can be approved by direct manager for second time');
+            }
+            
+            // Ensure there's a selected quote
+            $selectedQuote = $request->selectedQuote;
+            if (!$selectedQuote) {
+                throw new InvalidRequestStateException('No quote has been selected for this request');
+            }
+            
+            // Update status
+            $request->status = 'AWAITING_FINAL_APPROVAL';
+            $request->save();
+            
+            // Add approval history entry
+            $request->approvalHistories()->create([
+                'approver_id' => Auth::id(),
+                'status' => 'DM_SECOND_APPROVED',
+                'comments' => $comments ?? 'Request approved by direct manager after quote selection'
+            ]);
+            
+            // Notify accountants for final approval
+            $accountants = User::role('ACCOUNTANT')->get();
+            foreach ($accountants as $accountant) {
+                $this->notificationService->sendNotification(
+                    $accountant->id,
+                    'Request with selected quote ready for final approval',
+                    '/requests/' . $request->id
+                );
+            }
+            
+            // Notify requester
+            $this->notificationService->sendNotification(
+                $request->requester_id,
+                'Your request with selected quote has been approved by your manager',
+                '/requests/' . $request->id
+            );
+            
+            return $request;
+        });
+    }
+
+    /**
+     * Process request by accountant - Request quotes instead of direct approval.
+     *
+     * @param Request $request
+     * @param string|null $comments
+     * @return Request
+     */
+    public function processRequestByAccountant(Request $request, ?string $comments = null)
+    {
+        return DB::transaction(function () use ($request, $comments) {
+            // Can only process requests that were approved by direct manager
             if ($request->status !== 'DM_APPROVED') {
-                throw new InvalidRequestStateException('Only direct manager approved requests can be approved by accountant');
+                throw new InvalidRequestStateException('Only direct manager approved requests can be processed by accountant');
             }
             
             // Check budget availability
@@ -307,32 +363,47 @@ class RequestService
                 throw new InsufficientBudgetException('Insufficient budget for this request');
             }
             
+            // Request quotes instead of direct approval
+            return $this->quoteService->requestQuotes($request, $comments);
+        });
+    }
+
+    /**
+     * Approve request by accountant after quote selection.
+     *
+     * @param Request $request
+     * @param string|null $comments
+     * @return Request
+     */
+    public function approveByAccountant(Request $request, ?string $comments = null)
+    {
+        return DB::transaction(function () use ($request, $comments) {
+            // Can only approve requests that have selected quotes and are awaiting final approval
+            if ($request->status !== 'AWAITING_FINAL_APPROVAL') {
+                throw new InvalidRequestStateException('Only requests awaiting final approval can be approved by accountant');
+            }
+            
+            // Ensure there's a selected quote
+            $selectedQuote = $request->selectedQuote;
+            if (!$selectedQuote) {
+                throw new InvalidRequestStateException('No quote has been selected for this request');
+            }
+            
             // Update status
             $request->status = 'ACCT_APPROVED';
             $request->save();
             
             // Add approval history entry
             $request->approvalHistories()->create([
-                'user_id' => Auth::id(),
-                'action' => 'ACCT_APPROVED',
-                'comments' => $comments ?? 'Request approved by accountant',
-                'status' => 'ACCT_APPROVED'
+                'approver_id' => Auth::id(),
+                'status' => 'ACCT_APPROVED',
+                'comments' => $comments ?? 'Request approved by accountant with selected quote'
             ]);
-            
-            // Notify final managers
-            $finalManagers = User::role('FINAL_MANAGER')->get();
-            foreach ($finalManagers as $finalManager) {
-                $this->notificationService->sendNotification(
-                    $finalManager->id,
-                    'Request ready for final approval',
-                    '/requests/' . $request->id
-                );
-            }
             
             // Notify requester
             $this->notificationService->sendNotification(
                 $request->requester_id,
-                'Your request has been approved by accounting',
+                'Your request has been approved by accounting for funds transfer',
                 '/requests/' . $request->id
             );
             
@@ -361,10 +432,9 @@ class RequestService
             
             // Add approval history entry
             $request->approvalHistories()->create([
-                'user_id' => Auth::id(),
-                'action' => 'FINAL_APPROVED',
-                'comments' => $comments ?? 'Request approved by final manager',
-                'status' => 'FINAL_APPROVED'
+                'approver_id' => Auth::id(),
+                'status' => 'FINAL_APPROVED',
+                'comments' => $comments ?? 'Request approved by final manager'
             ]);
             
             // Notify requester
@@ -413,10 +483,9 @@ class RequestService
             
             // Add approval history entry
             $request->approvalHistories()->create([
-                'user_id' => Auth::id(),
-                'action' => 'FUNDS_TRANSFERRED',
-                'comments' => $comments ?? 'Funds transferred',
-                'status' => 'FUNDS_TRANSFERRED'
+                'approver_id' => Auth::id(),
+                'status' => 'FUNDS_TRANSFERRED',
+                'comments' => $comments ?? 'Funds transferred'
             ]);
             
             // Notify requester
@@ -451,10 +520,9 @@ class RequestService
             
             // Add approval history entry
             $request->approvalHistories()->create([
-                'user_id' => Auth::id(),
-                'action' => 'REJECTED',
-                'comments' => $comments,
-                'status' => 'REJECTED'
+                'approver_id' => Auth::id(),
+                'status' => 'REJECTED',
+                'comments' => $comments
             ]);
             
             // Notify requester
@@ -489,10 +557,9 @@ class RequestService
             
             // Add approval history entry
             $request->approvalHistories()->create([
-                'user_id' => Auth::id(),
-                'action' => 'RETURNED',
-                'comments' => $comments,
-                'status' => 'RETURNED'
+                'approver_id' => Auth::id(),
+                'status' => 'RETURNED',
+                'comments' => $comments
             ]);
             
             // Notify requester
@@ -506,6 +573,58 @@ class RequestService
         });
     }
     
+    /**
+     * Get requests that need quotes to be added (for accountants).
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getRequestsNeedingQuotes()
+    {
+        return Request::with(['user', 'department', 'items', 'projectDetails', 'approvalHistories', 'priceQuotes'])
+            ->where('status', 'DM_APPROVED')
+            ->latest()
+            ->get();
+    }
+    
+    /**
+     * Get requests with quotes requested (for viewing quotes).
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getRequestsWithQuotesRequested()
+    {
+        return Request::with(['user', 'department', 'items', 'projectDetails', 'approvalHistories', 'priceQuotes.creator'])
+            ->where('status', 'QUOTES_REQUESTED')
+            ->latest()
+            ->get();
+    }
+    
+    /**
+     * Get requests with selected quotes (for second manager approval).
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getRequestsWithSelectedQuotes()
+    {
+        return Request::with(['user', 'department', 'items', 'projectDetails', 'approvalHistories', 'selectedQuote'])
+            ->where('status', 'QUOTE_SELECTED')
+            ->latest()
+            ->get();
+    }
+    
+    /**
+     * Get requests awaiting final approval (for accountant final approval).
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getRequestsAwaitingFinalApproval()
+    {
+        return Request::with(['user', 'department', 'items', 'projectDetails', 'approvalHistories', 'selectedQuote'])
+            ->where('status', 'AWAITING_FINAL_APPROVAL')
+            ->latest()
+            ->get();
+    }
+
     /**
      * Resubmit a returned request.
      *
@@ -549,10 +668,9 @@ class RequestService
             
             // Add approval history entry
             $request->approvalHistories()->create([
-                'user_id' => Auth::id(),
-                'action' => 'RESUBMITTED',
-                'comments' => $comments ?? 'Request resubmitted after revision',
-                'status' => 'SUBMITTED'
+                'approver_id' => Auth::id(),
+                'status' => 'RESUBMITTED',
+                'comments' => $comments ?? 'Request resubmitted after revision'
             ]);
             
             // Notify direct manager
