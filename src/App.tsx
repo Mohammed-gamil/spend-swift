@@ -19,6 +19,7 @@ import AdminSettings from "@/pages/AdminSettings";
 import Index from "@/pages/Index";
 import NotFound from "@/pages/NotFound";
 import Reports from "@/pages/Reports";
+import UserProfile from "@/pages/UserProfile";
 
 const queryClient = new QueryClient();
 
@@ -110,6 +111,7 @@ const App = () => (
                   <AdminSettings />
                 </ProtectedRoute>
               } />
+              <Route path="profile" element={<UserProfile />} />
             </Route>
             
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

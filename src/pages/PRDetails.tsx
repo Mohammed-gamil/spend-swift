@@ -238,7 +238,7 @@ export default function PRDetails() {
       setQuoteFiles([]);
       setShowQuoteDialog(false);
     } catch (error) {
-      toast.error(t('common.errorOccurred'));
+      toast.error(t('common.errorOccurred' as any));
     }
   };
 

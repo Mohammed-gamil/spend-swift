@@ -68,21 +68,29 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+    <div className="min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      {/* Background gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-luxury-bg"></div>
+
+      <div className="max-w-md w-full space-y-8 relative z-10">
         <div className="text-center">
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+          <div className="mb-8">
+            <div className="h-16 w-16 rounded-full bg-gradient-primary flex items-center justify-center shadow-primary mx-auto mb-4">
+              <span className="text-2xl font-bold text-primary-foreground">PR</span>
+            </div>
+          </div>
+          <h2 className="mt-6 text-3xl font-extrabold text-foreground gradient-text">
             {t('login.title')}
           </h2>
-          <p className="mt-2 text-sm text-gray-600">
+          <p className="mt-2 text-sm text-muted-foreground">
             {t('login.subtitle')}
           </p>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('login.welcome')}</CardTitle>
-            <CardDescription>
+        <Card className="border-primary/20 shadow-lg backdrop-blur-sm bg-card/95">
+          <CardHeader className="text-center">
+            <CardTitle className="text-foreground">{t('login.welcome')}</CardTitle>
+            <CardDescription className="text-muted-foreground">
               {t('login.welcomeSubtitle')}
             </CardDescription>
           </CardHeader>
@@ -102,10 +110,10 @@ export default function Login() {
                   autoComplete="email"
                   placeholder={t('login.emailPlaceholder')}
                   {...register('email')}
-                  className={errors.email ? 'border-red-500' : ''}
+                  className={errors.email ? 'border-destructive' : ''}
                 />
                 {errors.email && (
-                  <p className="text-sm text-red-500">{t(errors.email.message as any)}</p>
+                  <p className="text-sm text-destructive">{t(errors.email.message as any)}</p>
                 )}
               </div>
 
@@ -118,7 +126,7 @@ export default function Login() {
                     autoComplete="current-password"
                     placeholder={t('login.passwordPlaceholder')}
                     {...register('password')}
-                    className={errors.password ? 'border-red-500 pr-10' : 'pr-10'}
+                    className={errors.password ? 'border-destructive pr-10' : 'pr-10'}
                   />
                   <button
                     type="button"
@@ -126,14 +134,14 @@ export default function Login() {
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (
-                      <EyeOff className="h-4 w-4 text-gray-400" />
+                      <EyeOff className="h-4 w-4 text-muted-foreground" />
                     ) : (
-                      <Eye className="h-4 w-4 text-gray-400" />
+                      <Eye className="h-4 w-4 text-muted-foreground" />
                     )}
                   </button>
                 </div>
                 {errors.password && (
-                  <p className="text-sm text-red-500">{t(errors.password.message as any)}</p>
+                  <p className="text-sm text-destructive">{t(errors.password.message as any)}</p>
                 )}
               </div>
 
@@ -179,33 +187,33 @@ export default function Login() {
             <div className="mt-6">
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300" />
+                  <div className="w-full border-t border-border" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">{t('login.demoCredentials')}</span>
+                  <span className="px-2 bg-background text-muted-foreground">{t('login.demoCredentials')}</span>
                 </div>
               </div>
 
               <div className="mt-4 grid grid-cols-2 gap-3 text-xs">
-                <div className="bg-gray-50 p-2 rounded">
-                  <strong>{t('login.demo.admin')}</strong><br />
-                  admin@demo.com<br />
-                  {t('login.demo.password')}
+                <div className="bg-muted p-2 rounded border border-border">
+                  <strong className="text-foreground">{t('login.demo.admin')}</strong><br />
+                  <span className="text-muted-foreground">admin@demo.com<br />
+                  {t('login.demo.password')}</span>
                 </div>
-                <div className="bg-gray-50 p-2 rounded">
-                  <strong>{t('login.demo.manager')}</strong><br />
-                  manager@demo.com<br />
-                  {t('login.demo.password')}
+                <div className="bg-muted p-2 rounded border border-border">
+                  <strong className="text-foreground">{t('login.demo.manager')}</strong><br />
+                  <span className="text-muted-foreground">manager@demo.com<br />
+                  {t('login.demo.password')}</span>
                 </div>
-                <div className="bg-gray-50 p-2 rounded">
-                  <strong>{t('login.demo.accountant')}</strong><br />
-                  accountant@demo.com<br />
-                  {t('login.demo.password')}
+                <div className="bg-muted p-2 rounded border border-border">
+                  <strong className="text-foreground">{t('login.demo.accountant')}</strong><br />
+                  <span className="text-muted-foreground">accountant@demo.com<br />
+                  {t('login.demo.password')}</span>
                 </div>
-                <div className="bg-gray-50 p-2 rounded">
-                  <strong>{t('login.demo.user')}</strong><br />
-                  user@demo.com<br />
-                  {t('login.demo.password')}
+                <div className="bg-muted p-2 rounded border border-border">
+                  <strong className="text-foreground">{t('login.demo.user')}</strong><br />
+                  <span className="text-muted-foreground">user@demo.com<br />
+                  {t('login.demo.password')}</span>
                 </div>
               </div>
             </div>

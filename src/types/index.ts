@@ -31,6 +31,17 @@ export interface User {
   teamId?: string;
   status: 'active' | 'inactive';
   avatar?: string;
+  phone?: string;
+  position?: string;
+  department_id?: string;
+  firstName?: string;
+  lastName?: string;
+  language_preference?: string;
+  timezone?: string;
+  date_format?: string;
+  currency?: string;
+  isActive?: boolean;
+  lastLogin?: Date;
   createdAt?: Date;
   lastLoginAt?: Date;
 }

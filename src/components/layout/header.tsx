@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useLanguageStore } from "@/hooks/use-language";
+import { useNavigate } from "react-router-dom";
 
 interface HeaderProps {
   currentUser: {
@@ -26,6 +27,7 @@ interface HeaderProps {
 
 export function Header({ currentUser, notifications, onSearch }: HeaderProps) {
   const { isRTL } = useLanguageStore();
+  const navigate = useNavigate();
   
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/60 shadow-sm">
@@ -115,11 +117,11 @@ export function Header({ currentUser, notifications, onSearch }: HeaderProps) {
                 </Badge>
               </div>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate('/profile')}>
                 <User className={`h-4 w-4 ${isRTL ? "ml-2" : "mr-2"}`} />
                 <span>{isRTL ? "الملف الشخصي" : "Profile"}</span>
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate('/admin/settings')}>
                 <Settings className={`h-4 w-4 ${isRTL ? "ml-2" : "mr-2"}`} />
                 <span>{isRTL ? "الإعدادات" : "Settings"}</span>
               </DropdownMenuItem>
