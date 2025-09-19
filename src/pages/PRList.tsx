@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuthStore } from "@/stores/authStore";
-import { usePRStore } from "@/stores/prStore";
+import { useApiPRStore } from "@/stores/apiPRStore";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -54,7 +54,7 @@ const mockPRs: PurchaseRequest[] = [
 
 export default function PRList() {
   const { user } = useAuthStore();
-  const { prs, isLoading, getPRs } = usePRStore();
+  const { prs, isLoading, getPRs } = useApiPRStore();
   const [searchQuery, setSearchQuery] = useState("");
   const [stateFilter, setStateFilter] = useState<string>("all");
   const { t } = useTranslation();

@@ -151,7 +151,9 @@ export type TranslationKey =
   // PR Create
   | 'prCreate.backToPRs'
   | 'prCreate.title'
+  | 'prCreate.titleEdit'
   | 'prCreate.subtitle'
+  | 'prCreate.subtitleEdit'
   | 'prCreate.stepBasicInfo'
   | 'prCreate.stepItems'
   | 'prCreate.stepProjectDetails'
@@ -213,6 +215,9 @@ export type TranslationKey =
   | 'prCreate.buttonPrevious'
   | 'prCreate.buttonNext'
   | 'prCreate.buttonSubmit'
+  | 'prCreate.buttonUpdate'
+  | 'prCreate.buttonSubmitting'
+  | 'prCreate.buttonUpdating'
   | 'prCreate.categories.itEquipment'
   | 'prCreate.categories.officeSupplies'
   | 'prCreate.categories.softwareLicenses'
@@ -566,7 +571,7 @@ export type TranslationKey =
 export const translations: Record<'en' | 'ar', Record<TranslationKey, string>> = {
   en: {
     // App
-    'app.title': 'PR System',
+    'app.title': 'Action-g',
     
     // Navigation
     'nav.dashboard': 'Dashboard',
@@ -698,7 +703,9 @@ export const translations: Record<'en' | 'ar', Record<TranslationKey, string>> =
     // PR Create
     'prCreate.backToPRs': 'Back to PRs',
     'prCreate.title': 'Create Purchase Request',
+    'prCreate.titleEdit': 'Edit Purchase Request',
     'prCreate.subtitle': 'Fill out the form to create a new purchase request',
+    'prCreate.subtitleEdit': 'Update the details of your purchase request',
     'prCreate.stepBasicInfo': 'Basic Info',
     'prCreate.stepItems': 'Items',
     'prCreate.stepProjectDetails': 'Project Details',
@@ -757,6 +764,9 @@ export const translations: Record<'en' | 'ar', Record<TranslationKey, string>> =
     'prCreate.buttonPrevious': 'Previous',
     'prCreate.buttonNext': 'Next',
     'prCreate.buttonSubmit': 'Create Purchase Request',
+    'prCreate.buttonUpdate': 'Update Purchase Request',
+    'prCreate.buttonSubmitting': 'Creating...',
+    'prCreate.buttonUpdating': 'Updating...',
   'prCreate.categories.itEquipment': 'IT Equipment',
   'prCreate.categories.officeSupplies': 'Office Supplies',
   'prCreate.categories.softwareLicenses': 'Software Licenses',
@@ -1141,7 +1151,7 @@ export const translations: Record<'en' | 'ar', Record<TranslationKey, string>> =
   },
   ar: {
     // App
-    'app.title': 'نظام طلبات الشراء',
+    'app.title': 'Action-g',
     
     // Navigation
     'nav.dashboard': 'لوحة التحكم',
@@ -1274,7 +1284,9 @@ export const translations: Record<'en' | 'ar', Record<TranslationKey, string>> =
     // PR Create
     'prCreate.backToPRs': 'العودة إلى طلبات الشراء',
     'prCreate.title': 'إنشاء طلب شراء',
+    'prCreate.titleEdit': 'تعديل طلب الشراء',
     'prCreate.subtitle': 'املأ النموذج لإنشاء طلب شراء جديد',
+    'prCreate.subtitleEdit': 'قم بتحديث تفاصيل طلب الشراء',
     'prCreate.stepBasicInfo': 'المعلومات الأساسية',
     'prCreate.stepItems': 'البنود',
     'prCreate.stepProjectDetails': 'تفاصيل المشروع',
@@ -1333,6 +1345,9 @@ export const translations: Record<'en' | 'ar', Record<TranslationKey, string>> =
     'prCreate.buttonPrevious': 'السابق',
     'prCreate.buttonNext': 'التالي',
     'prCreate.buttonSubmit': 'إنشاء طلب شراء',
+    'prCreate.buttonUpdate': 'تحديث طلب الشراء',
+    'prCreate.buttonSubmitting': 'جاري الإنشاء...',
+    'prCreate.buttonUpdating': 'جاري التحديث...',
   'prCreate.categories.itEquipment': 'معدات تقنية المعلومات',
   'prCreate.categories.officeSupplies': 'مستلزمات المكاتب',
   'prCreate.categories.softwareLicenses': 'تراخيص البرامج',

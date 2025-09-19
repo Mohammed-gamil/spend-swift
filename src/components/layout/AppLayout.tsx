@@ -10,7 +10,6 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Badge } from '@/components/ui/badge';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { LanguageToggle } from '@/components/ui/language-toggle';
-import { NotificationDropdown } from '@/components/ui/notification-dropdown';
 import { 
   Menu, 
   Home, 
@@ -137,9 +136,6 @@ export default function AppLayout() {
                 
                 {/* Theme Toggle */}
                 <ThemeToggle />
-                
-                {/* Notifications */}
-                <NotificationDropdown />
 
                 {/* Profile dropdown */}
                 <DropdownMenu>
@@ -165,10 +161,7 @@ export default function AppLayout() {
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
-                      <Link to="/profile">{t('nav.profile')}</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/notifications">{t('nav.notifications')}</Link>
+                      <Link to="/profile">{t('common.profile')}</Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleLogout}>

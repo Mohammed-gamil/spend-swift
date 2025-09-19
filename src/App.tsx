@@ -7,6 +7,8 @@ import { LanguageProvider } from "@/components/LanguageProvider";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import AppLayout from "@/components/layout/AppLayout";
 import Login from "@/pages/Login";
+import LoginTest from "@/pages/LoginTest";
+import LoginSimple from "@/pages/LoginSimple";
 import Unauthorized from "@/pages/Unauthorized";
 import Dashboard from "@/pages/Dashboard";
 import PRList from "@/pages/PRList";
@@ -16,9 +18,11 @@ import Approvals from "@/pages/Approvals";
 import Accounting from "@/pages/Accounting";
 import AdminUsers from "@/pages/AdminUsers";
 import AdminSettings from "@/pages/AdminSettings";
+import UserProfile from "@/pages/UserProfile";
 import Index from "@/pages/Index";
 import NotFound from "@/pages/NotFound";
 import Reports from "@/pages/Reports";
+import { AuthTestComponent } from "@/components/auth/AuthTestComponent";
 
 const queryClient = new QueryClient();
 
@@ -63,7 +67,10 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/login" element={<Login />} />
+            <Route path="/login-test" element={<LoginTest />} />
+            <Route path="/login-simple" element={<LoginSimple />} />
             <Route path="/unauthorized" element={<Unauthorized />} />
+            <Route path="/auth-test" element={<AuthTestComponent />} />
             
             {/* Protected routes with layout */}
             <Route path="/" element={
@@ -110,6 +117,7 @@ const App = () => (
                   <AdminSettings />
                 </ProtectedRoute>
               } />
+              <Route path="profile" element={<UserProfile />} />
             </Route>
             
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

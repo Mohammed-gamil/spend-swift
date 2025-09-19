@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -19,6 +19,7 @@ import { arSA } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { Currency, RequestType } from "@/types";
 import { usePRStore } from "@/stores/prStore";
+import { useApiPRStore } from "@/stores/apiPRStore";
 import { useTranslation } from "@/hooks/use-translation";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import RoleGuard from "@/components/auth/RoleGuard";
@@ -119,8 +120,11 @@ const requestTypes: RequestType[] = ["purchase", "project"];
 
 export default function PRCreate() {
   const { t, language } = useTranslation();
+  const { id } = useParams(); // Get request ID from URL for edit mode
+  const isEditMode = Boolean(id); // Determine if we're in edit mode
   const [currentStep, setCurrentStep] = useState(0);
   const [files, setFiles] = useState<File[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
   const form = useForm<PRFormData>({
@@ -212,68 +216,119 @@ export default function PRCreate() {
     setCurrentStep(prev => Math.max(prev - 1, 0));
   };
 
-  const { createRequest } = usePRStore();
+  // Handle Enter key press to prevent accidental form submission
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && e.target instanceof HTMLInputElement) {
+      e.preventDefault();
+      // Move to next step instead of submitting
+      if (currentStep < steps.length - 1) {
+        nextStep();
+      }
+    }
+  };
+
+  // Use API store for backend integration, fallback to mock store for local data
+  const { createRequest: createRequestAPI, updateRequest: updateRequestAPI } = useApiPRStore();
+  const { updatePR, prs } = usePRStore(); // Keep for backwards compatibility and local data
   const { reset } = form;
 
+  // Get existing request data in edit mode
+  const existingRequest = isEditMode ? prs.find(pr => pr.id === id) : null;
+
+  // Load existing data when in edit mode
+  useEffect(() => {
+    if (isEditMode && existingRequest) {
+      // Populate form with existing data
+      form.reset({
+        type: existingRequest.type,
+        title: existingRequest.title,
+        description: existingRequest.description,
+        category: existingRequest.category,
+        desiredCost: existingRequest.desiredCost,
+        currency: existingRequest.currency,
+        neededByDate: new Date(existingRequest.neededByDate),
+        items: existingRequest.items || [{ name: "", quantity: 1, unitPrice: 0, vendorHint: "" }],
+        // Project-specific fields
+        ...(existingRequest.type === 'project' && {
+          clientName: (existingRequest as any).clientName || "",
+          projectDescription: (existingRequest as any).projectDescription || "",
+          totalCost: (existingRequest as any).totalCost || 0,
+          totalBenefit: (existingRequest as any).totalBenefit || 0,
+          totalPrice: (existingRequest as any).totalPrice || 0,
+        })
+      });
+    } else if (isEditMode && !existingRequest) {
+      // If in edit mode but request not found, redirect to list
+      navigate('/prs');
+    }
+  }, [isEditMode, existingRequest, form, navigate]);
+
   const onSubmit = async (data: PRFormData) => {
+    if (isSubmitting) return; // Prevent double submission
+    
+    setIsSubmitting(true);
     try {
-      console.log('Submitting Request:', data);
+      console.log(isEditMode ? 'Updating Request:' : 'Creating Request:', data);
       
-      if (data.type === "purchase") {
-        // Handle purchase request submission
-        await createRequest({
-          type: "purchase",
+      if (isEditMode && id) {
+        // Update existing request using API
+        await updateRequestAPI(id, {
+          type: data.type,
           title: data.title,
           description: data.description,
           category: data.category,
           desiredCost: data.desiredCost,
           currency: data.currency,
           neededByDate: data.neededByDate,
-          items: data.items.map((item, index) => ({
-            name: item.name,
-            quantity: item.quantity,
-            unitPrice: item.unitPrice,
-            vendorHint: item.vendorHint,
-          }))
+          items: data.items,
+          // Project-specific fields
+          ...(data.type === 'project' && {
+            clientName: data.clientName,
+            projectDescription: data.projectDescription,
+            totalCost: data.totalCost,
+            totalBenefit: data.totalBenefit,
+            totalPrice: data.totalPrice,
+          })
         });
       } else {
-        // Handle project request submission
-        await createRequest({
-          type: "project",
+        // Create new request using API
+        await createRequestAPI({
+          type: data.type,
           title: data.title,
           description: data.description,
           category: data.category,
           desiredCost: data.desiredCost,
           currency: data.currency,
           neededByDate: data.neededByDate,
-          clientName: data.clientName,
-          projectDescription: data.projectDescription,
-          totalCost: data.totalCost,
-          totalBenefit: data.totalBenefit,
-          totalPrice: data.totalPrice,
-          // Include items if any were added (optional for projects)
-          items: data.items?.map((item, index) => ({
-            name: item.name,
-            quantity: item.quantity,
-            unitPrice: item.unitPrice,
-            vendorHint: item.vendorHint,
-          }))
+          items: data.items,
+          // Project-specific fields
+          ...(data.type === 'project' && {
+            clientName: data.clientName,
+            projectDescription: data.projectDescription,
+            totalCost: data.totalCost,
+            totalBenefit: data.totalBenefit,
+            totalPrice: data.totalPrice,
+          })
         });
       }
       
-      console.log('Request created successfully');
+      console.log(isEditMode ? 'Request updated successfully' : 'Request created successfully');
       
-      // Reset form after successful submission
-      reset();
+      // Reset form after successful submission (only for create mode)
+      if (!isEditMode) {
+        reset();
+      }
       
-      // Add a small delay before navigation to ensure everything is processed
+      // Navigate back to list
       setTimeout(() => {
         navigate('/prs');
       }, 100);
       
     } catch (error) {
-      console.error('Failed to create request:', error);
+      console.error(isEditMode ? 'Failed to update request:' : 'Failed to create request:', error);
       // Error is already handled by the store with toast
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -294,15 +349,25 @@ export default function PRCreate() {
           {t('prCreate.backToPRs')}
         </Button>
         <div>
-          <h1 className="text-3xl font-bold">{t('prCreate.title')}</h1>
-          <p className="text-gray-600">{t('prCreate.subtitle')}</p>
+          <h1 className="text-3xl font-bold">
+            {isEditMode ? t('prCreate.titleEdit') : t('prCreate.title')}
+          </h1>
+          <p className="text-gray-600">
+            {isEditMode ? t('prCreate.subtitleEdit') : t('prCreate.subtitle')}
+          </p>
         </div>
       </div>
 
       {/* Stepper */}
   <Stepper steps={steps.map((k) => t(k as any))} currentStep={currentStep} />
 
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form 
+        onSubmit={(e) => {
+          // Prevent auto-submit except when explicitly clicking submit button
+          e.preventDefault();
+        }}
+        onKeyDown={handleKeyDown}
+      >
       {/* Step 1: Basic Information */}
       {currentStep === 0 && (
         <Card>
@@ -832,8 +897,15 @@ export default function PRCreate() {
               <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
           ) : (
-            <Button type="submit">
-              {t('prCreate.buttonSubmit')}
+            <Button 
+              type="button" 
+              onClick={form.handleSubmit(onSubmit)}
+              disabled={isSubmitting}
+            >
+              {isSubmitting 
+                ? (isEditMode ? t('prCreate.buttonUpdating') : t('prCreate.buttonSubmitting'))
+                : (isEditMode ? t('prCreate.buttonUpdate') : t('prCreate.buttonSubmit'))
+              }
             </Button>
           )}
         </div>

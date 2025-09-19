@@ -1,6 +1,6 @@
-# SpendSwift: Purchase Request Management System
+# Action-g: Purchase Request Management System
 
-![SpendSwift Logo](public/favicon.ico) 
+![Action-g Logo](public/favicon.ico) 
 
 A comprehensive solution for managing both purchase requests and project requests across organizations with a multi-role approval workflow.
 
@@ -20,7 +20,7 @@ A comprehensive solution for managing both purchase requests and project request
 
 ## 📋 Overview
 
-SpendSwift is an enterprise-grade Purchase Request (PR) and Project Request Management System designed to streamline procurement and project approval processes. It features a sophisticated multi-role approval workflow, state machines for managing request lifecycles, and a modern, responsive interface with multilingual support including RTL languages.
+Action-g is an enterprise-grade Purchase Request (PR) and Project Request Management System designed to streamline procurement and project approval processes. It features a sophisticated multi-role approval workflow, state machines for managing request lifecycles, and a modern, responsive interface with multilingual support including RTL languages.
 
 ## ✨ Features
 
@@ -376,7 +376,7 @@ Authorization: Bearer {token}
 
 ## 🧩 UI Components
 
-SpendSwift includes a comprehensive set of UI components built on shadcn/ui and Tailwind CSS:
+Action-g includes a comprehensive set of UI components built on shadcn/ui and Tailwind CSS:
 
 ### Layout Components
 - App layouts with sidebar navigation
@@ -494,4 +494,4 @@ Additional states include:
 
 ---
 
-© 2025 SpendSwift. All Rights Reserved.
+© 2025 Action-g. All Rights Reserved.

@@ -27,8 +27,18 @@ import { useTranslation } from "@/hooks/use-translation";
 const mockPendingPRs: PurchaseRequest[] = [
   {
     id: "PR-2024-001",
+    type: "purchase" as const,
     requesterId: "2",
-    requester: { id: "2", name: "Sarah Ahmed", email: "sarah@company.com", role: "USER", status: "active" },
+    requester: { 
+      id: 2, 
+      name: "Sarah Ahmed", 
+      email: "sarah@company.com", 
+      role: "USER", 
+      status: "active",
+      language_preference: "en",
+      created_at: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+      updated_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
+    },
     title: "New MacBook Pro for Development Team",
     description: "Urgent requirement for M3 MacBook Pro to replace aging development machine",
     category: "IT Equipment",
@@ -45,8 +55,18 @@ const mockPendingPRs: PurchaseRequest[] = [
   },
   {
     id: "PR-2024-003",
+    type: "purchase" as const,
     requesterId: "4",
-    requester: { id: "4", name: "Omar Hassan", email: "omar@company.com", role: "USER", status: "active" },
+    requester: { 
+      id: 4, 
+      name: "Omar Hassan", 
+      email: "omar@company.com", 
+      role: "USER", 
+      status: "active",
+      language_preference: "en",
+      created_at: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString(),
+      updated_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()
+    },
     title: "Marketing Campaign Materials",
     description: "Promotional materials for Q2 marketing campaign including banners, flyers, and digital assets",
     category: "Marketing Materials",
@@ -66,8 +86,18 @@ const mockPendingPRs: PurchaseRequest[] = [
   },
   {
     id: "PR-2024-004",
+    type: "purchase" as const,
     requesterId: "5",
-    requester: { id: "5", name: "Fatima Ali", email: "fatima@company.com", role: "USER", status: "active" },
+    requester: { 
+      id: 5, 
+      name: "Fatima Ali", 
+      email: "fatima@company.com", 
+      role: "USER", 
+      status: "active",
+      language_preference: "en",
+      created_at: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString(),
+      updated_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString()
+    },
     title: "Software Licenses Renewal",
     description: "Annual renewal of Adobe Creative Suite licenses for design team",
     category: "Software Licenses",
@@ -122,11 +152,11 @@ export default function Approvals() {
       
       switch (user.role) {
         case 'DIRECT_MANAGER':
-          return pr.state === 'SUBMITTED' && pr.currentApproverId === user.id;
+          return pr.state === 'SUBMITTED' && pr.currentApproverId === user.id.toString();
         case 'ACCOUNTANT':
-          return pr.state === 'DM_APPROVED' && pr.currentApproverId === user.id;
+          return pr.state === 'DM_APPROVED' && pr.currentApproverId === user.id.toString();
         case 'FINAL_MANAGER':
-          return pr.state === 'ACCT_APPROVED' && pr.currentApproverId === user.id;
+          return pr.state === 'ACCT_APPROVED' && pr.currentApproverId === user.id.toString();
         default:
           return false;
       }

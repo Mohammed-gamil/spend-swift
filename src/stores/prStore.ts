@@ -15,6 +15,7 @@ import {
 import toast from 'react-hot-toast';
 import { translations } from '@/lib/translations';
 import { useLanguageStore } from '@/hooks/use-language';
+import { requestApi } from '@/lib/api';
 
 interface PRStoreState {
   prs: Request[];
@@ -141,71 +142,28 @@ export const usePRStore = create<PRStoreState & PRActions>()(
         try {
           set({ isLoading: true, error: null });
           
-          // Simulate API delay
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          console.log('Creating request via API:', requestData);
           
-          const currentUser = getCurrentUser();
-          let newRequest: Request;
-
-          if (requestData.type === 'purchase') {
-            // Handle purchase request
-            const purchaseData = requestData as CreatePurchaseRequestForm;
-            const newPurchaseRequest: PurchaseRequest = {
-              ...purchaseData,
-              id: `pr-${Date.now()}`,
-              requesterId: currentUser.id,
-              requester: currentUser,
-              state: 'DRAFT',
-              approvals: [],
-              quotes: [],
-              createdAt: new Date(),
-              updatedAt: new Date(),
-              type: 'purchase',
-              items: purchaseData.items.map((item, index) => ({
-                id: `item-${index + 1}`,
-                name: item.name,
-                quantity: item.quantity,
-                unitPrice: item.unitPrice,
-                vendorHint: item.vendorHint,
-                total: item.quantity * item.unitPrice,
-              }))
-            };
-            newRequest = newPurchaseRequest;
+          // Call real API
+          const response = await requestApi.create(requestData);
+          
+          if (response.success && response.data) {
+            // Transform backend response to frontend format
+            const newRequest = transformBackendToFrontend(response.data);
+            
+            set((state) => ({
+              prs: [...state.prs, newRequest],
+              isLoading: false,
+              error: null,
+            }));
+            
+            const lang = useLanguageStore.getState().language;
+            toast.success(translations[lang]['pr.toast.createSuccess']);
           } else {
-            // Handle project request
-            const projectData = requestData as CreateProjectRequestForm;
-            const newProjectRequest: ProjectRequest = {
-              ...projectData,
-              id: `proj-${Date.now()}`,
-              requesterId: currentUser.id,
-              requester: currentUser,
-              state: 'DRAFT',
-              approvals: [],
-              quotes: [],
-              createdAt: new Date(),
-              updatedAt: new Date(),
-              type: 'project',
-              items: projectData.items?.map((item, index) => ({
-                id: `item-${index + 1}`,
-                name: item.name,
-                quantity: item.quantity,
-                unitPrice: item.unitPrice,
-                vendorHint: item.vendorHint,
-                total: item.quantity * item.unitPrice,
-              })) || []
-            };
-            newRequest = newProjectRequest;
+            throw new Error(response.message || 'Failed to create request');
           }
-          
-          set((state) => ({
-            prs: [...state.prs, newRequest],
-            isLoading: false,
-            error: null,
-          }));
-          
-          const lang = useLanguageStore.getState().language;
-          toast.success(translations[lang]['pr.toast.createSuccess']);
         } catch (error: unknown) {
+          console.error('Create request error:', error);
           const errorMessage = error instanceof Error ? error.message : 'Failed to create request';
           set({ isLoading: false, error: errorMessage });
           const lang = useLanguageStore.getState().language;
@@ -265,72 +223,32 @@ export const usePRStore = create<PRStoreState & PRActions>()(
         try {
           set({ isLoading: true, error: null });
           
-          // Simulate API delay
-          await new Promise(resolve => setTimeout(resolve, 500));
+          console.log('Updating request via API:', id, updates);
           
-          // Find the current request to get its type
-          const currentRequest = get().prs.find(pr => pr.id === id);
-          if (!currentRequest) {
-            throw new Error('Request not found');
-          }
+          // Call real API
+          const response = await requestApi.update(id, updates);
           
-          // Update the state with type-safe modifications
-          set((state) => {
-            const updatedPrs = state.prs.map(pr => {
-              if (pr.id === id) {
-                const updatedAt = new Date();
-                
-                if (pr.type === 'purchase') {
-                  // Update purchase request
-                  if (updates.type === 'project') {
-                    // Don't allow type change through updatePR
-                    console.warn('Cannot change request type from purchase to project');
-                    return pr;
-                  }
-                  // Safe to update purchase request fields
-                  return { 
-                    ...pr, 
-                    ...updates, 
-                    type: 'purchase', 
-                    updatedAt 
-                  } as PurchaseRequest;
-                } else if (pr.type === 'project') {
-                  // Update project request
-                  if (updates.type === 'purchase') {
-                    // Don't allow type change through updatePR
-                    console.warn('Cannot change request type from project to purchase');
-                    return pr;
-                  }
-                  // Safe to update project request fields
-                  return { 
-                    ...pr, 
-                    ...updates, 
-                    type: 'project', 
-                    updatedAt 
-                  } as ProjectRequest;
-                }
-              }
-              return pr;
-            });
+          if (response.success && response.data) {
+            // Transform backend response to frontend format
+            const updatedRequest = transformBackendToFrontend(response.data);
             
-            return {
-              prs: updatedPrs,
+            set((state) => ({
+              prs: state.prs.map(pr => pr.id === id ? updatedRequest : pr),
               isLoading: false,
-              error: null
-            };
-          });
-          
-          {
+              error: null,
+            }));
+            
             const lang = useLanguageStore.getState().language;
             toast.success(translations[lang]['pr.toast.updateSuccess']);
+          } else {
+            throw new Error('Failed to update request');
           }
         } catch (error: unknown) {
+          console.error('Update request error:', error);
           const errorMessage = error instanceof Error ? error.message : 'Failed to update request';
           set({ isLoading: false, error: errorMessage });
-          {
-            const lang = useLanguageStore.getState().language;
-            toast.error(translations[lang]['pr.toast.updateError']);
-          }
+          const lang = useLanguageStore.getState().language;
+          toast.error(translations[lang]['pr.toast.updateError']);
           throw error;
         }
       },
@@ -367,25 +285,29 @@ export const usePRStore = create<PRStoreState & PRActions>()(
         try {
           set({ isLoading: true, error: null });
           
-          // Simulate API delay
-          await new Promise(resolve => setTimeout(resolve, 800));
+          console.log('Fetching requests via API');
           
-          // In a real app, this would fetch from API
-          // For now, we'll just use the existing state
-          const currentPRs = get().prs;
+          // Call real API
+          const response = await requestApi.getAll();
           
-          set({
-            prs: currentPRs,
-            isLoading: false,
-            error: null,
-          });
+          if (response.success && response.data) {
+            // Transform backend responses to frontend format
+            const requests = response.data.map(transformBackendToFrontend);
+            
+            set({
+              prs: requests,
+              isLoading: false,
+              error: null,
+            });
+          } else {
+            throw new Error('Failed to fetch requests');
+          }
         } catch (error: unknown) {
+          console.error('Get requests error:', error);
           const errorMessage = error instanceof Error ? error.message : 'Failed to fetch requests';
           set({ isLoading: false, error: errorMessage });
-          {
-            const lang = useLanguageStore.getState().language;
-            toast.error(translations[lang]['pr.toast.fetchError']);
-          }
+          const lang = useLanguageStore.getState().language;
+          toast.error(translations[lang]['pr.toast.fetchError']);
           throw error;
         }
       },

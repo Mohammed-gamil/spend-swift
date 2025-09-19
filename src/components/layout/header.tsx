@@ -20,11 +20,11 @@ interface HeaderProps {
     role: string;
     avatar?: string;
   };
-  notifications: number;
   onSearch?: (query: string) => void;
+  onNavigate?: (route: string) => void;
 }
 
-export function Header({ currentUser, notifications, onSearch }: HeaderProps) {
+export function Header({ currentUser, onSearch, onNavigate }: HeaderProps) {
   const { isRTL } = useLanguageStore();
   
   return (
@@ -34,11 +34,11 @@ export function Header({ currentUser, notifications, onSearch }: HeaderProps) {
         <div className="flex items-center space-x-4 rtl:space-x-reverse">
           <div className="flex items-center space-x-2 rtl:space-x-reverse group">
             <div className="h-8 w-8 rounded-lg bg-gradient-primary flex items-center justify-center shadow-primary transition-all duration-300 group-hover:scale-110 group-hover:shadow-glow">
-              <span className="text-white font-bold text-sm">PR</span>
+              <span className="text-white font-bold text-sm">AG</span>
             </div>
             <div className="transition-all duration-300 rtl:group-hover:translate-x-0 rtl:group-hover:-translate-x-1 ltr:group-hover:translate-x-1">
               <h1 className="text-lg font-bold text-foreground gradient-text">
-                {isRTL ? "طلبات الشراء" : "Purchase Requests"}
+                {isRTL ? "Action-g" : "Action-g"}
               </h1>
               <p className="text-xs text-muted-foreground hidden sm:block">
                 {isRTL ? "نظام الإدارة" : "Management System"}
@@ -66,27 +66,8 @@ export function Header({ currentUser, notifications, onSearch }: HeaderProps) {
 
         {/* Right Side Actions */}
         <div className="flex items-center space-x-4 rtl:space-x-reverse">
-          {/* Test Button - Simple Debug */}
-          <Button variant="outline" size="sm" className="bg-red-500 text-white">
-            {isRTL ? "اختبار" : "TEST"}
-          </Button>
-          
           {/* Theme Toggle */}
           <ThemeToggle />
-          
-          {/* Notifications */}
-          <Button variant="ghost" size="icon" className="relative group hover:bg-gradient-primary-soft transition-all duration-300">
-            <Bell className="h-5 w-5 transition-transform group-hover:animate-bounce-subtle" />
-            {notifications > 0 && (
-              <Badge 
-                variant="destructive" 
-                className={`absolute -top-1 h-5 w-5 flex items-center justify-center p-0 text-xs animate-pulse-soft
-                  ${isRTL ? "-left-1" : "-right-1"}`}
-              >
-                {notifications > 99 ? '99+' : notifications}
-              </Badge>
-            )}
-          </Button>
 
           {/* User Menu */}
           <DropdownMenu>
@@ -115,11 +96,11 @@ export function Header({ currentUser, notifications, onSearch }: HeaderProps) {
                 </Badge>
               </div>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onNavigate?.('profile')}>
                 <User className={`h-4 w-4 ${isRTL ? "ml-2" : "mr-2"}`} />
                 <span>{isRTL ? "الملف الشخصي" : "Profile"}</span>
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onNavigate?.('settings')}>
                 <Settings className={`h-4 w-4 ${isRTL ? "ml-2" : "mr-2"}`} />
                 <span>{isRTL ? "الإعدادات" : "Settings"}</span>
               </DropdownMenuItem>

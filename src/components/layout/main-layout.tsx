@@ -16,7 +16,6 @@ interface MainLayoutProps {
   onNavigate: (route: string) => void;
   onSearch?: (query: string) => void;
   pendingApprovals?: number;
-  notifications?: number;
 }
 
 export function MainLayout({
@@ -25,15 +24,14 @@ export function MainLayout({
   activeRoute,
   onNavigate,
   onSearch,
-  pendingApprovals = 0,
-  notifications = 0
+  pendingApprovals = 0
 }: MainLayoutProps) {
   return (
     <div className="min-h-screen bg-background">
       <Header 
         currentUser={currentUser}
-        notifications={notifications}
         onSearch={onSearch}
+        onNavigate={onNavigate}
       />
       
       <div className="flex h-[calc(100vh-4rem)]">

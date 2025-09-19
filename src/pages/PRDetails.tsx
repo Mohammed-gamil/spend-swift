@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useAuthStore } from "@/stores/authStore";
+import { useApiPRStore } from "@/stores/apiPRStore";
 import RoleGuard from "@/components/auth/RoleGuard";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -107,11 +108,34 @@ export default function PRDetails() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuthStore();
+  const { getRequest, isLoading } = useApiPRStore();
+  const [request, setRequest] = useState<any>(null);
   const [showApprovalDialog, setShowApprovalDialog] = useState(false);
   const [showFundsDialog, setShowFundsDialog] = useState(false);
   const [showQuoteDialog, setShowQuoteDialog] = useState(false);
   const [quoteFiles, setQuoteFiles] = useState<File[]>([]);
   const { t, language } = useTranslation();
+
+  // Fetch request data on component mount
+  useEffect(() => {
+    const fetchRequest = async () => {
+      if (id) {
+        try {
+          const fetchedRequest = await getRequest(id);
+          setRequest(fetchedRequest);
+        } catch (error) {
+          console.error('Failed to fetch request:', error);
+          // Use mock data as fallback for now
+          setRequest(mockPR);
+        }
+      }
+    };
+    
+    fetchRequest();
+  }, [id, getRequest]);
+
+  // Use fetched request or fallback to mock data
+  const currentRequest = request || mockPR;
 
   const approvalForm = useForm<ApprovalFormData>({
     resolver: zodResolver(approvalSchema),

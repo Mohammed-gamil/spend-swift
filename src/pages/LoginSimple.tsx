@@ -12,19 +12,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { Loader2, Eye, EyeOff } from 'lucide-react';
-import { useTranslation } from '@/hooks/use-translation';
 import toast from 'react-hot-toast';
 
 const loginSchema = z.object({
-  email: z.string().email('login.errors.invalidEmail'),
-  password: z.string().min(1, 'login.errors.passwordRequired'),
+  email: z.string().email('Invalid email'),
+  password: z.string().min(1, 'Password is required'),
   remember: z.boolean().optional(),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
-export default function Login() {
-  const { t } = useTranslation();
+export default function LoginSimple() {
   const [showPassword, setShowPassword] = useState(false);
   const { login, isLoading, error, clearError, isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
@@ -98,68 +96,72 @@ export default function Login() {
             </div>
           </div>
           <h2 className="text-3xl font-extrabold text-foreground">
-            {t('login.title')}
+            Sign in to your account
           </h2>
           <p className="text-sm text-muted-foreground">
-            {t('login.subtitle')}
+            Welcome back! Please enter your details.
           </p>
         </div>
 
-        <Card className="backdrop-blur-sm bg-card/95 border-border/50 shadow-xl hover:shadow-2xl transition-all duration-300">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl text-center gradient-text">{t('login.welcome')}</CardTitle>
-            <CardDescription className="text-center text-muted-foreground">
-              {t('login.welcomeSubtitle')}
+        <Card className="shadow-xl border-primary/20 bg-card/80 backdrop-blur-sm">
+          <CardHeader className="space-y-1 pb-4">
+            <CardTitle className="text-xl text-center">Login</CardTitle>
+            <CardDescription className="text-center">
+              Enter your email and password to access your account
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              {error && (
-                <Alert variant="destructive" className="animate-shake">
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
+          <CardContent className="space-y-4">
+            {error && (
+              <Alert variant="destructive" className="animate-in slide-in-from-top-2 duration-300">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
 
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-foreground font-medium">{t('login.emailLabel')}</Label>
+                <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
                   type="email"
                   autoComplete="email"
-                  placeholder={t('login.emailPlaceholder')}
+                  required
+                  className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
                   {...register('email')}
-                  className={`transition-all duration-200 ${errors.email ? 'border-destructive focus:border-destructive' : 'focus:border-primary'}`}
                 />
                 {errors.email && (
-                  <p className="text-sm text-destructive animate-slide-down">{t(errors.email.message as any)}</p>
+                  <p className="text-sm text-destructive animate-in slide-in-from-left-2 duration-300">
+                    {errors.email.message}
+                  </p>
                 )}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-foreground font-medium">{t('login.passwordLabel')}</Label>
+                <Label htmlFor="password">Password</Label>
                 <div className="relative">
                   <Input
                     id="password"
                     type={showPassword ? 'text' : 'password'}
                     autoComplete="current-password"
-                    placeholder={t('login.passwordPlaceholder')}
+                    required
+                    className="transition-all duration-200 focus:ring-2 focus:ring-primary/20 pr-10"
                     {...register('password')}
-                    className={`pr-10 transition-all duration-200 ${errors.password ? 'border-destructive focus:border-destructive' : 'focus:border-primary'}`}
                   />
                   <button
                     type="button"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center hover:text-foreground transition-colors"
                     onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-muted-foreground hover:text-foreground transition-colors"
                   >
                     {showPassword ? (
-                      <EyeOff className="h-4 w-4 text-muted-foreground" />
+                      <EyeOff className="h-4 w-4" />
                     ) : (
-                      <Eye className="h-4 w-4 text-muted-foreground" />
+                      <Eye className="h-4 w-4" />
                     )}
                   </button>
                 </div>
                 {errors.password && (
-                  <p className="text-sm text-destructive animate-slide-down">{t(errors.password.message as any)}</p>
+                  <p className="text-sm text-destructive animate-in slide-in-from-left-2 duration-300">
+                    {errors.password.message}
+                  </p>
                 )}
               </div>
 
@@ -172,37 +174,73 @@ export default function Login() {
                   />
                   <Label
                     htmlFor="remember"
-                    className="text-sm font-medium text-foreground cursor-pointer"
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
-                    {t('login.rememberMe')}
+                    Remember me
                   </Label>
                 </div>
-
                 <Link
                   to="/forgot-password"
-                  className="text-sm text-primary hover:text-primary/80 transition-colors font-medium"
+                  className="text-sm font-medium text-primary hover:text-primary/80 transition-colors"
                 >
-                  {t('login.forgotPassword')}
+                  Forgot password?
                 </Link>
               </div>
 
               <Button
                 type="submit"
-                className="w-full bg-gradient-primary hover:bg-gradient-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
                 disabled={isLoading}
+                className="w-full bg-gradient-primary hover:opacity-90 transition-all duration-200 shadow-md hover:shadow-lg"
               >
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {t('login.signingInButton')}
+                    Signing in...
                   </>
                 ) : (
-                  t('login.signInButton')
+                  'Sign in'
                 )}
               </Button>
             </form>
+
+            {/* Demo Login Section */}
+            <div className="mt-6 pt-4 border-t border-border/50">
+              <p className="text-sm text-center text-muted-foreground mb-3">
+                Quick demo login:
+              </p>
+              <div className="grid grid-cols-2 gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleDemoLogin('admin@example.com', 'password')}
+                  disabled={isLoading}
+                  className="text-xs transition-all duration-200 hover:bg-primary/10"
+                >
+                  Admin Demo
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleDemoLogin('user@spendswift.com', 'password')}
+                  disabled={isLoading}
+                  className="text-xs transition-all duration-200 hover:bg-primary/10"
+                >
+                  User Demo
+                </Button>
+              </div>
+            </div>
           </CardContent>
         </Card>
+
+        <p className="text-center text-sm text-muted-foreground">
+          Need an account?{' '}
+          <Link
+            to="/register"
+            className="font-medium text-primary hover:text-primary/80 transition-colors"
+          >
+            Contact your administrator
+          </Link>
+        </p>
       </div>
     </div>
   );

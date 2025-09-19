@@ -24,26 +24,79 @@ export type Decision = 'PENDING' | 'APPROVED' | 'REJECTED';
 export type RequestType = 'purchase' | 'project';
 
 export interface User {
-  id: string;
+  id: number;
   name: string;
   email: string;
-  role: UserRole;
-  teamId?: string;
-  status: 'active' | 'inactive';
+  email_verified_at?: string | null;
+  department_id?: number | null;
+  direct_manager_id?: number | null;
+  position?: string;
+  phone?: string;
+  bio?: string;
   avatar?: string;
-  createdAt?: Date;
+  avatar_url?: string;
+  timezone?: string;
+  date_format?: string;
+  currency?: string;
+  notification_preferences?: {
+    email: boolean;
+    push: boolean;
+    sms: boolean;
+    request_updates: boolean;
+    approval_reminders: boolean;
+    system_updates: boolean;
+  };
+  language_preference: string;
+  created_at: string;
+  updated_at: string;
+  // Additional fields for frontend
+  role?: UserRole;
+  role_names?: string[]; // Role names array from backend
+  teamId?: string;
+  status?: 'active' | 'inactive';
   lastLoginAt?: Date;
+  roles?: string[];
+  permissions?: string[];
 }
 
 export interface LoginCredentials {
   email: string;
   password: string;
+  remember?: boolean;
+}
+
+export interface RegisterCredentials {
+  name: string;
+  email: string;
+  password: string;
+  password_confirmation: string;
+  department_id?: number;
+}
+
+export interface RegisterResponse {
+  message: string;
+  user: User;
+}
+
+export interface Department {
+  id: number;
+  name: string;
+  description?: string;
+  code?: string;
+  manager_id?: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DepartmentListResponse {
+  data: Department[];
 }
 
 export interface AuthResponse {
+  access_token: string;
+  token_type: string;
+  expires_in: number;
   user: User;
-  token: string;
-  expires_at: string;
 }
 
 export interface Team {
