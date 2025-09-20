@@ -1,0 +1,285 @@
+{
+  "info": {
+    "_postman_id": "b5f4f9a2-0000-0000-0000-000000000000",
+    "name": "Vibe Coding Backend API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\": \"John Doe\", \"email\": \"john.doe@example.com\", \"password\": \"password\", \"password_confirmation\": \"password\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{api_url}}/register",
+              "host": [
+                "{{api_url}}"
+              ],
+              "path": [
+                "register"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Login - user",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "if (json && json.access_token) {",
+                  "  pm.environment.set('access_token_user', json.access_token);",
+                  "} else if (json && json.token) {",
+                  "  pm.environment.set('access_token_user', json.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\": \"user@example.com\", \"password\": \"password\"}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{api_url}}/login", "host": ["{{api_url}}"], "path": ["login"] }
+          }
+        },
+        {
+          "name": "Login - manager",
+          "event": [
+            {
+              "listen": "test",
+              "script": { "exec": [
+                "var json = pm.response.json();",
+                "if (json && json.access_token) {",
+                "  pm.environment.set('access_token_manager', json.access_token);",
+                "} else if (json && json.token) {",
+                "  pm.environment.set('access_token_manager', json.token);",
+                "}"
+              ] }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"email\": \"manager@example.com\", \"password\": \"password\"}", "options": { "raw": { "language": "json" } } },
+            "url": { "raw": "{{api_url}}/login", "host": ["{{api_url}}"], "path": ["login"] }
+          }
+        },
+        {
+          "name": "Login - accountant",
+          "event": [
+            {
+              "listen": "test",
+              "script": { "exec": [
+                "var json = pm.response.json();",
+                "if (json && json.access_token) {",
+                "  pm.environment.set('access_token_accountant', json.access_token);",
+                "} else if (json && json.token) {",
+                "  pm.environment.set('access_token_accountant', json.token);",
+                "}"
+              ] }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"email\": \"accountant@example.com\", \"password\": \"password\"}", "options": { "raw": { "language": "json" } } },
+            "url": { "raw": "{{api_url}}/login", "host": ["{{api_url}}"], "path": ["login"] }
+          }
+        },
+        {
+          "name": "Login - admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": { "exec": [
+                "var json = pm.response.json();",
+                "if (json && json.access_token) {",
+                "  pm.environment.set('access_token_admin', json.access_token);",
+                "} else if (json && json.token) {",
+                "  pm.environment.set('access_token_admin', json.token);",
+                "}"
+              ] }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\"email\": \"admin@example.com\", \"password\": \"password\"}", "options": { "raw": { "language": "json" } } },
+            "url": { "raw": "{{api_url}}/login", "host": ["{{api_url}}"], "path": ["login"] }
+          }
+        }
+        ,
+        {
+          "name": "Refresh - user",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key":"Accept","value":"application/json"},
+              {"key":"Authorization","value":"Bearer {{access_token_user}}"}
+            ],
+            "url": {"raw":"{{api_url}}/refresh","host":["{{api_url}}"],"path":["refresh"]}
+          },
+          "event": [{"listen":"test","script":{"exec":["var json = pm.response.json();","if (json && json.access_token) {","  pm.environment.set('access_token_user', json.access_token);","}"]}}]
+        },
+        {
+          "name": "Logout - user",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key":"Accept","value":"application/json"},
+              {"key":"Authorization","value":"Bearer {{access_token_user}}"}
+            ],
+            "url": {"raw":"{{api_url}}/logout","host":["{{api_url}}"],"path":["logout"]}
+          },
+          "event": [{"listen":"test","script":{"exec":["pm.environment.unset('access_token_user');"]}}]
+        },
+        {
+          "name": "Refresh - manager",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key":"Accept","value":"application/json"},
+              {"key":"Authorization","value":"Bearer {{access_token_manager}}"}
+            ],
+            "url": {"raw":"{{api_url}}/refresh","host":["{{api_url}}"],"path":["refresh"]}
+          },
+          "event": [{"listen":"test","script":{"exec":["var json = pm.response.json();","if (json && json.access_token) {","  pm.environment.set('access_token_manager', json.access_token);","}"]}}]
+        },
+        {
+          "name": "Logout - manager",
+          "request": {"method":"POST","header":[{"key":"Accept","value":"application/json"},{"key":"Authorization","value":"Bearer {{access_token_manager}}"}],"url":{"raw":"{{api_url}}/logout","host":["{{api_url}}"],"path":["logout"]}},
+          "event": [{"listen":"test","script":{"exec":["pm.environment.unset('access_token_manager');"]}}]
+        },
+        {
+          "name": "Refresh - accountant",
+          "request": {"method":"POST","header":[{"key":"Accept","value":"application/json"},{"key":"Authorization","value":"Bearer {{access_token_accountant}}"}],"url":{"raw":"{{api_url}}/refresh","host":["{{api_url}}"],"path":["refresh"]}},
+          "event": [{"listen":"test","script":{"exec":["var json = pm.response.json();","if (json && json.access_token) {","  pm.environment.set('access_token_accountant', json.access_token);","}"]}}]
+        },
+        {
+          "name": "Logout - accountant",
+          "request": {"method":"POST","header":[{"key":"Accept","value":"application/json"},{"key":"Authorization","value":"Bearer {{access_token_accountant}}"}],"url":{"raw":"{{api_url}}/logout","host":["{{api_url}}"],"path":["logout"]}},
+          "event": [{"listen":"test","script":{"exec":["pm.environment.unset('access_token_accountant');"]}}]
+        },
+        {
+          "name": "Refresh - admin",
+          "request": {"method":"POST","header":[{"key":"Accept","value":"application/json"},{"key":"Authorization","value":"Bearer {{access_token_admin}}"}],"url":{"raw":"{{api_url}}/refresh","host":["{{api_url}}"],"path":["refresh"]}},
+          "event": [{"listen":"test","script":{"exec":["var json = pm.response.json();","if (json && json.access_token) {","  pm.environment.set('access_token_admin', json.access_token);","}"]}}]
+        },
+        {
+          "name": "Logout - admin",
+          "request": {"method":"POST","header":[{"key":"Accept","value":"application/json"},{"key":"Authorization","value":"Bearer {{access_token_admin}}"}],"url":{"raw":"{{api_url}}/logout","host":["{{api_url}}"],"path":["logout"]}},
+          "event": [{"listen":"test","script":{"exec":["pm.environment.unset('access_token_admin');"]}}]
+        }
+      ]
+    },
+        {
+          "name": "Purchase Requests",
+          "item": [
+            {
+              "name": "Create PR (user)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {"key":"Accept","value":"application/json"},
+                  {"key":"Authorization","value":"Bearer {{access_token_user}}"}
+                ],
+                "body": {"mode":"raw","raw":"{\"title\":\"New Server\",\"description\":\"Request for a new web server.\"}","options":{"raw":{"language":"json"}}},
+                "url": {"raw":"{{api_url}}/purchase-requests","host":["{{api_url}}"],"path":["purchase-requests"]}
+              }
+                ,
+                "event": [
+                  {
+                    "listen": "test",
+                    "script": {
+                      "exec": [
+                        "var json = pm.response.json();",
+                        "if (json && json.data && json.data.id) {",
+                        "  pm.environment.set('pr_id', json.data.id);",
+                        "} else if (json && json.id) {",
+                        "  pm.environment.set('pr_id', json.id);",
+                        "}"
+                      ]
+                    }
+                  }
+                ]
+            },
+            {
+              "name": "Get All PRs (any)",
+              "request": {"method":"GET","header":[{"key":"Accept","value":"application/json"},{"key":"Authorization","value":"Bearer {{access_token_user}}"}],"url":{"raw":"{{api_url}}/purchase-requests","host":["{{api_url}}"],"path":["purchase-requests"]}}
+            },
+            {
+              "name": "Approve PR (manager)",
+              "request": {"method":"PUT","header":[{"key":"Accept","value":"application/json"},{"key":"Authorization","value":"Bearer {{access_token_manager}}"}],"url":{"raw":"{{api_url}}/purchase-requests/{{pr_id}}/approve","host":["{{api_url}}"],"path":["purchase-requests","{{pr_id}}","approve"]}}
+            },
+            {
+              "name": "Add Price Offer (accountant)",
+              "request": {"method":"POST","header":[{"key":"Accept","value":"application/json"},{"key":"Authorization","value":"Bearer {{access_token_accountant}}"}],"body":{"mode":"raw","raw":"{\"amount\":5000,\"description\":\"Offer from supplier X.\"}","options":{"raw":{"language":"json"}}},"url":{"raw":"{{api_url}}/purchase-requests/{{pr_id}}/offers","host":["{{api_url}}"],"path":["purchase-requests","{{pr_id}}","offers"]}}
+              ,
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "var json = pm.response.json();",
+                      "if (json && json.data && json.data.id) {",
+                      "  pm.environment.set('offer_id', json.data.id);",
+                      "} else if (json && json.id) {",
+                      "  pm.environment.set('offer_id', json.id);",
+                      "}"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Accept Offer (user)",
+              "request": {"method":"PUT","header":[{"key":"Accept","value":"application/json"},{"key":"Authorization","value":"Bearer {{access_token_user}}"}],"url":{"raw":"{{api_url}}/offers/{{offer_id}}/accept","host":["{{api_url}}"],"path":["offers","{{offer_id}}","accept"]}}
+            }
+          ]
+        },
+    {
+      "name": "Projects",
+      "item": [
+        {"name":"Create Project","request":{"method":"POST","header":[{"key":"Accept","value":"application/json"},{"key":"Authorization","value":"Bearer {{access_token}}"}],"body":{"mode":"raw","raw":"{\"title\":\"Marketing Campaign\",\"description\":\"Launch a new digital marketing campaign.\"}","options":{"raw":{"language":"json"}}},"url":{"raw":"{{api_url}}/projects","host":["{{api_url}}"],"path":["projects"]}}},
+        {"name":"Get Projects","request":{"method":"GET","header":[{"key":"Accept","value":"application/json"},{"key":"Authorization","value":"Bearer {{access_token}}"}],"url":{"raw":"{{api_url}}/projects","host":["{{api_url}}"],"path":["projects"]}}}
+      ]
+    }
+  ],
+  "variable": [
+    {"key":"api_url","value":"http://localhost:8000/api/v1"},
+    {"key":"access_token","value":""},
+    {"key":"access_token_user","value":""},
+    {"key":"access_token_manager","value":""},
+    {"key":"access_token_accountant","value":""},
+    {"key":"access_token_admin","value":""}
+  ]
+}

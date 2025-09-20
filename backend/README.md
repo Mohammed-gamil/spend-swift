@@ -59,3 +59,45 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## CI & JWT (Deployment Guidance)
+
+When running tests or deploying in CI, ensure the `JWT_SECRET` is supplied securely as a secret/env var. There are two common approaches:
+
+- Provision `JWT_SECRET` as an environment variable in CI (recommended). Example (GitHub Actions):
+
+```yaml
+env:
+	JWT_SECRET: ${{ secrets.JWT_SECRET }}
+jobs:
+	test:
+		runs-on: ubuntu-latest
+		steps:
+			- uses: actions/checkout@v3
+			- name: Set up PHP
+				uses: shivammathur/setup-php@v2
+				with:
+					php-version: '8.3'
+			- name: Install dependencies
+				run: composer install --no-interaction --prefer-dist --optimize-autoloader
+			- name: Run migrations
+				env:
+					DB_CONNECTION: mysql
+					DB_HOST: ${{ secrets.DB_HOST }}
+					DB_USERNAME: ${{ secrets.DB_USERNAME }}
+					DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+					DB_DATABASE: ${{ secrets.DB_DATABASE }}
+					JWT_SECRET: ${{ secrets.JWT_SECRET }}
+				run: php artisan migrate --force
+			- name: Run tests
+				env:
+					JWT_SECRET: ${{ secrets.JWT_SECRET }}
+				run: vendor/bin/phpunit --colors=never
+```
+
+- Alternatively, you can run `php artisan jwt:secret` during CI to generate and write the secret to `.env`; ensure that generated secret is not leaked in CI logs and is stored as a secret for future runs.
+
+Security notes:
+- Never commit `JWT_SECRET` to source. Use CI secrets or a secrets manager.
+- If you rotate `JWT_SECRET`, all existing tokens become invalid; plan rotations carefully.
+
