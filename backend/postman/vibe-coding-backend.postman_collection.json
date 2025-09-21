@@ -275,7 +275,7 @@
     }
   ],
   "variable": [
-    {"key":"api_url","value":"http://localhost:8000/api/v1"},
+  {"key":"api_url","value":"http://localhost:8000/api"},
     {"key":"access_token","value":""},
     {"key":"access_token_user","value":""},
     {"key":"access_token_manager","value":""},

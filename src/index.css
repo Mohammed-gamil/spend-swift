@@ -122,11 +122,16 @@
 
 @layer base {
   * {
-    @apply border-border;
+    /* Use CSS variable for border color instead of a Tailwind-generated class */
+    border-color: var(--border);
+    box-sizing: border-box;
   }
 
   body {
-    @apply bg-background text-foreground antialiased;
+    background-color: var(--background);
+    color: var(--foreground);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }

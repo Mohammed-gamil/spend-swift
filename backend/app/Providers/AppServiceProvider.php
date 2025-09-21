@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Gate;
 use App\Models\User;
 use App\Repositories\PurchaseRequestRepository;
 use App\Repositories\Contracts\PurchaseRequestRepositoryInterface;
+use App\Repositories\ProjectRepository;
+use App\Repositories\Contracts\ProjectRepositoryInterface;
 use App\Models\PurchaseRequest;
 use App\Policies\PurchaseRequestPolicy;
 
@@ -18,7 +20,9 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         // Bind repository interfaces to implementations
-        $this->app->bind(PurchaseRequestRepositoryInterface::class, PurchaseRequestRepository::class);
+    $this->app->bind(PurchaseRequestRepositoryInterface::class, PurchaseRequestRepository::class);
+    // Bind project repository so controllers/services can be resolved when artisan commands run
+    $this->app->bind(ProjectRepositoryInterface::class, ProjectRepository::class);
     }
 
     /**

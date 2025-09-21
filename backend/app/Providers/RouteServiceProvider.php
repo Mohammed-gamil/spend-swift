@@ -13,6 +13,7 @@ class RouteServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->routes(function () {
+            // Keep API prefix as /api to match current route registration
             Route::middleware('api')
                 ->prefix('api')
                 ->group(base_path('routes/api.php'));
